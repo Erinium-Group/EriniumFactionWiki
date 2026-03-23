@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Économie — EriniumFaction Wiki</title>
+  <meta name="description" content="Maîtrisez l'économie d'Erinium : gagnez des Erins via le PvP et le minage, gérez la banque de faction, et dépensez intelligemment." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .earn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .earn-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid rgba(46, 204, 113, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .earn-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(46,204,113,0.35), transparent);
+    }
+    .earn-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md), 0 0 20px rgba(46,204,113,0.12);
+    }
+    .earn-card-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+    .earn-card-title { font-size: 0.95rem; font-weight: 800; color: #2ECC71; margin-bottom: 8px; }
+    .earn-card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    .currency-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (max-width: 520px) {
+      .currency-compare { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">💰 L'Argent du Serveur</div>
+      <h1>L'Économie</h1>
+      <p>
+        Tout tourne autour des <strong>Erins</strong> — la monnaie du serveur. Gagne de l'argent en minant, en combattant, et dépense-le pour faire grandir ta faction.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">💵 <strong>Monnaie</strong> — Erins ($)</div>
+        <div class="hero-meta-item">⚔️ <strong>Vol au kill</strong> — 10% (perk Pillard)</div>
+        <div class="hero-meta-item">⛏️ <strong>Bonus minage</strong> — +1% / point Fortune</div>
+        <div class="hero-meta-item">🏦 <strong>Banque faction</strong> — 1 000 000 $ max</div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">💰 Économie</span>
+        </nav>
+
+        <!-- 1. LA MONNAIE -->
+        <section id="monnaie">
+          <h2>La monnaie du serveur</h2>
+          <p>
+            Sur Erinium, il y a deux monnaies. Les <strong>Erins ($)</strong> que tu gagnes en jouant, et les <strong>Eris (✦)</strong>, une monnaie premium permanente.
+          </p>
+
+          <div class="currency-compare">
+            <div class="glass-card" style="border-top:3px solid var(--accent-gold);padding:22px 20px;">
+              <div style="font-size:1.8rem;margin-bottom:10px;">💵</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:8px;">Erins ($)</div>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 10px;line-height:1.65;">La monnaie principale. Tu la gagnes en jouant — via le combat et le minage. Elle se remet à zéro à chaque saison.</p>
+              <span class="badge badge-green">Gagnable en jeu</span>
+            </div>
+            <div class="glass-card" style="border-top:3px solid #B06EDE;padding:22px 20px;">
+              <div style="font-size:1.8rem;margin-bottom:10px;">✦</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:8px;">Eris (✦)</div>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 10px;line-height:1.65;">Monnaie premium. Ne se remet jamais à zéro. Utilisée pour des cosmétiques et personnalisations — jamais pour des avantages en combat.</p>
+              <span class="badge badge-orange">Permanente</span>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-cyan" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">ℹ️</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:6px;">Pas de pay-to-win</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Les Eris (✦) donnent accès à des <strong style="color:var(--text);">cosmétiques uniquement</strong> — skins, titres, personnalisation. Ils ne donnent aucun avantage en combat. L'équilibre du jeu repose uniquement sur ta compétence et ta progression en jeu.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="commandes-solde">Voir ton solde</h3>
+          <div class="command-block"><span class="cmd-prefix">/</span>money</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Affiche ton solde en Erins ($).</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>eris</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Ouvre l'interface pour tes Eris (✦).</p>
+        </section>
+
+        <!-- 2. GAGNER DE L'ARGENT -->
+        <section id="gagner">
+          <h2>Comment gagner de l'argent ?</h2>
+          <p>
+            L'argent ne tombe pas du ciel. Sur Erinium, il y a deux façons principales de remplir ta bourse.
+          </p>
+
+          <div class="earn-grid">
+
+            <div class="earn-card">
+              <span class="earn-card-icon">⛏️</span>
+              <div class="earn-card-title">Le Minage</div>
+              <div class="earn-card-desc">
+                Chaque minerai extrait dans le <strong style="color:#2ECC71;">Monde Minage</strong> te rapporte des Erins. Plus tu investis des points dans la stat <strong style="color:#2ECC71;">Fortune</strong>, plus tu gagnes — chaque point ajoute <strong style="color:#2ECC71;">+1%</strong> de revenus.
+              </div>
+            </div>
+
+            <div class="earn-card">
+              <span class="earn-card-icon">⚔️</span>
+              <div class="earn-card-title">PvP — Perk Pillard</div>
+              <div class="earn-card-desc">
+                Équipe le perk <strong style="color:#2ECC71;">Pillard</strong> dans ton arbre RPG. Chaque fois que tu tues un joueur, tu voles <strong style="color:#2ECC71;">10%</strong> de son argent. Plus ta cible est riche, plus c'est juteux !
+              </div>
+            </div>
+
+          </div>
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">💡</span>
+              <div>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  <strong style="color:var(--accent-gold);">Conseil :</strong> Commence par le minage pour accumuler de l'argent en sécurité. Le PvP rapporte plus par "transaction", mais tu peux aussi te faire tuer et perdre tes objets !
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. DÉPENSER -->
+        <section id="depenser">
+          <h2>Comment dépenser son argent ?</h2>
+          <p>
+            L'argent sert à plusieurs choses sur Erinium. Voici les principales utilisations.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:20px 0;">
+            <div class="glass-card" style="padding:18px 16px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">🏰</div>
+              <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;">Banque de Faction</div>
+              <p style="font-size:0.78rem;color:var(--text-muted);margin:0;line-height:1.5;">Alimenter la trésorerie de ta faction pour financer ses besoins.</p>
+            </div>
+            <div class="glass-card" style="padding:18px 16px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">💸</div>
+              <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;">Payer tes amis</div>
+              <p style="font-size:0.78rem;color:var(--text-muted);margin:0;line-height:1.5;">Envoie de l'argent à n'importe quel joueur en ligne ou hors ligne.</p>
+            </div>
+            <div class="glass-card" style="padding:18px 16px;text-align:center;opacity:0.7;">
+              <div style="font-size:2rem;margin-bottom:8px;">🛒</div>
+              <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;">Boutique (bientôt)</div>
+              <p style="font-size:0.78rem;color:var(--text-muted);margin:0;line-height:1.5;">Des marchés pour acheter et vendre des objets entre joueurs.</p>
+            </div>
+          </div>
+
+          <h3 id="commandes-paiement">Envoyer de l'argent</h3>
+          <div class="command-block"><span class="cmd-prefix">/</span>pay <span class="cmd-arg">&lt;joueur&gt;</span> <span class="cmd-arg">&lt;montant&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Exemple : <code>/pay Steve 500</code> — envoie 500$ à Steve.</p>
+        </section>
+
+        <!-- 4. COMMANDES -->
+        <section id="commandes">
+          <h2>Toutes les commandes économiques</h2>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Commande</th><th>Ce que ça fait</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/money</code></td><td>Voir ton solde en Erins</td></tr>
+                <tr><td><code>/pay &lt;joueur&gt; &lt;montant&gt;</code></td><td>Envoyer de l'argent à un joueur</td></tr>
+                <tr><td><code>/eris</code></td><td>Ouvrir l'interface Eris (✦)</td></tr>
+                <tr><td><code>/f bank</code></td><td>Voir le solde de la banque de faction</td></tr>
+                <tr><td><code>/f bank deposit &lt;montant&gt;</code></td><td>Déposer dans la banque de faction</td></tr>
+                <tr><td><code>/f bank withdraw &lt;montant&gt;</code></td><td>Retirer de la banque de faction</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#monnaie" class="toc-link">La monnaie</a></li>
+          <li class="toc-item"><a href="#gagner" class="toc-link">Gagner de l'argent</a></li>
+          <li class="toc-item"><a href="#depenser" class="toc-link">Dépenser</a></li>
+          <li class="toc-item"><a href="#commandes" class="toc-link">Commandes</a></li>
+        </ul>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

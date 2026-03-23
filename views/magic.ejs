@@ -1,0 +1,400 @@
+<%- include('partials/head', { pageTitle: 'Magie — EriniumFaction Wiki' }) %>
+<style>
+    /* ── School overview cards ── */
+    .school-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+      margin: 24px 0;
+    }
+    .school-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: default;
+    }
+    .school-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+    }
+    .school-card:hover { transform: translateY(-4px); }
+    .school-card-fracture       { border: 1px solid rgba(168,47,160,0.30); }
+    .school-card-fracture:hover { box-shadow: 0 8px 32px rgba(168,47,160,0.25); border-color: rgba(168,47,160,0.55); }
+    .school-card-cristallisation       { border: 1px solid rgba(0,229,255,0.22); }
+    .school-card-cristallisation:hover { box-shadow: 0 8px 32px rgba(0,229,255,0.18); border-color: rgba(0,229,255,0.45); }
+    .school-card-corruption       { border: 1px solid rgba(46,204,113,0.22); }
+    .school-card-corruption:hover { box-shadow: 0 8px 32px rgba(46,204,113,0.18); border-color: rgba(46,204,113,0.45); }
+    .school-card-resonance       { border: 1px solid rgba(242,196,15,0.22); }
+    .school-card-resonance:hover { box-shadow: 0 8px 32px rgba(242,196,15,0.18); border-color: rgba(242,196,15,0.45); }
+
+    .school-emoji { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+    .school-name  { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 6px; }
+    .school-name-fracture       { color: #C84FC0; }
+    .school-name-cristallisation { color: #00E5FF; }
+    .school-name-corruption     { color: #2ECC71; }
+    .school-name-resonance      { color: #F2C40F; }
+    .school-tagline { font-size: 0.77rem; color: var(--text-muted); line-height: 1.5; }
+    .school-count   { font-size: 0.7rem; font-weight: 700; color: var(--text-faint); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Mana info blocks ── */
+    .mana-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .mana-block {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .mana-block-value {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--accent-secondary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .mana-block-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-faint);
+    }
+
+    /* ── Formula box ── */
+    .formula-box {
+      background: rgba(0,0,0,0.30);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-secondary);
+      margin: 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .formula-label {
+      color: var(--text-faint);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      white-space: nowrap;
+    }
+
+    /* ── Equip steps ── */
+    .equip-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .equip-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      transition: border-color var(--transition);
+    }
+    .equip-step:hover { border-color: var(--glass-border-hover); }
+    .equip-step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(var(--accent-primary-rgb), 0.25);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.45);
+      color: var(--accent-secondary);
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .equip-step-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .equip-step-text strong { color: var(--text); }
+
+    /* ── Slots unlocked info ── */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .slots-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .slots-num   { font-size: 1.8rem; font-weight: 900; color: var(--accent-secondary); line-height: 1; margin-bottom: 4px; }
+    .slots-label { font-size: 0.72rem; color: var(--text-faint); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Hero override ── */
+    .hero-magic {
+      background: linear-gradient(135deg,
+        rgba(107,47,160,0.14) 0%,
+        rgba(0,229,255,0.06) 50%,
+        transparent 100%);
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:10%;top:16%;animation-delay:0s;animation-duration:3.4s;"></span>
+  <span class="star" style="left:27%;top:9%;animation-delay:1.3s;animation-duration:4.2s;"></span>
+  <span class="star" style="left:53%;top:23%;animation-delay:0.7s;animation-duration:3.6s;"></span>
+  <span class="star" style="left:75%;top:13%;animation-delay:2.2s;animation-duration:2.7s;"></span>
+  <span class="star" style="left:87%;top:37%;animation-delay:1.0s;animation-duration:4.7s;"></span>
+  <span class="star" style="left:37%;top:57%;animation-delay:1.9s;animation-duration:3.2s;"></span>
+  <span class="star" style="left:63%;top:71%;animation-delay:0.2s;animation-duration:5.2s;"></span>
+  <span class="star" style="left:6%;top:83%;animation-delay:2.6s;animation-duration:3.7s;"></span>
+  <span class="star" style="left:93%;top:67%;animation-delay:1.5s;animation-duration:4.1s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-magic" aria-labelledby="hero-title">
+      <span class="hero-badge">🔮 Magie</span>
+      <h1 id="hero-title">Lance des sorts dévastateurs !</h1>
+      <p>Tu peux lancer des sorts puissants sur le serveur. Chaque sort coûte du <strong>mana</strong> — une énergie magique qui se recharge automatiquement.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🔮 <strong>4 écoles</strong></div>
+        <div class="hero-meta-item">💫 <strong>20 sorts</strong></div>
+        <div class="hero-meta-item">🎰 <strong>4 emplacements</strong></div>
+        <div class="hero-meta-item">⬆️ <strong>Niveau magie max : 50</strong></div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/index">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Magie</span>
+        </nav>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1 — LE MANA
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-mana">
+          <h2 id="section-mana">Le Mana</h2>
+
+          <p>Le mana est ton carburant magique. Chaque sort que tu lances en dépense. Quand tu es à court de mana, tu dois attendre qu'il se recharge avant de relancer des sorts.</p>
+
+          <div class="formula-box">
+            <span class="formula-label">Formule Mana Max</span>
+            100 + (Arcane × 2) + (Vigueur × 0,5)
+          </div>
+
+          <div class="mana-grid">
+            <div class="mana-block">
+              <div class="mana-block-value">100</div>
+              <div class="mana-block-label">Mana de base</div>
+            </div>
+            <div class="mana-block">
+              <div class="mana-block-value">+2</div>
+              <div class="mana-block-label">Par point Arcane</div>
+            </div>
+            <div class="mana-block">
+              <div class="mana-block-value">+0,5</div>
+              <div class="mana-block-label">Par point Vigueur</div>
+            </div>
+            <div class="mana-block">
+              <div class="mana-block-value">150</div>
+              <div class="mana-block-label">Mana max (25 Arcane)</div>
+            </div>
+          </div>
+
+          <h3 id="regen-mana">Régénération du mana</h3>
+          <p>Le mana se recharge automatiquement chaque seconde. La vitesse dépend de si tu es en combat ou non :</p>
+
+          <div class="mana-grid">
+            <div class="mana-block" style="border-color:rgba(46,204,113,0.35);">
+              <div class="mana-block-value" style="color:#2ECC71;">+2,5</div>
+              <div class="mana-block-label">Hors combat (Arcane ≥ 15)</div>
+            </div>
+            <div class="mana-block" style="border-color:rgba(0,229,255,0.25);">
+              <div class="mana-block-value">+2,0</div>
+              <div class="mana-block-label">Hors combat (normal)</div>
+            </div>
+            <div class="mana-block" style="border-color:rgba(231,76,60,0.35);">
+              <div class="mana-block-value" style="color:#E74C3C;">+0,5</div>
+              <div class="mana-block-label">En combat</div>
+            </div>
+          </div>
+
+          <div class="alert alert-tip" role="note">
+            <span class="alert-icon">💡</span>
+            <div class="alert-body">
+              <strong class="alert-title">Astuce Arcane</strong>
+              <span class="alert-desc">Avec <strong>15 points d'Arcane</strong> ou plus, ta régénération hors combat passe de 2 à 2,5 mana/sec — un bonus qui compte sur le long terme !</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2 — LES 4 ÉCOLES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-schools">
+          <h2 id="section-schools">Les 4 Écoles de Magie</h2>
+
+          <p>Chaque sort appartient à une école. Les sorts d'une même école partagent un style visuel et une couleur. Tu peux mélanger des sorts de différentes écoles dans tes emplacements !</p>
+
+          <div class="school-grid">
+
+            <div class="school-card school-card-fracture">
+              <span class="school-emoji">💥</span>
+              <div class="school-name school-name-fracture">Fracture</div>
+              <div class="school-tagline">Sorts offensifs — explosions, projectiles, zones de dégâts massifs</div>
+              <div class="school-count">5 sorts</div>
+            </div>
+
+            <div class="school-card school-card-cristallisation">
+              <span class="school-emoji">🧊</span>
+              <div class="school-name school-name-cristallisation">Cristallisation</div>
+              <div class="school-tagline">Sorts défensifs — boucliers, murs de glace, prison, ralentissement</div>
+              <div class="school-count">5 sorts</div>
+            </div>
+
+            <div class="school-card school-card-corruption">
+              <span class="school-emoji">☠️</span>
+              <div class="school-name school-name-corruption">Corruption</div>
+              <div class="school-tagline">Sorts de contrôle — drain, poison, malédiction, brume toxique</div>
+              <div class="school-count">5 sorts</div>
+            </div>
+
+            <div class="school-card school-card-resonance">
+              <span class="school-emoji">💛</span>
+              <div class="school-name school-name-resonance">Résonance</div>
+              <div class="school-tagline">Sorts de soutien — soins, auras, téléportation, résurrection</div>
+              <div class="school-count">5 sorts</div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 3 — ÉQUIPER DES SORTS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-equip">
+          <h2 id="section-equip">Comment équiper des sorts</h2>
+
+          <p>Tu peux équiper jusqu'à <strong>4 sorts</strong> dans tes emplacements. Le nombre d'emplacements disponibles dépend de ton <strong>niveau de magie</strong>.</p>
+
+          <div class="slots-grid">
+            <div class="slots-item">
+              <div class="slots-num" style="color:#9B4FCF;">1</div>
+              <div class="slots-label">Emplacement dès le départ</div>
+            </div>
+            <div class="slots-item">
+              <div class="slots-num" style="color:#9B4FCF;">2</div>
+              <div class="slots-label">Emplacement au niveau magie 5</div>
+            </div>
+            <div class="slots-item">
+              <div class="slots-num" style="color:#9B4FCF;">3</div>
+              <div class="slots-label">Emplacement au niveau magie 10</div>
+            </div>
+            <div class="slots-item">
+              <div class="slots-num" style="color:#9B4FCF;">4</div>
+              <div class="slots-label">Emplacement au niveau magie 20</div>
+            </div>
+          </div>
+
+          <div class="equip-steps">
+            <div class="equip-step">
+              <div class="equip-step-num">1</div>
+              <div class="equip-step-text"><strong>Ouvre le menu de magie</strong> avec la touche dédiée (configurable dans les options)</div>
+            </div>
+            <div class="equip-step">
+              <div class="equip-step-num">2</div>
+              <div class="equip-step-text"><strong>Choisis un emplacement</strong> parmi tes emplacements disponibles (1 à 4)</div>
+            </div>
+            <div class="equip-step">
+              <div class="equip-step-num">3</div>
+              <div class="equip-step-text"><strong>Sélectionne un sort</strong> dans la liste — seuls les sorts que ton niveau de magie te permet d'utiliser sont disponibles</div>
+            </div>
+            <div class="equip-step">
+              <div class="equip-step-num">4</div>
+              <div class="equip-step-text"><strong>Lance le sort en jeu</strong> avec les touches de raccourci correspondant à chaque emplacement</div>
+            </div>
+          </div>
+
+          <h3 id="magic-xp">Progression en magie</h3>
+          <p>Tu montes en niveau de magie en lançant des sorts — chaque sort réussi te rapporte de l'XP magique. Tuer des joueurs avec des sorts rapporte <strong>150 XP magique</strong>, tuer des monstres rapporte jusqu'à <strong>60 XP</strong>.</p>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 4 — VOIR TOUS LES SORTS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-catalog">
+          <h2 id="section-catalog">Catalogue complet des sorts</h2>
+
+          <p>Découvre tous les sorts disponibles avec leurs coûts en mana, leurs temps de recharge et leurs effets exacts sur la page dédiée.</p>
+
+          <div style="text-align:center;margin-top:24px;">
+            <a href="/spells" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:rgba(107,47,160,0.22);border:1px solid rgba(107,47,160,0.48);border-radius:var(--radius-md);color:var(--accent-secondary);font-weight:700;font-size:0.9rem;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.background='rgba(107,47,160,0.38)'" onmouseout="this.style.background='rgba(107,47,160,0.22)'">
+              💫 Voir tous les Sorts
+            </a>
+          </div>
+        </section>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="/index">Accueil</a></li>
+        <li><a href="/spells">Sorts</a></li>
+        <li><a href="/rpg">RPG</a></li>
+        <li><a href="/builds">Builds</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+<%- include('partials/footer') %>

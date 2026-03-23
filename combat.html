@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Combat &amp; PvP — EriniumFaction Wiki</title>
+  <meta name="description" content="Tout sur le combat PvP d'EriniumFaction : PvP 1.8, scaling des dégâts RPG, zones de combat, armures, magie et conseils de build." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Hero override — couleur combat rouge/orange ── */
+    .hero-combat {
+      background: linear-gradient(135deg,
+        rgba(231, 76, 60, 0.14) 0%,
+        rgba(243, 156, 18, 0.07) 50%,
+        transparent 100%);
+    }
+    .hero-combat::before {
+      background: radial-gradient(circle, rgba(231, 76, 60, 0.18), transparent 70%);
+    }
+    .hero-combat::after {
+      background: radial-gradient(circle, rgba(243, 156, 18, 0.10), transparent 70%);
+    }
+
+    /* ── Alert PvP 1.8 — mise en avant maximale ── */
+    .alert-pvp18 {
+      position: relative;
+      background: linear-gradient(135deg,
+        rgba(231, 76, 60, 0.12) 0%,
+        rgba(243, 156, 18, 0.07) 100%);
+      border: 1px solid rgba(231, 76, 60, 0.40);
+      border-left: 4px solid var(--danger);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .alert-pvp18::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(231,76,60,0.45), transparent);
+    }
+    .alert-pvp18-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--danger);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-pvp18-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+    .alert-pvp18-glow {
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(231,76,60,0.14), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* ── Feature list PvP 1.8 ── */
+    .pvp18-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pvp18-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .pvp18-item:hover {
+      border-color: var(--glass-border-hover);
+      background: var(--surface-hover);
+    }
+    .pvp18-item-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .pvp18-item strong {
+      color: var(--text);
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── Scaling stats grid ── */
+    .scaling-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .scaling-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .scaling-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+    }
+    .scaling-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--glass-border-hover);
+    }
+    .scaling-card-offense { border-top: 3px solid var(--danger); }
+    .scaling-card-defense { border-top: 3px solid #5B9BD5; }
+
+    .scaling-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+    .scaling-offense { color: var(--danger); }
+    .scaling-defense { color: #5B9BD5; }
+
+    .scaling-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.84rem;
+    }
+    .scaling-stat-row:last-child { border-bottom: none; }
+    .scaling-stat-name {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .scaling-stat-value {
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .scaling-stat-value.val-red   { color: var(--danger); }
+    .scaling-stat-value.val-blue  { color: #5B9BD5; }
+    .scaling-stat-value.val-gold  { color: var(--accent-gold); }
+    .scaling-stat-value.val-green { color: var(--success); }
+    .scaling-stat-value.val-cyan  { color: var(--accent-secondary); }
+    .scaling-stat-value.val-purple { color: #B06EDE; }
+
+    /* ── Zones de combat ── */
+    .zone-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .zone-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px;
+      text-align: center;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .zone-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .zone-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .zone-safe     { border-top: 3px solid var(--success); }
+    .zone-warzone  { border-top: 3px solid var(--danger); }
+    .zone-faction  { border-top: 3px solid var(--warning); }
+    .zone-wild     { border-top: 3px solid var(--text-faint); }
+
+    .zone-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .zone-name {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .zone-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .zone-status-safe     { color: var(--success); }
+    .zone-status-war      { color: var(--danger); }
+    .zone-status-faction  { color: var(--warning); }
+    .zone-status-wild     { color: var(--text-muted); }
+    .zone-desc {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      line-height: 1.5;
+    }
+
+    /* ── Zone rules list ── */
+    .zone-rules {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .zone-rule-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      transition: border-color var(--transition);
+    }
+    .zone-rule-item:hover { border-color: var(--glass-border-hover); }
+    .zone-rule-item.rule-no  { border-left: 3px solid var(--danger); }
+    .zone-rule-item.rule-yes { border-left: 3px solid var(--success); }
+    .zone-rule-item.rule-info { border-left: 3px solid var(--accent-secondary); }
+    .zone-rule-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Armor comparison ── */
+    .armor-highlight {
+      background: rgba(107, 47, 160, 0.08) !important;
+    }
+    .armor-highlight td { color: var(--text) !important; }
+    .armor-endgame {
+      background: rgba(255, 215, 0, 0.06) !important;
+    }
+    .armor-endgame td { color: var(--text) !important; }
+
+    /* ── Magic damage section ── */
+    .magic-dmg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .magic-dmg-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .magic-dmg-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .magic-dmg-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .magic-dmg-card.card-bypass { border-left: 3px solid #B06EDE; }
+    .magic-dmg-card.card-reduce { border-left: 3px solid #5B9BD5; }
+    .magic-dmg-card.card-boost  { border-left: 3px solid #818CF8; }
+    .magic-dmg-card.card-ignore { border-left: 3px solid var(--danger); }
+    .magic-dmg-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .magic-dmg-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Death consequences list ── */
+    .death-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .death-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .death-item:hover {
+      border-color: var(--glass-border-hover);
+    }
+    .death-item.death-bad  { border-left: 3px solid var(--danger); }
+    .death-item.death-perk { border-left: 3px solid #B06EDE; }
+    .death-item.death-spell { border-left: 3px solid #818CF8; }
+    .death-item.death-bonus { border-left: 3px solid var(--accent-gold); }
+    .death-item-icon {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .death-item strong {
+      color: var(--text);
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── Nameplates ── */
+    .nameplate-preview {
+      position: relative;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      margin: 20px 0;
+      text-align: center;
+      overflow: hidden;
+    }
+    .nameplate-preview::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+    }
+    .nameplate-demo {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 24px;
+      background: rgba(0,0,0,0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(12px);
+    }
+    .nameplate-faction-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      text-shadow: 0 0 8px rgba(255,215,0,0.5);
+    }
+    .nameplate-player-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nameplate-grade {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #B06EDE;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .nameplate-prestige {
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      color: var(--accent-gold);
+    }
+    .nameplate-hp-bar {
+      width: 120px;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+    .nameplate-hp-fill {
+      height: 100%;
+      width: 78%;
+      background: linear-gradient(90deg, #c0392b, var(--danger));
+      border-radius: 100px;
+    }
+    .nameplate-hp-text {
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      font-variant-numeric: tabular-nums;
+    }
+    .nameplate-note {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      margin-top: 14px;
+      font-style: italic;
+    }
+
+    .nameplate-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .nameplate-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      transition: border-color var(--transition);
+    }
+    .nameplate-info-item:hover { border-color: var(--glass-border-hover); }
+    .nameplate-info-item strong {
+      color: var(--text);
+      display: block;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .nameplate-info-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Build cards combat ── */
+    .build-combat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .build-combat-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .build-combat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .build-combat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+    }
+    .build-combat-card.build-off  { border-top: 3px solid var(--danger); }
+    .build-combat-card.build-def  { border-top: 3px solid #5B9BD5; }
+    .build-combat-card.build-supp { border-top: 3px solid #818CF8; }
+
+    .build-combat-card.build-off:hover  { border-color: rgba(231,76,60,0.35); box-shadow: var(--shadow-md), 0 0 24px rgba(231,76,60,0.18); }
+    .build-combat-card.build-def:hover  { border-color: rgba(91,155,213,0.35); box-shadow: var(--shadow-md), 0 0 24px rgba(91,155,213,0.18); }
+    .build-combat-card.build-supp:hover { border-color: rgba(129,140,248,0.35); box-shadow: var(--shadow-md), 0 0 24px rgba(129,140,248,0.18); }
+
+    .build-combat-icon {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      display: block;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+    .build-combat-name {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 3px;
+      letter-spacing: -0.01em;
+    }
+    .build-combat-role {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 14px;
+    }
+    .build-role-off  { color: var(--danger); }
+    .build-role-def  { color: #5B9BD5; }
+    .build-role-supp { color: #818CF8; }
+
+    .build-combat-stat {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    .build-combat-stat strong { color: var(--text); }
+
+    .build-combat-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 14px;
+    }
+    .build-tag {
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 100px;
+      background: rgba(var(--accent-primary-rgb), 0.14);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.28);
+      color: var(--accent-secondary);
+    }
+    .build-tag.tag-off  { background: rgba(231,76,60,0.12); border-color: rgba(231,76,60,0.25); color: #ff8a7a; }
+    .build-tag.tag-def  { background: rgba(91,155,213,0.12); border-color: rgba(91,155,213,0.25); color: #8ec6f0; }
+    .build-tag.tag-supp { background: rgba(129,140,248,0.12); border-color: rgba(129,140,248,0.25); color: #b0b8ff; }
+
+    /* ── Section intro tags ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(var(--accent-primary-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.25);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--accent-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* ── Generic alert ── */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      margin: 16px 0;
+      font-size: 0.875rem;
+    }
+    .alert-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .alert-body { flex: 1; }
+    .alert-title { font-weight: 700; color: var(--text); display: block; margin-bottom: 3px; }
+    .alert-desc  { color: var(--text-muted); line-height: 1.6; }
+    .alert-info  {
+      background: rgba(var(--info-rgb), 0.08);
+      border: 1px solid rgba(var(--info-rgb), 0.25);
+      border-left: 3px solid var(--info);
+    }
+    .alert-warn  {
+      background: rgba(var(--warning-rgb), 0.08);
+      border: 1px solid rgba(var(--warning-rgb), 0.25);
+      border-left: 3px solid var(--warning);
+    }
+    .alert-danger {
+      background: rgba(var(--danger-rgb), 0.10);
+      border: 1px solid rgba(var(--danger-rgb), 0.28);
+      border-left: 3px solid var(--danger);
+    }
+    .alert-success {
+      background: rgba(var(--success-rgb), 0.08);
+      border: 1px solid rgba(var(--success-rgb), 0.25);
+      border-left: 3px solid var(--success);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:8%;top:14%;animation-delay:0s;animation-duration:3.1s;"></span>
+  <span class="star" style="left:22%;top:6%;animation-delay:0.9s;animation-duration:4.3s;"></span>
+  <span class="star" style="left:47%;top:19%;animation-delay:0.4s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:69%;top:9%;animation-delay:1.8s;animation-duration:2.7s;"></span>
+  <span class="star" style="left:85%;top:28%;animation-delay:0.6s;animation-duration:4.6s;"></span>
+  <span class="star" style="left:34%;top:52%;animation-delay:2.1s;animation-duration:3.3s;"></span>
+  <span class="star" style="left:60%;top:68%;animation-delay:0.2s;animation-duration:5.1s;"></span>
+  <span class="star" style="left:3%;top:77%;animation-delay:2.7s;animation-duration:3.9s;"></span>
+  <span class="star" style="left:94%;top:60%;animation-delay:1.4s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:78%;top:44%;animation-delay:3.2s;animation-duration:3.6s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-combat" aria-labelledby="hero-title">
+      <span class="hero-badge">🗡️ Combat &amp; PvP</span>
+      <h1 id="hero-title">Dominez le Champ de Bataille</h1>
+      <p>PvP 1.8 pur, sans cooldown, sans pitié. Chaque clic compte, chaque milliseconde décide de votre survie. Maîtrisez le strafing, spammez vos attaques, écrasez vos ennemis avec la puissance brute de votre build RPG — bienvenue dans le vrai PvP Minecraft.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">⚡ <strong>PvP :</strong> Style 1.8 — Pas de cooldown</div>
+        <div class="hero-meta-item">💀 <strong>Zones :</strong> Safezone / Warzone / Faction</div>
+        <div class="hero-meta-item">🛡️ <strong>Armures :</strong> 3 sets custom + diamant</div>
+        <div class="hero-meta-item">🔮 <strong>Magie :</strong> Contourne l'armure classique</div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Combat &amp; PvP</span>
+        </nav>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1 — PVP STYLE 1.8
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-pvp18">
+          <h2 id="section-pvp18">PvP Style 1.8</h2>
+
+          <!-- Alerte principale -->
+          <div class="alert-pvp18" role="note" aria-label="Information PvP 1.8">
+            <div class="alert-pvp18-glow" aria-hidden="true"></div>
+            <div class="alert-pvp18-title">
+              <span aria-hidden="true">⚔️</span>
+              EriniumFaction utilise le PvP 1.8 — pas de cooldown d'attaque !
+            </div>
+            <p class="alert-pvp18-desc">
+              Oubliez la barre de cooldown de Minecraft 1.9+. Ici, <strong>chaque clic inflige des dégâts</strong>. Celui qui clique le plus vite et le plus précisément domine. Le skill, le timing et le positionnement font toute la différence — exactement comme sur <strong>Hypixel, Badlion ou les serveurs compétitifs légendaires</strong>.
+            </p>
+          </div>
+
+          <ul class="pvp18-list" aria-label="Règles du PvP 1.8">
+            <li class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">🚫</span>
+              <div>
+                <strong>Pas de barre de cooldown</strong>
+                L'indicateur de cooldown de Minecraft 1.9+ est absent. Attaquez en continu sans restriction temporelle entre chaque frappe.
+              </div>
+            </li>
+            <li class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">🖱️</span>
+              <div>
+                <strong>Jitter click &amp; spam click sont la norme</strong>
+                Plus vous cliquez vite, plus vous infligez de dégâts par seconde. Entraînez votre CPS — c'est un avantage compétitif réel.
+              </div>
+            </li>
+            <li class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">⚙️</span>
+              <div>
+                <strong>L'attribut ATTACK_SPEED n'existe pas</strong>
+                Aucun bonus ni malus basé sur la vitesse d'attaque vanilla. Toutes les mécaniques de combat sont repensées autour du PvP 1.8.
+              </div>
+            </li>
+            <li class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">🎯</span>
+              <div>
+                <strong>Skill-based : timing, strafing et click speed</strong>
+                Le combat récompense le mouvement latéral (strafing), les esquives et la précision des hits. Pas de bouton "win" — que du skill pur.
+              </div>
+            </li>
+            <li class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">💥</span>
+              <div>
+                <strong>Knockback maîtrisable</strong>
+                Le knockback 1.8 est prévisible et stratégique. Apprenez à enchaîner les combos knockback pour maintenir vos adversaires en déséquilibre permanent.
+              </div>
+            </li>
+          </ul>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ℹ️</span>
+            <div class="alert-body">
+              <strong class="alert-title">Compatibilité clients</strong>
+              <span class="alert-desc">Utilisez un client comme <strong>Badlion Client, Lunar Client ou Forge 1.12.2</strong> pour profiter des meilleures performances en PvP 1.8. Les mods de hit indicator, keystrokes et reach display sont autorisés.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2 — SCALING DES DÉGÂTS RPG
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-scaling">
+          <h2 id="section-scaling">Scaling des Dégâts RPG</h2>
+
+          <p>Vos <strong>statistiques RPG</strong> influencent directement les dégâts que vous infligez et encaissez. Chaque point investi dans les bonnes stats transforme vos frappes en coups dévastateurs — ou fait de vous un mur infranchissable.</p>
+
+          <div class="scaling-grid">
+            <!-- Offensif -->
+            <div class="scaling-card scaling-card-offense">
+              <div class="scaling-card-title">
+                <span aria-hidden="true">🗡️</span>
+                <span class="scaling-offense">Scaling Offensif</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Force (par point)</span>
+                <span class="scaling-stat-value val-red">+1.5% dégâts mêlée</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Force max (25 pts)</span>
+                <span class="scaling-stat-value val-red">+37.5% dégâts mêlée</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Arcane (par point)</span>
+                <span class="scaling-stat-value val-purple">+1% dégâts des sorts</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Arcane max (25 pts)</span>
+                <span class="scaling-stat-value val-purple">+25% dégâts des sorts</span>
+              </div>
+            </div>
+
+            <!-- Défensif -->
+            <div class="scaling-card scaling-card-defense">
+              <div class="scaling-card-title">
+                <span aria-hidden="true">🛡️</span>
+                <span class="scaling-defense">Scaling Défensif</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Résistance (par point)</span>
+                <span class="scaling-stat-value val-blue">+1.2% réduction</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Cap de Résistance</span>
+                <span class="scaling-stat-value val-blue">25% max</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Vigueur (par point)</span>
+                <span class="scaling-stat-value val-green">+4 PV max</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Vigueur max (25 pts)</span>
+                <span class="scaling-stat-value val-green">+100 PV max</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="section-perks-offensifs">Perks offensifs majeurs</h3>
+
+          <div class="perk-list" style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+            <div class="perk-card">
+              <div class="perk-tier tier-4">⚔</div>
+              <div class="perk-info">
+                <div class="perk-name">Exécution</div>
+                <div class="perk-desc"><strong>+35% dégâts</strong> lorsque la cible est sous 25% de PV. Finissez vos adversaires avant qu'ils puissent fuir ou activer Résurgence.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-5">🔥</div>
+              <div class="perk-info">
+                <div class="perk-name">Furie d'Erinium</div>
+                <div class="perk-desc"><strong>+15% dégâts</strong> pendant 10 secondes après chaque kill. Les multikills accumulent la furie — devenez inarrêtable dans les mêlées.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-5">💠</div>
+              <div class="perk-info">
+                <div class="perk-name">Frappe d'Erinium</div>
+                <div class="perk-desc">Attaque chargée qui inflige <strong>×2.5 les dégâts normaux</strong> (CD variable). Une frappe qui change l'issue d'un duel en une fraction de seconde.</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="section-perks-defensifs">Perks défensifs majeurs</h3>
+
+          <div class="perk-list" style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+            <div class="perk-card">
+              <div class="perk-tier tier-3">🏛</div>
+              <div class="perk-info">
+                <div class="perk-name">Bastion</div>
+                <div class="perk-desc"><strong>+15% réduction des dégâts</strong> lorsque vous êtes immobile. Idéal pour tenir une position défensive sur le territoire de votre faction.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-4">🧱</div>
+              <div class="perk-info">
+                <div class="perk-name">Mur d'Acier</div>
+                <div class="perk-desc">Absorbe les <strong>3 premiers points de dégâts</strong> de chaque attaque reçue. Rend les combos rapides en PvP 1.8 moins efficaces contre vous.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-4">🩸</div>
+              <div class="perk-info">
+                <div class="perk-name">Vampirisme</div>
+                <div class="perk-desc"><strong>8% de lifesteal</strong> sur chaque attaque mêlée. En combat prolongé, vous vous soignez pendant que vous détruisez vos adversaires.</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="section-sorts-combat">Sorts qui boostent le combat</h3>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">✨</span>
+            <div class="alert-body">
+              <strong class="alert-title">Synergie Magie &amp; Mêlée</strong>
+              <span class="alert-desc">Certains sorts amplifient massivement vos capacités de combat. Combinez-les avec vos perks pour des synergies dévastatrices.</span>
+            </div>
+          </div>
+
+          <div class="perk-list" style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+            <div class="perk-card">
+              <div class="perk-tier tier-3" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.35);color:#B06EDE;">🌑</div>
+              <div class="perk-info">
+                <div class="perk-name">Toucher Corrompu</div>
+                <div class="perk-desc">Enrobe vos attaques d'énergie sombre. Vos frappes mêlée infligent des dégâts magiques <strong>supplémentaires</strong> qui contournent partiellement l'armure.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-3" style="background:rgba(129,140,248,0.12);border-color:rgba(129,140,248,0.30);color:#818CF8;">🔮</div>
+              <div class="perk-info">
+                <div class="perk-name">Armure d'Erinium</div>
+                <div class="perk-desc">Crée un bouclier magique autour de vous qui <strong>absorbe des dégâts</strong> avant votre armure physique. Particulièrement efficace en début de combat.</div>
+              </div>
+            </div>
+            <div class="perk-card">
+              <div class="perk-tier tier-4" style="background:rgba(124,232,255,0.10);border-color:rgba(124,232,255,0.28);color:var(--accent-secondary);">💎</div>
+              <div class="perk-info">
+                <div class="perk-name">Bouclier Cristallin</div>
+                <div class="perk-desc">Bouclier temporaire qui absorbe jusqu'à <strong>un coup fatal</strong>. Active automatiquement quand vos PV tombent sous un seuil critique. <em>(CD : 2min)</em></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 3 — ZONES DE COMBAT
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-zones">
+          <h2 id="section-zones">Zones de Combat</h2>
+
+          <p>EriniumFaction divise le monde en zones avec des <strong>règles PvP distinctes</strong>. Connaître ces règles peut vous sauver la vie — ou vous permettre d'embusquer vos ennemis au bon endroit.</p>
+
+          <div class="zone-grid">
+            <div class="zone-card zone-safe" data-animate>
+              <span class="zone-icon" aria-hidden="true">🟢</span>
+              <div class="zone-name">Safezone</div>
+              <div class="zone-status zone-status-safe">PvP INTERDIT</div>
+              <div class="zone-desc">Impossible d'attaquer ou d'être attaqué. Zone neutre absolue — idéale pour commercer et récupérer.</div>
+            </div>
+            <div class="zone-card zone-warzone" data-animate>
+              <span class="zone-icon" aria-hidden="true">🔴</span>
+              <div class="zone-name">Warzone</div>
+              <div class="zone-status zone-status-war">PvP LIBRE</div>
+              <div class="zone-desc">Tout le monde peut combattre n'importe qui. Zone de haute valeur et de grand danger — entrez armé ou n'entrez pas.</div>
+            </div>
+            <div class="zone-card zone-faction" data-animate>
+              <span class="zone-icon" aria-hidden="true">🟡</span>
+              <div class="zone-name">Territoire Faction</div>
+              <div class="zone-status zone-status-faction">PvP CONDITIONNEL</div>
+              <div class="zone-desc">PvP entre factions ennemies uniquement. Membres et alliés sont protégés — votre territoire est votre forteresse.</div>
+            </div>
+            <div class="zone-card zone-wild" data-animate>
+              <span class="zone-icon" aria-hidden="true">⚪</span>
+              <div class="zone-name">Wilderness</div>
+              <div class="zone-status zone-status-wild">PvP ENNEMIS/NEUTRES</div>
+              <div class="zone-desc">PvP libre entre factions ennemies et neutres. Terrain non réclamé — explorez prudemment.</div>
+            </div>
+          </div>
+
+          <h3 id="section-regles-zones">Règles détaillées</h3>
+
+          <ul class="zone-rules" aria-label="Règles détaillées des zones">
+            <li class="zone-rule-item rule-no">
+              <span class="zone-rule-icon" aria-hidden="true">🚫</span>
+              Impossible d'attaquer un <strong>membre de votre propre faction</strong> — le feu ami est bloqué par le système.
+            </li>
+            <li class="zone-rule-item rule-no">
+              <span class="zone-rule-icon" aria-hidden="true">🚫</span>
+              Impossible d'attaquer un <strong>allié de faction</strong> — les alliances sont réelles et protègent sur le terrain.
+            </li>
+            <li class="zone-rule-item rule-yes">
+              <span class="zone-rule-icon" aria-hidden="true">✅</span>
+              Sur votre <strong>propre territoire</strong> : <strong>bonus défensif</strong> accordé à tous les membres de votre faction.
+            </li>
+            <li class="zone-rule-item rule-info">
+              <span class="zone-rule-icon" aria-hidden="true">⚠️</span>
+              Sur le <strong>territoire ennemi</strong> : un <strong>overclaim</strong> est possible si leur pouvoir de faction est tombé trop bas — prenez leur terre !
+            </li>
+            <li class="zone-rule-item rule-info">
+              <span class="zone-rule-icon" aria-hidden="true">💀</span>
+              Chaque mort en zone PvP coûte <strong>2.0 points de pouvoir</strong> à votre faction. Mourir trop souvent affaiblit votre emprise territoriale.
+            </li>
+          </ul>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 4 — MATÉRIAUX D'ARMURE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-armures">
+          <h2 id="section-armures">Matériaux d'Armure</h2>
+
+          <p>EriniumFaction propose <strong>trois sets d'armure custom</strong> en plus du diamant vanilla. Plus votre set est avancé, plus vous encaissez de dégâts — investissez dans l'équipement avant d'entrer en Warzone.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Comparaison des sets d'armure">
+              <thead>
+                <tr>
+                  <th>Set d'Armure</th>
+                  <th>Protection totale</th>
+                  <th>Résistance</th>
+                  <th>Particularité</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>💎 Diamant (vanilla)</strong></td>
+                  <td>Référence</td>
+                  <td>Standard</td>
+                  <td>Accessible, crafté normalement</td>
+                  <td><span class="badge badge-grey">Standard</span></td>
+                </tr>
+                <tr>
+                  <td><strong>🔵 Valterite</strong></td>
+                  <td>Moyenne</td>
+                  <td>Bonne</td>
+                  <td>Set de départ custom — premier upgrade majeur</td>
+                  <td><span class="badge badge-green">Commun</span></td>
+                </tr>
+                <tr class="armor-highlight">
+                  <td><strong>🟣 Erinium</strong></td>
+                  <td>Haute</td>
+                  <td>Très bonne</td>
+                  <td>Set intermédiaire — idéal pour la Warzone standard</td>
+                  <td><span class="badge badge-violet">Rare</span></td>
+                </tr>
+                <tr class="armor-endgame">
+                  <td><strong>✨ Aetherite</strong></td>
+                  <td>Très haute</td>
+                  <td>Excellente</td>
+                  <td>Set endgame — domination absolue en PvP</td>
+                  <td><span class="badge badge-gold">Très rare</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-warn" role="note">
+            <span class="alert-icon" aria-hidden="true">⚠️</span>
+            <div class="alert-body">
+              <strong class="alert-title">Valeur au drop</strong>
+              <span class="alert-desc">Les sets Erinium et Aetherite sont extrêmement précieux. En Warzone, attendez-vous à être ciblé en priorité si vous portez un équipement de haut rang. Prenez vos précautions — ou assumez le risque.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 5 — DÉGÂTS MAGIQUES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-magie-combat">
+          <h2 id="section-magie-combat">Types de Dégâts Magiques</h2>
+
+          <p>Les sorts utilisent une <strong>source de dégâts distincte</strong> (<code>erinium_spell</code>) qui contourne partiellement l'armure physique classique. En combat, la magie est un atout imprévisible qui déséquilibre même les meilleurs tanks.</p>
+
+          <div class="magic-dmg-grid">
+            <div class="magic-dmg-card card-bypass">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true">👻</span>
+                Bypass d'armure partiel
+              </div>
+              <p class="magic-dmg-desc">Les sorts à source <code>erinium_spell</code> <strong>contournent partiellement</strong> l'armure classique. Un sort infligera plus de dégâts réels qu'une attaque mêlée équivalente contre un cible lourdement armée.</p>
+            </div>
+            <div class="magic-dmg-card card-reduce">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true">🛡️</span>
+                Résistance RPG efficace
+              </div>
+              <p class="magic-dmg-desc">L'attribut <strong>Résistance</strong> du système RPG réduit également les dégâts magiques. Investir en Résistance protège contre les attaquants physiques ET les lanceurs de sorts.</p>
+            </div>
+            <div class="magic-dmg-card card-boost">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true">🔮</span>
+                Arcane booste les sorts
+              </div>
+              <p class="magic-dmg-desc">Chaque point d'<strong>Arcane</strong> ajoute <strong>+1% aux dégâts des sorts</strong>. À 25 points, vos sorts frappent 25% plus fort — la base indispensable pour tout build orienté magie en PvP.</p>
+            </div>
+            <div class="magic-dmg-card card-ignore">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true">❌</span>
+                Enchantements ignorés
+              </div>
+              <p class="magic-dmg-desc">Les sorts <strong>ignorent l'enchantement Protection</strong> vanilla. Votre armure Aetherite avec Protection IV ? Inefficace contre un mage Arcane 25. La diversité des builds crée l'équilibre.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 6 — MORT & CONSÉQUENCES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-mort">
+          <h2 id="section-mort">Mort &amp; Conséquences</h2>
+
+          <p>Mourir en PvP n'est <strong>jamais anodin</strong> sur EriniumFaction. Les conséquences s'étendent au-delà de la simple respawn — votre faction en paie le prix, et certains perks/sorts peuvent changer le cours des événements au dernier moment.</p>
+
+          <ul class="death-list" aria-label="Conséquences de la mort en PvP">
+            <li class="death-item death-bad">
+              <span class="death-item-icon" aria-hidden="true">📉</span>
+              <div>
+                <strong>-2.0 Pouvoir de faction</strong>
+                Chaque mort retire 2 points de pouvoir à votre faction. Un territoire ne peut être réclamé que si votre pouvoir total reste positif — mourez trop et perdez vos terres.
+              </div>
+            </li>
+            <li class="death-item death-bad">
+              <span class="death-item-icon" aria-hidden="true">🎒</span>
+              <div>
+                <strong>Items droppés normalement</strong>
+                Votre inventaire tombe à votre mort sauf protection spéciale (coffre sécurisé, assurance d'item). Votre set Aetherite est en jeu — chaque engagement est une mise.
+              </div>
+            </li>
+            <li class="death-item death-perk">
+              <span class="death-item-icon" aria-hidden="true">🌀</span>
+              <div>
+                <strong>Perk Résurgence — Annule une mort</strong>
+                Ce perk rare annule une mort imminente et vous redonne un faible pourcentage de PV. <em>Cooldown : 15 minutes.</em> Le "get out of jail free" ultime des duels.
+              </div>
+            </li>
+            <li class="death-item death-perk">
+              <span class="death-item-icon" aria-hidden="true">💰</span>
+              <div>
+                <strong>Perk Pillard (attaquant) — Vol de 10% d'argent</strong>
+                Si votre assaillant possède ce perk, il vole <strong>10% de votre argent</strong> sur votre mort. Le PvP économique est réel — protégez votre fortune ou perdez-la.
+              </div>
+            </li>
+            <li class="death-item death-spell">
+              <span class="death-item-icon" aria-hidden="true">💫</span>
+              <div>
+                <strong>Sort Résurrection — Fenêtre de 6 secondes</strong>
+                Un allié avec ce sort peut vous ressusciter sur place dans les <strong>6 secondes</strong> suivant votre mort grâce au système DeathCorpse. La coordination d'équipe peut littéralement changer la mort en victoire.
+              </div>
+            </li>
+            <li class="death-item death-bonus">
+              <span class="death-item-icon" aria-hidden="true">⭐</span>
+              <div>
+                <strong>Défis quotidiens kill — XP bonus</strong>
+                Chaque kill validé dans vos défis quotidiens rapporte de l'<strong>XP supplémentaire</strong>. Le PvP n'est pas que de la destruction — c'est aussi le chemin le plus rapide vers le Prestige.
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 7 — NAMEPLATES EN COMBAT
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-nameplates">
+          <h2 id="section-nameplates">Nameplates en Combat</h2>
+
+          <p>En combat, chaque joueur affiche un <strong>nameplate complet</strong> au-dessus de sa tête. Ces informations vous permettent d'évaluer immédiatement la dangerosité d'un adversaire et de gérer vos priorités sur le champ de bataille.</p>
+
+          <!-- Prévisualisation du nameplate -->
+          <div class="nameplate-preview" aria-label="Prévisualisation d'un nameplate en combat">
+            <div class="nameplate-demo" role="img" aria-label="Exemple de nameplate joueur">
+              <div class="nameplate-faction-tag">[ERINIUM]</div>
+              <div class="nameplate-player-name">
+                KillerMC
+                <span class="nameplate-prestige" aria-label="Prestige 3, 3 étoiles">★★★</span>
+              </div>
+              <div class="nameplate-grade">Général de Guerre</div>
+              <div class="nameplate-hp-bar" role="progressbar" aria-label="Vie restante" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">
+                <div class="nameplate-hp-fill"></div>
+              </div>
+              <div class="nameplate-hp-text">78 / 100 PV</div>
+            </div>
+            <p class="nameplate-note">Aperçu d'un nameplate tel qu'affiché au-dessus d'un joueur adverse en combat</p>
+          </div>
+
+          <div class="nameplate-info-grid">
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">🏰</span>
+              <div>
+                <strong>Tag de Faction</strong>
+                Identifiez instantanément si le joueur est ennemi, allié ou neutre grâce au tag de faction coloré.
+              </div>
+            </div>
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">🎖️</span>
+              <div>
+                <strong>Grade &amp; Niveau</strong>
+                Le grade de faction et le niveau RPG renseignent sur la progression et les capacités probables de l'adversaire.
+              </div>
+            </div>
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">🌟</span>
+              <div>
+                <strong>Étoiles de Prestige</strong>
+                Les étoiles (★ à ★★★★★) indiquent le niveau de prestige — un joueur Prestige 5 a accès aux builds les plus dévastateurs.
+              </div>
+            </div>
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">❤️</span>
+              <div>
+                <strong>Barre de vie en temps réel</strong>
+                La barre de vie et le nombre de PV exacts se mettent à jour en temps réel pendant le combat. Évaluez quand déclencher Exécution.
+              </div>
+            </div>
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">🧱</span>
+              <div>
+                <strong>Visibilité derrière les blocs</strong>
+                Quand un joueur est derrière un obstacle, seul le pseudo reste visible. Sachez toujours où se trouve votre adversaire.
+              </div>
+            </div>
+            <div class="nameplate-info-item">
+              <span class="nameplate-info-icon" aria-hidden="true">⚡</span>
+              <div>
+                <strong>Mise à jour instantanée</strong>
+                Toutes les informations du nameplate se rafraîchissent en temps réel — aucun lag d'affichage pendant les combats intenses.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 8 — CONSEILS PVP
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-conseils">
+          <h2 id="section-conseils">Conseils PvP &amp; Builds Recommandés</h2>
+
+          <p>Trois archetypes dominent le méta PvP d'EriniumFaction. Choisissez votre style, optimisez votre build et <strong>écrasez le serveur</strong>.</p>
+
+          <div class="build-combat-grid">
+
+            <!-- Build Offensif -->
+            <div class="build-combat-card build-off" data-animate>
+              <span class="build-combat-icon" aria-hidden="true">⚔️</span>
+              <div class="build-combat-name">Build Offensif</div>
+              <div class="build-combat-role build-role-off">Damage Dealer — Assassin</div>
+
+              <div class="build-combat-stat">
+                <strong>Force :</strong> 20+ — Dégâts mêlée maximaux
+              </div>
+              <div class="build-combat-stat">
+                <strong>Agilité :</strong> 15+ — Mobilité et esquives
+              </div>
+              <div class="build-combat-stat">
+                <strong>Vigueur :</strong> 10 — Minimum vital pour survivre
+              </div>
+
+              <p style="font-size:0.78rem;color:var(--text-faint);margin-top:10px;line-height:1.5;">
+                Objectif : éliminer un adversaire avant qu'il réagisse. Spammez vos attaques, déclenchez Exécution sous 25% PV et enchaînez avec Furie d'Erinium pour les multikills.
+              </p>
+
+              <div class="build-combat-tags" aria-label="Perks recommandés">
+                <span class="build-tag tag-off">Exécution</span>
+                <span class="build-tag tag-off">Furie d'Erinium</span>
+                <span class="build-tag tag-off">Frappe d'Erinium</span>
+                <span class="build-tag tag-off">Vampirisme</span>
+              </div>
+            </div>
+
+            <!-- Build Défensif -->
+            <div class="build-combat-card build-def" data-animate>
+              <span class="build-combat-icon" aria-hidden="true">🛡️</span>
+              <div class="build-combat-name">Build Défensif</div>
+              <div class="build-combat-role build-role-def">Tank — Gardien de territoire</div>
+
+              <div class="build-combat-stat">
+                <strong>Vigueur :</strong> 25 — Pool de PV maximum
+              </div>
+              <div class="build-combat-stat">
+                <strong>Résistance :</strong> 24 — Cap de réduction à 25%
+              </div>
+              <div class="build-combat-stat">
+                <strong>Force :</strong> 5+ — Minimum pour riposter
+              </div>
+
+              <p style="font-size:0.78rem;color:var(--text-faint);margin-top:10px;line-height:1.5;">
+                Objectif : tenir la ligne. Inarrêtable sur votre territoire grâce à Bastion. Résurgence annule une mort par combat. Bouclier Cristallin garantit une seconde chance.
+              </p>
+
+              <div class="build-combat-tags" aria-label="Perks et sorts recommandés">
+                <span class="build-tag tag-def">Bastion</span>
+                <span class="build-tag tag-def">Résurgence</span>
+                <span class="build-tag tag-def">Mur d'Acier</span>
+                <span class="build-tag tag-def">Bouclier Cristallin</span>
+              </div>
+            </div>
+
+            <!-- Build Support de guerre -->
+            <div class="build-combat-card build-supp" data-animate>
+              <span class="build-combat-icon" aria-hidden="true">✨</span>
+              <div class="build-combat-name">Support de Guerre</div>
+              <div class="build-combat-role build-role-supp">Mage Support — Changeur de bataille</div>
+
+              <div class="build-combat-stat">
+                <strong>Arcane :</strong> 25 — Sorts à pleine puissance
+              </div>
+              <div class="build-combat-stat">
+                <strong>Vigueur :</strong> 15+ — Survie sous pression
+              </div>
+              <div class="build-combat-stat">
+                <strong>Résistance :</strong> 10 — Protection minimale
+              </div>
+
+              <p style="font-size:0.78rem;color:var(--text-faint);margin-top:10px;line-height:1.5;">
+                Objectif : faire gagner votre équipe. Pulse de Soin maintient vos alliés en vie. Aura de Vigueur booste tout le groupe. Lien Cristallin et Résurrection peuvent retourner un combat perdu.
+              </p>
+
+              <div class="build-combat-tags" aria-label="Sorts recommandés">
+                <span class="build-tag tag-supp">Pulse de Soin</span>
+                <span class="build-tag tag-supp">Aura de Vigueur</span>
+                <span class="build-tag tag-supp">Lien Cristallin</span>
+                <span class="build-tag tag-supp">Résurrection</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="alert alert-success" role="note">
+            <span class="alert-icon" aria-hidden="true">🏆</span>
+            <div class="alert-body">
+              <strong class="alert-title">Conseil ultime</strong>
+              <span class="alert-desc">Le meilleur build est celui que vous <strong>maîtrisez</strong>. Commencez par un archetype, apprenez ses mécaniques en profondeur, puis adaptez vos stats au fil de votre progression et des situations. Il n'existe pas de build parfait — il existe des joueurs parfaits.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — ANTI-CHEAT
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-anticheat">
+          <h2 id="section-anticheat">Anti-Cheat &amp; Fair-Play</h2>
+
+          <p>
+            Erinium embarque un système anti-cheat intégré qui surveille en permanence les comportements suspects.
+            Le but : garantir un jeu équitable pour tous, quelle que soit la puissance de l'adversaire.
+          </p>
+
+          <div class="alert-pvp18" style="background:linear-gradient(135deg,rgba(46,204,113,0.08),rgba(0,229,255,0.04));border-color:rgba(46,204,113,0.35);border-left-color:var(--success);">
+            <div class="alert-pvp18-title" style="color:var(--success);">🛡️ Anti-Cheat Actif</div>
+            <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+              Les tricheurs sont automatiquement détectés et sanctionnés. Le système fonctionne en temps réel —
+              inutile d'attendre un signalement pour qu'un joueur soit pris en compte.
+            </p>
+          </div>
+
+          <h3 id="detection-anticheat" style="margin-top:28px;">Comportements Détectés</h3>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:20px 0;">
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">💨</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">Speed Hack</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Déplacement anormalement rapide comparé à la vitesse normale.</div>
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">✈️</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">Fly Hack</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Vol sans autorisation ou sustentation anormale en l'air.</div>
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">⚔️</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">Reach Hack</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Attaques portées à une distance supérieure à celle autorisée.</div>
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">🔄</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">KillAura</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Attaques automatiques sur plusieurs cibles sans interaction manuelle.</div>
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">🖱️</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">AutoClicker</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Vitesse de clic automatisée dépassant les limites humaines normales.</div>
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 14px;">
+              <div style="font-size:1.2rem;margin-bottom:8px;">💎</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:4px;">XRay</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.55;">Détection de patterns de minage suspects orientés directement vers les minerais.</div>
+            </div>
+          </div>
+
+          <h3 id="sanctions-anticheat">Système de Violations &amp; Sanctions</h3>
+          <p>
+            Chaque comportement suspect incrémente un <strong>compteur de violations</strong>. Selon la gravité
+            et le nombre de violations accumulées, le système applique automatiquement des sanctions progressives —
+            alertes staff, kicks automatiques, et bans temporaires pour les cas récurrents.
+          </p>
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin:16px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">⚠️</span>
+              <div>
+                <strong style="color:var(--accent-gold);display:block;margin-bottom:6px;">Pour les joueurs légitimes</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Les faux positifs sont rares mais possibles. Si vous pensez avoir été sanctionné à tort,
+                  contactez un membre du staff en jeu ou via le Discord. Les faux positifs sont toujours
+                  réexaminés et les sanctions annulées si votre jeu est légitime.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="bypass-anticheat">Permissions de Bypass</h3>
+          <p>Certains membres du staff peuvent disposer de permissions bypass pour les tests :</p>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>eriniumfaction.bypass.movement</code></td>
+                  <td>Bypass tous les checks de mouvement (speed, fly, nofall, phase, step, blink)</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.bypass.combat</code></td>
+                  <td>Bypass tous les checks de combat (reach, killaura, autoclicker)</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.admin.security</code></td>
+                  <td>Accès aux commandes de monitoring anti-cheat (<code>/ac</code>)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — ARMES DE COMBAT CUSTOM
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-armes-custom">
+          <h2 id="section-armes-custom">Armes de Combat Custom</h2>
+
+          <p>EriniumFaction introduit de nouvelles catégories d'armes en 3 tiers (Valterite → Aetherite → Erinium), chacune avec des mécaniques uniques adaptées au PvP 1.8 sans cooldown.</p>
+
+          <!-- Arcs -->
+          <h3 id="section-arcs">Arcs Custom</h3>
+          <p>Trois arcs custom améliorent les statistiques de l'arc vanilla. Compatibles avec les enchantements vanilla (Puissance, Recul, Flammes, Infini).</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des arcs custom">
+              <thead>
+                <tr>
+                  <th>Arc</th>
+                  <th>Dégâts</th>
+                  <th>Vitesse flèche</th>
+                  <th>Vitesse de tir</th>
+                  <th>Durabilité</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E8892A;">Arc de Valterite</strong></td>
+                  <td><span class="scaling-stat-value val-red">×1.20</span></td>
+                  <td><span class="scaling-stat-value val-gold">×1.10</span></td>
+                  <td>×1.00</td>
+                  <td>500</td>
+                  <td><span class="badge badge-green">Peu commun</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#00D4FF;">Arc d'Aetherite</strong></td>
+                  <td><span class="scaling-stat-value val-red">×1.35</span></td>
+                  <td><span class="scaling-stat-value val-gold">×1.20</span></td>
+                  <td>×1.25 (plus rapide)</td>
+                  <td>750</td>
+                  <td><span class="badge badge-cyan">Rare</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#C44BE0;">Arc d'Erinium</strong></td>
+                  <td><span class="scaling-stat-value val-red">×1.50</span></td>
+                  <td><span class="scaling-stat-value val-gold">×1.30</span></td>
+                  <td>×1.43 (très rapide)</td>
+                  <td>1200</td>
+                  <td><span class="badge badge-violet">Épique</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ℹ️</span>
+            <div class="alert-body">
+              <strong class="alert-title">Fonctionnement des multiplicateurs</strong>
+              <span class="alert-desc">Le multiplicateur de dégâts s'applique sur les dégâts de base de l'arc vanilla. Les arcs custom tirent les <strong>flèches spéciales</strong> et profitent de leurs effets. Utilisez des flèches d'Erinium avec l'Arc d'Erinium pour des dégâts maximaux.</span>
+            </div>
+          </div>
+
+          <!-- Flèches Spéciales -->
+          <h3 id="section-fleches">Flèches Spéciales</h3>
+          <p>Quatre types de flèches remplacent les flèches vanilla et apportent des effets uniques sur impact.</p>
+
+          <div class="magic-dmg-grid">
+            <div class="magic-dmg-card" style="border-left:3px solid #E8892A;">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true" style="color:#E8892A;">🏹</span>
+                <span style="color:#E8892A;">Flèche de Valterite</span>
+              </div>
+              <p class="magic-dmg-desc">Applique <strong>Lenteur I pendant 2 secondes</strong> sur la cible touchée. Idéale pour ralentir les adversaires qui fuient ou pour contrôler les déplacements en PvP.</p>
+            </div>
+            <div class="magic-dmg-card" style="border-left:3px solid #00D4FF;">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true" style="color:#00D4FF;">🏹</span>
+                <span style="color:#00D4FF;">Flèche d'Aetherite</span>
+              </div>
+              <p class="magic-dmg-desc">Inflige <strong>30% des dégâts supplémentaires en dégâts magiques</strong> (ignore l'armure) en plus des dégâts normaux de la flèche. Dégâts directs garantis même contre les tanks.</p>
+            </div>
+            <div class="magic-dmg-card" style="border-left:3px solid #C44BE0;">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true" style="color:#C44BE0;">🏹</span>
+                <span style="color:#C44BE0;">Flèche d'Erinium</span>
+              </div>
+              <p class="magic-dmg-desc">Inflige <strong>×2 les dégâts normaux</strong>. Flèche non récupérable (consommée à chaque tir). Le coup le plus dévastateur de l'arc en PvP — réservez-la aux moments décisifs.</p>
+            </div>
+            <div class="magic-dmg-card" style="border-left:3px solid var(--danger);">
+              <div class="magic-dmg-title">
+                <span aria-hidden="true" style="color:var(--danger);">💥</span>
+                <span style="color:var(--danger);">Flèche Explosive</span>
+              </div>
+              <p class="magic-dmg-desc">Crée une <strong>explosion AOE de rayon 2.5 blocs</strong> à l'impact (endommage blocs et entités). Inflige 4 dégâts de base aux entités proches avec décroissance selon la distance. Non récupérable.</p>
+            </div>
+          </div>
+
+          <!-- Dagues -->
+          <h3 id="section-dagues">Dagues</h3>
+          <p>Les dagues sont des armes légères conçues pour l'attaque surprise. Leur force réside dans le <strong>backstab</strong> — une mécanique de coup dans le dos infligeant 50% de dégâts supplémentaires.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des dagues">
+              <thead>
+                <tr>
+                  <th>Dague</th>
+                  <th>Dégâts de base</th>
+                  <th>Durabilité</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E8892A;">Dague de Valterite</strong></td>
+                  <td>4.0 + 0.0 = 4.0 ❤</td>
+                  <td>300</td>
+                  <td><span class="badge badge-green">Peu commun</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#00D4FF;">Dague d'Aetherite</strong></td>
+                  <td>4.0 + 1.0 = 5.0 ❤</td>
+                  <td>450</td>
+                  <td><span class="badge badge-cyan">Rare</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#C44BE0;">Dague d'Erinium</strong></td>
+                  <td>4.0 + 2.0 = 6.0 ❤</td>
+                  <td>700</td>
+                  <td><span class="badge badge-violet">Épique</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert-pvp18" style="background:linear-gradient(135deg,rgba(107,47,160,0.10),rgba(196,75,224,0.05));border-color:rgba(196,75,224,0.35);border-left-color:#C44BE0;" role="note">
+            <div class="alert-pvp18-title" style="color:#C44BE0;">🗡️ Mécanique Backstab</div>
+            <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+              Le backstab s'active quand vous attaquez un joueur dans son arc de <strong>120° arrière</strong> (vous êtes derrière lui). Les dégâts sont multipliés par <strong>×1.5</strong>. Feedback visuel avec particules et son critique. Le backstab ne fonctionne <strong>pas</strong> entre membres de la même faction.
+            </p>
+          </div>
+
+          <!-- Marteaux de Guerre -->
+          <h3 id="section-marteaux">Marteaux de Guerre</h3>
+          <p>Les marteaux de guerre sont des armes lourdes infligeant des dégâts élevés avec un <strong>effet de zone frontal</strong>. Non enchantables — leur puissance suffit amplement.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des marteaux de guerre">
+              <thead>
+                <tr>
+                  <th>Marteau</th>
+                  <th>Dégâts directs</th>
+                  <th>Rayon AOE</th>
+                  <th>Cooldown</th>
+                  <th>Durabilité</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E8892A;">Marteau de Valterite</strong></td>
+                  <td>7.0 ❤</td>
+                  <td>2.0 blocs</td>
+                  <td>2s (40 ticks)</td>
+                  <td>400</td>
+                  <td><span class="badge badge-green">Peu commun</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#00D4FF;">Marteau d'Aetherite</strong></td>
+                  <td>8.5 ❤</td>
+                  <td>2.5 blocs</td>
+                  <td>2.5s (50 ticks)</td>
+                  <td>600</td>
+                  <td><span class="badge badge-cyan">Rare</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#C44BE0;">Marteau d'Erinium</strong></td>
+                  <td>10.0 ❤</td>
+                  <td>3.0 blocs</td>
+                  <td>3s (60 ticks)</td>
+                  <td>1000</td>
+                  <td><span class="badge badge-violet">Épique</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-warn" role="note">
+            <span class="alert-icon" aria-hidden="true">⚠️</span>
+            <div class="alert-body">
+              <strong class="alert-title">AOE frontal — Cône 90°</strong>
+              <span class="alert-desc">L'AOE touche toutes les entités dans un <strong>cône frontal de 90°</strong> autour du marteau (devant vous). Les entités dans l'AOE reçoivent <strong>60% des dégâts</strong> de la cible principale. Le cooldown s'applique sur l'icône de l'item — pendant ce temps, les coups infligent 0 dégâts. Les marteaux ne peuvent <strong>jamais être enchantés</strong>.</span>
+            </div>
+          </div>
+
+          <!-- Pommes Custom -->
+          <h3 id="section-pommes">Pommes Custom</h3>
+          <p>Trois tiers de pommes de combat avec un <strong>cooldown partagé de 30 secondes</strong> entre toutes les pommes custom. Une seule pomme peut être consommée toutes les 30s.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des pommes custom">
+              <thead>
+                <tr>
+                  <th>Pomme</th>
+                  <th>Effets</th>
+                  <th>Durée</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E8892A;">Pomme de Valterite</strong></td>
+                  <td>Régénération II</td>
+                  <td>10s</td>
+                  <td><span class="badge badge-green">Peu commun</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#00D4FF;">Pomme d'Aetherite</strong></td>
+                  <td>Absorption IV</td>
+                  <td>30s</td>
+                  <td><span class="badge badge-cyan">Rare</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#C44BE0;">Pomme d'Erinium</strong></td>
+                  <td>Régénération III + Résistance II + Absorption IV</td>
+                  <td>20s chacun</td>
+                  <td><span class="badge badge-violet">Épique</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — SET BONUS ARMURE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-set-bonus">
+          <h2 id="section-set-bonus">Set Bonus d'Armure (4 pièces)</h2>
+
+          <p>Porter les <strong>4 pièces du même tier d'armure</strong> (casque, plastron, jambières, bottes) active un bonus de set passif. Un seul set bonus peut être actif à la fois.</p>
+
+          <div class="scaling-grid">
+            <div class="scaling-card" style="border-top:3px solid #E8892A;">
+              <div class="scaling-card-title">
+                <span aria-hidden="true" style="color:#E8892A;">🟠</span>
+                <span style="color:#E8892A;">Set Valterite</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Bonus actif</span>
+                <span class="scaling-stat-value" style="color:#E8892A;">Régén. passive hors combat</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Soin toutes les 5s</span>
+                <span class="scaling-stat-value val-green">+0.5 cœur (1 PV)</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Condition</span>
+                <span class="scaling-stat-value">Pas de dégâts depuis 5s</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Particules</span>
+                <span class="scaling-stat-value">Éclaboussures d'eau</span>
+              </div>
+            </div>
+
+            <div class="scaling-card" style="border-top:3px solid #00D4FF;">
+              <div class="scaling-card-title">
+                <span aria-hidden="true" style="color:#00D4FF;">🔵</span>
+                <span style="color:#00D4FF;">Set Aetherite</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Bonus actif</span>
+                <span class="scaling-stat-value" style="color:#00D4FF;">Vitesse permanente</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Bonus vitesse</span>
+                <span class="scaling-stat-value val-cyan">+10% déplacement</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Application</span>
+                <span class="scaling-stat-value">Instantané (AttributeModifier)</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Particules</span>
+                <span class="scaling-stat-value">Portail (violet)</span>
+              </div>
+            </div>
+
+            <div class="scaling-card" style="border-top:3px solid #C44BE0;">
+              <div class="scaling-card-title">
+                <span aria-hidden="true" style="color:#C44BE0;">🟣</span>
+                <span style="color:#C44BE0;">Set Erinium</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Bonus actif</span>
+                <span class="scaling-stat-value" style="color:#C44BE0;">Réduction dégâts reçus</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Réduction</span>
+                <span class="scaling-stat-value val-blue">-15% dégâts reçus</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Application</span>
+                <span class="scaling-stat-value">Sur chaque hit reçu</span>
+              </div>
+              <div class="scaling-stat-row">
+                <span class="scaling-stat-name">Particules</span>
+                <span class="scaling-stat-value">Table d'enchantement</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — HACHES NERFÉES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-haches">
+          <h2 id="section-haches">Haches — Dégâts Réduits (PvP 1.8)</h2>
+
+          <p>En PvP 1.8 sans cooldown, les haches sont potentiellement trop puissantes. Leurs dégâts sont intentionnellement inférieurs à ceux des épées pour maintenir l'équilibre.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Dégâts des haches custom">
+              <thead>
+                <tr>
+                  <th>Hache</th>
+                  <th>Bonus dégâts</th>
+                  <th>Durabilité</th>
+                  <th>Note PvP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E8892A;">Hache de Valterite</strong></td>
+                  <td>+1.0 dégâts</td>
+                  <td>1 600</td>
+                  <td>Moins forte qu'une épée de même tier</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#00D4FF;">Hache d'Aetherite</strong></td>
+                  <td>+1.25 dégâts</td>
+                  <td>2 200</td>
+                  <td>Moins forte qu'une épée de même tier</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#C44BE0;">Hache d'Erinium</strong></td>
+                  <td>+1.5 dégâts</td>
+                  <td>3 100</td>
+                  <td>Moins forte qu'une épée de même tier</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">ℹ️</span>
+            <div class="alert-body">
+              <strong class="alert-title">Pourquoi ce nerf ?</strong>
+              <span class="alert-desc">En PvP 1.8, sans cooldown d'attaque, les haches infligeraient plus de DPS que les épées. Les valeurs ont été ajustées pour que les haches restent des outils utiles sans dominer le PvP.</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — RESTRICTIONS DIMENSIONS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-dimensions-pvp">
+          <h2 id="section-dimensions-pvp">Restrictions par Dimension</h2>
+
+          <ul class="zone-rules" aria-label="Restrictions par dimension">
+            <li class="zone-rule-item rule-no">
+              <span class="zone-rule-icon" aria-hidden="true">🚫</span>
+              <strong>End bloqué</strong> — L'accès à la dimension End est désactivé. Aucun portail End ne peut être activé.
+            </li>
+            <li class="zone-rule-item rule-info">
+              <span class="zone-rule-icon" aria-hidden="true">⛏️</span>
+              <strong>Nether — Minage uniquement</strong> — Le Nether n'est accessible que via le Monde Minage. Les portails Nether fonctionnent dans la dimension Minage. Pas de claims possibles dans le Nether.
+            </li>
+            <li class="zone-rule-item rule-yes">
+              <span class="zone-rule-icon" aria-hidden="true">🛡️</span>
+              <strong>Nether — Zone protégée</strong> — Les joueurs sont invincibles dans le Nether. Pas de PvP possible. Zone de ressources uniquement.
+            </li>
+          </ul>
+
+        </section>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── Table of Contents (auto-generated) ─────────────── -->
+      <aside class="toc" aria-labelledby="toc-title" data-toc>
+        <div class="toc-title" id="toc-title">Sur cette page</div>
+        <!-- Injecté automatiquement par main.js -->
+      </aside>
+
+    </div><!-- /.content -->
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

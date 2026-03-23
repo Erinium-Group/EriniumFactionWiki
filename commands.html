@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commandes — EriniumFaction Wiki</title>
+  <meta name="description" content="Référence complète de toutes les commandes du mod EriniumFaction : factions, RPG, magie, économie, chat, minage, grades et permissions." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Commands-page specific styles ─────────────────────── */
+    .cmd-section-icon {
+      font-size: 2rem;
+      display: inline-block;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 10px currentColor);
+    }
+
+    .section-intro {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin: 0 0 24px;
+      backdrop-filter: var(--blur-glass);
+    }
+
+    .section-intro-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .section-intro-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .section-intro-text strong {
+      color: var(--text);
+    }
+
+    /* Permission badge inside tables */
+    .data-table .badge {
+      white-space: nowrap;
+    }
+
+    /* Subtle row divider color alternation */
+    .data-table tbody tr:nth-child(even) td {
+      background: rgba(255,255,255,0.015);
+    }
+
+    /* Search bar for commands */
+    .cmd-search-wrapper {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .cmd-search-input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      backdrop-filter: var(--blur-glass);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .cmd-search-input:focus {
+      border-color: rgba(var(--accent-secondary-rgb), 0.45);
+      box-shadow: 0 0 0 3px rgba(var(--accent-secondary-rgb), 0.10), var(--shadow-glow-cyan);
+    }
+
+    .cmd-search-input::placeholder {
+      color: var(--text-faint);
+    }
+
+    .cmd-search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      pointer-events: none;
+      width: 18px;
+      height: 18px;
+    }
+
+    .cmd-count-badge {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2px 10px;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+
+    /* Hidden rows during search */
+    .data-table tr.cmd-hidden {
+      display: none;
+    }
+
+    /* No results message */
+    .cmd-no-results {
+      display: none;
+      text-align: center;
+      padding: 32px;
+      color: var(--text-faint);
+      font-size: 0.9rem;
+    }
+
+    .cmd-no-results.is-visible {
+      display: block;
+    }
+
+    /* Permission legend */
+    .perm-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 32px;
+    }
+
+    .perm-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Perm note box */
+    .perm-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding: 14px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin: 12px 0;
+    }
+
+    .perm-note code {
+      background: rgba(var(--accent-secondary-rgb), 0.12);
+      color: var(--accent-secondary);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.8rem;
+    }
+
+    /* Quick-jump anchors row */
+    .jump-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 36px;
+    }
+
+    .jump-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+      backdrop-filter: var(--blur-glass);
+    }
+
+    .jump-link:hover {
+      background: rgba(var(--accent-primary-rgb), 0.12);
+      border-color: rgba(var(--accent-primary-rgb), 0.35);
+      color: var(--text);
+    }
+
+    /* Section heading with accent line */
+    .cmd-section-heading {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 48px 0 20px;
+    }
+
+    .cmd-section-heading-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .cmd-section-heading h2 {
+      margin: 0 !important;
+    }
+
+    /* Sticky header accent on table */
+    .table-section {
+      margin-bottom: 48px;
+    }
+
+    /* Permission full table */
+    .perm-full-table td:first-child code {
+      background: rgba(var(--warning-rgb), 0.10);
+      color: var(--warning);
+      border: 1px solid rgba(var(--warning-rgb), 0.20);
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE WRAPPER
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- ── HERO ─────────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero-badge">📋 Référence Complète</div>
+      <h1>Référence des Commandes</h1>
+      <p>
+        Toutes les commandes à portée de main. Organisées par système, filtrables en un instant.
+        Du joueur casual à l'administrateur chevronné — retrouvez instantanément la commande dont vous avez besoin.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🏰 <strong>Factions</strong> — 36 commandes</div>
+        <div class="hero-meta-item">🌀 <strong>Téléportation</strong> — 19 commandes</div>
+        <div class="hero-meta-item">⚔️ <strong>RPG</strong> — 11 commandes</div>
+        <div class="hero-meta-item">📊 <strong>Grades</strong> — 18 commandes</div>
+        <div class="hero-meta-item">💎 <strong>Gemmes</strong> — 2 commandes</div>
+      </div>
+    </section>
+
+    <!-- ── CONTENT ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">📋 Commandes</span>
+        </nav>
+
+        <!-- ── Légende permissions ─────────────────────────── -->
+        <div class="glass-card" style="margin:0 0 28px;padding:20px 24px;" data-animate>
+          <h4 style="margin:0 0 14px;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);">Légende des permissions</h4>
+          <div class="perm-legend">
+            <div class="perm-legend-item">
+              <span class="badge badge-green">Aucune</span>
+              <span>Accessible à tous les joueurs</span>
+            </div>
+            <div class="perm-legend-item">
+              <span class="badge badge-cyan">Role: XXX</span>
+              <span>Permission de rôle faction</span>
+            </div>
+            <div class="perm-legend-item">
+              <span class="badge badge-gold">Leader</span>
+              <span>Réservé au leader de faction</span>
+            </div>
+            <div class="perm-legend-item">
+              <span class="badge badge-orange">noeud.perm</span>
+              <span>Permission nommée spécifique</span>
+            </div>
+            <div class="perm-legend-item">
+              <span class="badge badge-red">OP 2 / OP 4</span>
+              <span>Niveau OP requis sur le serveur</span>
+            </div>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-faint);margin:0;">
+            Les arguments entre <code style="background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:4px;padding:1px 6px;">&lt;chevrons&gt;</code> sont <strong style="color:var(--text);">obligatoires</strong>.
+            Ceux entre <code style="background:rgba(var(--accent-secondary-rgb),0.10);color:var(--accent-secondary);border-radius:4px;padding:1px 6px;">[crochets]</code> sont <strong style="color:var(--text);">optionnels</strong>.
+          </p>
+        </div>
+
+        <!-- ── Liens rapides ───────────────────────────────── -->
+        <div class="jump-links">
+          <a href="#factions" class="jump-link">🏰 Factions</a>
+          <a href="#rpg" class="jump-link">⚔️ RPG</a>
+          <a href="#magie" class="jump-link">✨ Magie</a>
+          <a href="#economie" class="jump-link">💰 Économie</a>
+          <a href="#chat" class="jump-link">💬 Chat</a>
+          <a href="#minage" class="jump-link">⛏️ Minage</a>
+          <a href="#teleportation" class="jump-link">🌀 Téléportation</a>
+          <a href="#anti-cheat" class="jump-link">🛡️ Anti-Cheat</a>
+          <a href="#outils-serveur" class="jump-link">⚙️ Serveur</a>
+          <a href="#gemmes" class="jump-link">💎 Gemmes</a>
+          <a href="#grades" class="jump-link">🎖️ Grades</a>
+          <a href="#permissions" class="jump-link">🔐 Permissions</a>
+        </div>
+
+        <!-- ── Barre de recherche de commandes ─────────────── -->
+        <div class="cmd-search-wrapper">
+          <svg class="cmd-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="search"
+            id="cmdFilterInput"
+            class="cmd-search-input"
+            placeholder="Filtrer les commandes… ex: /f claim, bank, setlevel…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span class="cmd-count-badge" id="cmdCountBadge">96 commandes</span>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             1. FACTIONS
+             ══════════════════════════════════════════════════ -->
+        <section id="factions" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">🏰</span>
+            <h2>Factions <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/f</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">📖</span>
+            <div class="section-intro-text">
+              Le cœur du mod. Toutes les actions de gestion de votre faction — de la création à la diplomatie,
+              en passant par la gestion du territoire et de la banque. Certaines commandes nécessitent
+              un <strong>rôle minimum</strong> au sein de la faction.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-factions">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/f create &lt;nom&gt; &lt;tag&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Créer une nouvelle faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f join &lt;faction&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Rejoindre une faction en mode ouvert</td>
+                </tr>
+                <tr>
+                  <td><code>/f accept [faction]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Accepter une invitation à rejoindre</td>
+                </tr>
+                <tr>
+                  <td><code>/f deny [faction]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Refuser une invitation</td>
+                </tr>
+                <tr>
+                  <td><code>/f leave</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Quitter sa faction actuelle</td>
+                </tr>
+                <tr>
+                  <td><code>/f info [faction]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher les informations d'une faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f list</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Lister toutes les factions du serveur</td>
+                </tr>
+                <tr>
+                  <td><code>/f home</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Se téléporter au home de sa faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f chat &lt;canal&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Changer de canal de chat (faction/alliance/public)</td>
+                </tr>
+                <tr>
+                  <td><code>/f map</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher la carte des claims autour de soi</td>
+                </tr>
+                <tr>
+                  <td><code>/f bank</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Consulter le solde de la banque de faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f invite &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: INVITE</span></td>
+                  <td>Inviter un joueur à rejoindre la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f kick &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: KICK</span></td>
+                  <td>Expulser un membre de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f promote &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: PROMOTE</span></td>
+                  <td>Promouvoir un membre au rang supérieur</td>
+                </tr>
+                <tr>
+                  <td><code>/f demote &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: DEMOTE</span></td>
+                  <td>Rétrograder un membre au rang inférieur</td>
+                </tr>
+                <tr>
+                  <td><code>/f claim</code></td>
+                  <td><span class="badge badge-cyan">Role: CLAIM</span></td>
+                  <td>Revendiquer le chunk actuel pour la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f unclaim</code></td>
+                  <td><span class="badge badge-cyan">Role: UNCLAIM</span></td>
+                  <td>Libérer le chunk actuel</td>
+                </tr>
+                <tr>
+                  <td><code>/f sethome</code></td>
+                  <td><span class="badge badge-cyan">Role: SETHOME</span></td>
+                  <td>Définir le point de téléportation de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f bank deposit &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: USE_BANK</span></td>
+                  <td>Déposer de l'argent dans la banque de faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f bank withdraw &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: USE_BANK</span></td>
+                  <td>Retirer de l'argent de la banque de faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f ally &lt;faction&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_RELATION</span></td>
+                  <td>Proposer une alliance à une autre faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f neutral &lt;faction&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_RELATION</span></td>
+                  <td>Passer en relation neutre avec une faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f enemy &lt;faction&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_RELATION</span></td>
+                  <td>Déclarer une faction comme ennemie</td>
+                </tr>
+                <tr>
+                  <td><code>/f rename &lt;nom&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: RENAME</span></td>
+                  <td>Renommer la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f tag &lt;tag&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_TAG</span></td>
+                  <td>Changer le tag affiché de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f desc &lt;texte&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_DESCRIPTION</span></td>
+                  <td>Modifier la description de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f open</code></td>
+                  <td><span class="badge badge-cyan">Role: TOGGLE_OPEN</span></td>
+                  <td>Basculer le mode ouvert (accès libre) de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f color &lt;hex&gt;</code></td>
+                  <td><span class="badge badge-cyan">Role: SET_COLOR</span></td>
+                  <td>Changer la couleur d'affichage de la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f disband</code></td>
+                  <td><span class="badge badge-gold">Leader</span></td>
+                  <td>Dissoudre définitivement la faction</td>
+                </tr>
+                <tr>
+                  <td><code>/f admin claim safezone</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Marquer le chunk actuel comme zone sûre</td>
+                </tr>
+                <tr>
+                  <td><code>/f admin claim warzone</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Marquer le chunk actuel comme zone de guerre</td>
+                </tr>
+                <tr>
+                  <td><code>/f admin unclaim</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Libérer un chunk admin (safezone / warzone)</td>
+                </tr>
+                <tr>
+                  <td><code>/f admin unclaimall safezone</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Libérer tous les chunks de type safezone</td>
+                </tr>
+                <tr>
+                  <td><code>/f admin unclaimall warzone</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Libérer tous les chunks de type warzone</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-factions">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             2. RPG
+             ══════════════════════════════════════════════════ -->
+        <section id="rpg" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">⚔️</span>
+            <h2>Système RPG <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/rpg</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">📊</span>
+            <div class="section-intro-text">
+              Gérez votre progression RPG : stats, perks, défis quotidiens, respec et prestige.
+              Les commandes admin permettent de contrôler finement la progression de n'importe quel joueur.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-rpg">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/rpg stats</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher ses statistiques RPG actuelles</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg perks</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Consulter ses perks débloqués et disponibles</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg challenges</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Voir les défis quotidiens et leur progression</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg invest &lt;stat&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Investir un point de statistique disponible</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg chooseperk &lt;tier&gt; &lt;index&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Sélectionner un perk dans un palier donné</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg respec confirm</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Rembourser tous les points de stats investis</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg respecfull confirm</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Respec complet : stats et perks réinitialisés</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg prestige confirm</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Activer le prestige (reset niveau contre bonus permanent)</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg admin setlevel &lt;joueur&gt; &lt;niveau&gt;</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Définir le niveau RPG d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg admin givexp &lt;joueur&gt; &lt;xp&gt;</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Donner de l'expérience RPG à un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rpg admin resetdata &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Réinitialiser toutes les données RPG d'un joueur</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-rpg">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             3. MAGIE
+             ══════════════════════════════════════════════════ -->
+        <section id="magie" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">✨</span>
+            <h2>Magie <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/magic</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🔮</span>
+            <div class="section-intro-text">
+              Gérez vos sorts équipés, consultez votre progression magique et administrez le système de magie.
+              Les slots de sorts sont numérotés de 1 à N selon votre niveau.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-magie">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/magic</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Ouvrir l'interface principale de magie</td>
+                </tr>
+                <tr>
+                  <td><code>/magic info</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher les informations détaillées sur sa magie</td>
+                </tr>
+                <tr>
+                  <td><code>/magic equip &lt;slot&gt; &lt;sort&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Équiper un sort dans un emplacement donné</td>
+                </tr>
+                <tr>
+                  <td><code>/magic unequip &lt;slot&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Retirer le sort équipé dans un emplacement</td>
+                </tr>
+                <tr>
+                  <td><code>/magic list</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Lister tous les sorts débloqués</td>
+                </tr>
+                <tr>
+                  <td><code>/magic level</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher son niveau et son expérience magique</td>
+                </tr>
+                <tr>
+                  <td><code>/magic admin setlevel &lt;joueur&gt; &lt;niveau&gt;</code></td>
+                  <td><span class="badge badge-orange">magic.admin</span></td>
+                  <td>Définir le niveau de magie d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/magic admin setmana &lt;joueur&gt; &lt;mana&gt;</code></td>
+                  <td><span class="badge badge-orange">magic.admin</span></td>
+                  <td>Définir le mana actuel d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/magic admin givexp &lt;joueur&gt; &lt;xp&gt;</code></td>
+                  <td><span class="badge badge-orange">magic.admin</span></td>
+                  <td>Donner de l'expérience magique à un joueur</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-magie">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             4. ÉCONOMIE
+             ══════════════════════════════════════════════════ -->
+        <section id="economie" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">💰</span>
+            <h2>Économie <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/money /pay</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">💵</span>
+            <div class="section-intro-text">
+              Gérez votre solde, effectuez des transferts entre joueurs et administrez la monnaie du serveur.
+              Les montants sont toujours exprimés en <strong>Ériniums (E$)</strong>.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-economie">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/money</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher son solde actuel</td>
+                </tr>
+                <tr>
+                  <td><code>/money &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Consulter le solde d'un autre joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/pay &lt;joueur&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Envoyer de l'argent à un autre joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/money give &lt;joueur&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-orange">economy.admin</span></td>
+                  <td>Ajouter de l'argent sur le compte d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/money set &lt;joueur&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-orange">economy.admin</span></td>
+                  <td>Définir le solde exact d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/money remove &lt;joueur&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-orange">economy.admin</span></td>
+                  <td>Retirer de l'argent du compte d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/money reset &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">economy.admin</span></td>
+                  <td>Réinitialiser le solde d'un joueur à la valeur par défaut</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-economie">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             5. CHAT
+             ══════════════════════════════════════════════════ -->
+        <section id="chat" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">💬</span>
+            <h2>Chat <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/msg /r /ignore</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">✉️</span>
+            <div class="section-intro-text">
+              Messagerie privée et gestion des interactions sociales.
+              Les joueurs ignorés ne peuvent plus vous envoyer de messages privés ni vous voir dans le chat.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-chat">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/msg &lt;joueur&gt; &lt;message&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Envoyer un message privé à un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/r &lt;message&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Répondre au dernier message privé reçu</td>
+                </tr>
+                <tr>
+                  <td><code>/ignore &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Ignorer un joueur (masque ses messages)</td>
+                </tr>
+                <tr>
+                  <td><code>/unignore &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Débloquer un joueur précédemment ignoré</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-chat">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             6. MINAGE
+             ══════════════════════════════════════════════════ -->
+        <section id="minage" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">⛏️</span>
+            <h2>Monde Minage <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/minage</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🌍</span>
+            <div class="section-intro-text">
+              Accès et gestion du monde de minage dédié. Ce monde se <strong>reset périodiquement</strong> pour garantir des ressources toujours fraîches.
+              Les commandes admin permettent de forcer le reset et d'éditer le point d'apparition.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-minage">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/minage</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Se téléporter vers le monde de minage</td>
+                </tr>
+                <tr>
+                  <td><code>/minage info</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher les informations sur le prochain reset</td>
+                </tr>
+                <tr>
+                  <td><code>/minage reset</code></td>
+                  <td><span class="badge badge-orange">minage.admin</span></td>
+                  <td>Forcer la régénération immédiate du monde de minage</td>
+                </tr>
+                <tr>
+                  <td><code>/minage editspawn</code></td>
+                  <td><span class="badge badge-orange">minage.admin</span></td>
+                  <td>Passer en mode édition du spawn de minage</td>
+                </tr>
+                <tr>
+                  <td><code>/minage savespawn</code></td>
+                  <td><span class="badge badge-orange">minage.admin</span></td>
+                  <td>Sauvegarder la position actuelle comme spawn de minage</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-minage">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             7. TÉLÉPORTATION
+             ══════════════════════════════════════════════════ -->
+        <section id="teleportation" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">🌀</span>
+            <h2>Téléportation</h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">📖</span>
+            <div class="section-intro-text">
+              Toutes les commandes de déplacement — spawn, homes personnels, warps serveur, téléportation entre joueurs,
+              retour arrière et TP aléatoire. Chaque commande a un warmup et un cooldown.
+              Consultez la page <a href="teleportation.html" style="color:var(--accent-secondary);text-decoration:none;font-weight:600;">Téléportation</a> pour le détail complet.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-teleportation">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/spawn</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Retour au spawn du serveur (warmup 3s, cooldown 30s)</td>
+                </tr>
+                <tr>
+                  <td><code>/setspawn</code></td>
+                  <td><span class="badge badge-orange">command.setspawn</span></td>
+                  <td>Définir le spawn du serveur à la position actuelle</td>
+                </tr>
+                <tr>
+                  <td><code>/home [nom]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Se téléporter à un home personnel (warmup 3s, cooldown 15s)</td>
+                </tr>
+                <tr>
+                  <td><code>/sethome [nom]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Enregistrer la position actuelle comme home</td>
+                </tr>
+                <tr>
+                  <td><code>/delhome &lt;nom&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Supprimer un home enregistré</td>
+                </tr>
+                <tr>
+                  <td><code>/homes</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Lister tous ses homes enregistrés</td>
+                </tr>
+                <tr>
+                  <td><code>/warp &lt;nom&gt;</code></td>
+                  <td><span class="badge badge-orange">warp.&lt;nom&gt;</span></td>
+                  <td>Se téléporter à un warp serveur (warmup 3s, cooldown 15s)</td>
+                </tr>
+                <tr>
+                  <td><code>/warps</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Lister tous les warps accessibles</td>
+                </tr>
+                <tr>
+                  <td><code>/setwarp &lt;nom&gt;</code></td>
+                  <td><span class="badge badge-orange">command.setwarp</span></td>
+                  <td>Créer un warp à la position actuelle</td>
+                </tr>
+                <tr>
+                  <td><code>/delwarp &lt;nom&gt;</code></td>
+                  <td><span class="badge badge-orange">command.delwarp</span></td>
+                  <td>Supprimer un warp existant</td>
+                </tr>
+                <tr>
+                  <td><code>/tpa &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Demander à se téléporter vers un joueur (warmup 3s, cooldown 30s)</td>
+                </tr>
+                <tr>
+                  <td><code>/tpahere &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Demander à un joueur de se téléporter vers vous</td>
+                </tr>
+                <tr>
+                  <td><code>/tpaccept [joueur]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Accepter une demande de téléportation TPA</td>
+                </tr>
+                <tr>
+                  <td><code>/tpdeny [joueur]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Refuser une demande de téléportation TPA</td>
+                </tr>
+                <tr>
+                  <td><code>/back</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Retour à la dernière position (avant mort ou TP) — warmup 3s, cooldown 60s</td>
+                </tr>
+                <tr>
+                  <td><code>/rtp</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Téléportation aléatoire dans le monde (500–10 000 blocs, warmup 5s, cooldown 2min)</td>
+                </tr>
+                <tr>
+                  <td><code>/tp &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">command.tp</span></td>
+                  <td>Se téléporter vers un joueur (admin, instantané)</td>
+                </tr>
+                <tr>
+                  <td><code>/tphere &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">command.tp</span></td>
+                  <td>Téléporter un joueur vers soi (admin, instantané)</td>
+                </tr>
+                <tr>
+                  <td><code>/tppos &lt;x&gt; &lt;y&gt; &lt;z&gt;</code></td>
+                  <td><span class="badge badge-orange">command.tp</span></td>
+                  <td>Se téléporter à des coordonnées précises (admin)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-teleportation">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             7b. ANTI-CHEAT
+             ══════════════════════════════════════════════════ -->
+        <section id="anti-cheat" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">🛡️</span>
+            <h2>Anti-Cheat &amp; Sécurité <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/ac</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🔒</span>
+            <div class="section-intro-text">
+              Commandes de gestion de l'anti-cheat et des outils de sécurité serveur.
+              Réservées au staff avec la permission <strong>eriniumfaction.admin.security</strong>.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-anticheat">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/ac alerts</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.admin.security</span></td>
+                  <td>Activer ou désactiver les alertes anti-cheat en temps réel</td>
+                </tr>
+                <tr>
+                  <td><code>/ac info &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.admin.security</span></td>
+                  <td>Afficher les violations anti-cheat d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/ac reset &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.admin.security</span></td>
+                  <td>Réinitialiser les points de violation anti-cheat d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/ac status</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.admin.security</span></td>
+                  <td>Statut global de l'anti-cheat (joueurs surveillés, violations actives)</td>
+                </tr>
+                <tr>
+                  <td><code>/usebug status</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Statistiques du système anti-exploit (use-bug)</td>
+                </tr>
+                <tr>
+                  <td><code>/usebug check &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Vérifier le NBT de l'inventaire d'un joueur pour détecter les exploits</td>
+                </tr>
+                <tr>
+                  <td><code>/usebug limits</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Afficher les limites configurées pour la détection d'exploits</td>
+                </tr>
+                <tr>
+                  <td><code>/usebug clear &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-red">OP 4</span></td>
+                  <td>Réinitialiser le compteur d'exploits d'un joueur</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-anticheat">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             7c. OUTILS SERVEUR
+             ══════════════════════════════════════════════════ -->
+        <section id="outils-serveur" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">⚙️</span>
+            <h2>Outils Serveur</h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🖥️</span>
+            <div class="section-intro-text">
+              Outils de monitoring et de gestion technique du serveur. Réservés aux opérateurs.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-serveur">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/servperf</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Dashboard complet de performance serveur (TPS, entités, chunks)</td>
+                </tr>
+                <tr>
+                  <td><code>/servperf tps</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Afficher le TPS détaillé</td>
+                </tr>
+                <tr>
+                  <td><code>/servperf entities</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Compteur d'entités par dimension</td>
+                </tr>
+                <tr>
+                  <td><code>/servperf chunks</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Chunks actuellement chargés</td>
+                </tr>
+                <tr>
+                  <td><code>/servperf view &lt;n|auto&gt;</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Modifier la view distance dynamiquement</td>
+                </tr>
+                <tr>
+                  <td><code>/webinfo</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Afficher l'URL et le statut du serveur API web</td>
+                </tr>
+                <tr>
+                  <td><code>/locatebiome &lt;biome&gt;</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Trouver le biome le plus proche — fonctionne dans l'Overworld et le Monde Minage</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-serveur">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             7d. GEMMES & ACCESSOIRES
+             ══════════════════════════════════════════════════ -->
+        <section id="gemmes" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">💎</span>
+            <h2>Gemmes &amp; Accessoires <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/gem</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🔮</span>
+            <div class="section-intro-text">
+              Commandes d'administration du système de gemmes et de socketing.
+              <code>/gem info</code> est accessible à tous et affiche les gemmes de l'item en main.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-gemmes">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/gem info</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher les gemmes sockettées de l'item tenu en main</td>
+                </tr>
+                <tr>
+                  <td><code>/gem give &lt;joueur&gt; &lt;type&gt; &lt;qualité&gt; [quantité]</code></td>
+                  <td><span class="badge badge-red">OP 2</span></td>
+                  <td>Donner une gemme à un joueur (types : ruby, sapphire, emerald, amethyst, topaz, onyx — qualités : raw, cut, perfect)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-gemmes">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             8. GRADES
+             ══════════════════════════════════════════════════ -->
+        <section id="grades" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">🎖️</span>
+            <h2>Grades <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/rank</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">🏆</span>
+            <div class="section-intro-text">
+              Gestion complète du système de grades : création, suppression, assignation aux joueurs, configuration
+              des préfixes/suffixes, couleurs, priorités, permissions et héritage.
+              La majorité des commandes nécessite la permission <strong>rank.manage</strong>.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-grades">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/rank list</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Lister tous les grades disponibles sur le serveur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank info &lt;grade&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher les détails d'un grade (perms, héritages, style)</td>
+                </tr>
+                <tr>
+                  <td><code>/rank set &lt;joueur&gt; &lt;grade&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Assigner un grade à un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank remove &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Retirer le grade d'un joueur (revient au grade par défaut)</td>
+                </tr>
+                <tr>
+                  <td><code>/rank create &lt;id&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Créer un nouveau grade avec l'identifiant donné</td>
+                </tr>
+                <tr>
+                  <td><code>/rank delete &lt;id&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Supprimer un grade existant</td>
+                </tr>
+                <tr>
+                  <td><code>/rank setprefix &lt;id&gt; &lt;préfixe&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Définir le préfixe affiché avant le nom du joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank setsuffix &lt;id&gt; &lt;suffixe&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Définir le suffixe affiché après le nom du joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank setpriority &lt;id&gt; &lt;n&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Modifier la priorité d'affichage du grade (plus grand = prioritaire)</td>
+                </tr>
+                <tr>
+                  <td><code>/rank setcolor &lt;id&gt; &lt;code&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Modifier la couleur associée au grade</td>
+                </tr>
+                <tr>
+                  <td><code>/rank addperm &lt;id&gt; &lt;permission&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Ajouter une permission au grade</td>
+                </tr>
+                <tr>
+                  <td><code>/rank removeperm &lt;id&gt; &lt;permission&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Retirer une permission d'un grade</td>
+                </tr>
+                <tr>
+                  <td><code>/rank addinherit &lt;id&gt; &lt;parent&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Ajouter un grade parent (héritage des permissions)</td>
+                </tr>
+                <tr>
+                  <td><code>/rank removeinherit &lt;id&gt; &lt;parent&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Supprimer un héritage de grade parent</td>
+                </tr>
+                <tr>
+                  <td><code>/rank playerperm &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Afficher les permissions personnalisées d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank playeraddperm &lt;joueur&gt; &lt;permission&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Ajouter une permission personnalisée à un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank playerremoveperm &lt;joueur&gt; &lt;permission&gt;</code></td>
+                  <td><span class="badge badge-orange">rank.manage</span></td>
+                  <td>Retirer une permission personnalisée d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/rank reload</code></td>
+                  <td><span class="badge badge-orange">rank.reload</span></td>
+                  <td>Recharger la configuration des grades depuis le disque</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-grades">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             8. PERMISSIONS
+             ══════════════════════════════════════════════════ -->
+        <section id="permissions" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">🔐</span>
+            <h2>Référence des Permissions</h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">📋</span>
+            <div class="section-intro-text">
+              Tous les nœuds de permissions du mod, assignables via <code>/rank addperm</code> ou <code>/rank playeraddperm</code>.
+              Les permissions accordées aux joueurs s'accumulent avec celles de leur grade.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table perm-full-table" id="table-permissions">
+              <thead>
+                <tr>
+                  <th style="width:35%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>rank.manage</code></td>
+                  <td>Gestion complète des grades — création, suppression, configuration, assignation</td>
+                </tr>
+                <tr>
+                  <td><code>rank.reload</code></td>
+                  <td>Rechargement de la configuration des grades sans redémarrage</td>
+                </tr>
+                <tr>
+                  <td><code>chat.color</code></td>
+                  <td>Utilisation des codes couleur (<code>&amp;a</code>, <code>&amp;l</code>…) dans le chat global</td>
+                </tr>
+                <tr>
+                  <td><code>chat.staff</code></td>
+                  <td>Accès au canal de communication réservé au staff</td>
+                </tr>
+                <tr>
+                  <td><code>economy.admin</code></td>
+                  <td>Administration de l'économie — donner, retirer, définir, réinitialiser les soldes</td>
+                </tr>
+                <tr>
+                  <td><code>magic.admin</code></td>
+                  <td>Administration du système de magie — forcer les niveaux, mana et XP des joueurs</td>
+                </tr>
+                <tr>
+                  <td><code>minage.admin</code></td>
+                  <td>Administration du monde de minage — forcer les resets, éditer le spawn</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-permissions">Aucune permission ne correspond à votre recherche.</div>
+          </div>
+
+          <!-- Wildcards & Négation -->
+          <div class="glass-card" style="margin-top:24px;padding:22px 26px;" data-animate>
+            <h4 style="margin:0 0 14px;font-size:0.9rem;font-weight:700;color:var(--text);">Wildcards et négations</h4>
+
+            <div class="perm-note">
+              <strong style="color:var(--text);">Wildcard namespace</strong> — La permission
+              <code>rank.*</code> accorde toutes les permissions du namespace <code>rank</code> en une seule entrée.
+              De même, <code>economy.*</code> couvre <code>economy.admin</code> et toutes les futures sous-permissions économie.
+            </div>
+
+            <div class="perm-note">
+              <strong style="color:var(--text);">Wildcard global</strong> — La permission
+              <code>*</code> accordée à un grade ou un joueur donne accès à <strong>toutes les permissions du mod</strong>.
+              À utiliser uniquement pour les grades de super-administrateur.
+            </div>
+
+            <div class="perm-note">
+              <strong style="color:var(--text);">Négation</strong> — Préfixer une permission par
+              <code>-</code> la <strong>révoque explicitement</strong>, même si elle est héritée via un grade parent.
+              Exemple : <code>-chat.color</code> interdit les couleurs même si le grade parent les autorise.
+              Les négations ont toujours priorité sur les permissions positives.
+            </div>
+
+            <p style="margin:16px 0 0;font-size:0.82rem;color:var(--text-faint);">
+              Pour comprendre le fonctionnement complet du système de grades et d'héritage,
+              consultez la page
+              <a href="factions.html#hierarchie-roles" style="color:var(--accent-secondary);text-decoration:none;font-weight:600;">Factions → Hiérarchie &amp; Rôles</a>.
+            </p>
+          </div>
+        </section>
+
+      </div><!-- /.content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+<script>
+  /* ── Commands filter script ────────────────────────────── */
+  (function() {
+    var input     = document.getElementById('cmdFilterInput');
+    var countBadge = document.getElementById('cmdCountBadge');
+    var TOTAL     = document.querySelectorAll('.data-table tbody tr').length;
+
+    if (!input) return;
+
+    countBadge.textContent = TOTAL + ' commandes';
+
+    input.addEventListener('input', function() {
+      var query = input.value.trim().toLowerCase();
+      var visibleCount = 0;
+
+      var tables = document.querySelectorAll('.data-table');
+
+      tables.forEach(function(table) {
+        var rows       = table.querySelectorAll('tbody tr');
+        var noResults  = table.parentElement.querySelector('.cmd-no-results');
+        var sectionVisible = 0;
+
+        rows.forEach(function(row) {
+          var text = row.textContent.toLowerCase();
+          if (!query || text.indexOf(query) !== -1) {
+            row.classList.remove('cmd-hidden');
+            sectionVisible++;
+            visibleCount++;
+          } else {
+            row.classList.add('cmd-hidden');
+          }
+        });
+
+        if (noResults) {
+          if (sectionVisible === 0 && query.length > 0) {
+            noResults.classList.add('is-visible');
+          } else {
+            noResults.classList.remove('is-visible');
+          }
+        }
+      });
+
+      if (query.length === 0) {
+        countBadge.textContent = TOTAL + ' commandes';
+      } else {
+        countBadge.textContent = visibleCount + ' résultat' + (visibleCount !== 1 ? 's' : '');
+      }
+    });
+  })();
+</script>
+</body>
+</html>

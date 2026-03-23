@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biomes &amp; Monde — EriniumFaction Wiki</title>
+  <meta name="description" content="Découvrez les 53 biomes exclusifs du monde d'Erinium : forêts mystiques, déserts, toundras, jungles. Aucun biome vanilla." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .hero-biomes {
+      background: linear-gradient(135deg,
+        rgba(46, 204, 113, 0.12) 0%,
+        rgba(0, 229, 255, 0.07) 50%,
+        transparent 100%);
+    }
+
+    .climate-zone {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 48px 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .climate-zone-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .climate-zone h2 { margin: 0 !important; }
+
+    .biome-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 16px 0 32px;
+    }
+    .biome-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .biome-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .biome-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--glass-border-hover); }
+    .biome-card-name { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .biome-card-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 10px; }
+    .biome-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .biome-tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-faint);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .biome-badge-we {
+      font-size: 0.58rem;
+      font-weight: 700;
+      background: rgba(107,47,160,0.25);
+      color: #B06EDE;
+      border: 1px solid rgba(107,47,160,0.35);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* Accent per climate */
+    .biome-card--forest  { border-left: 3px solid rgba(46,204,113,0.6); }
+    .biome-card--forest:hover  { box-shadow: var(--shadow-md), 0 0 18px rgba(46,204,113,0.18); }
+    .biome-card--plains  { border-left: 3px solid rgba(255,215,0,0.6); }
+    .biome-card--plains:hover  { box-shadow: var(--shadow-md), 0 0 18px rgba(255,215,0,0.15); }
+    .biome-card--mountain { border-left: 3px solid rgba(180,180,200,0.6); }
+    .biome-card--mountain:hover { box-shadow: var(--shadow-md), 0 0 18px rgba(180,180,200,0.18); }
+    .biome-card--cold    { border-left: 3px solid rgba(140,200,255,0.6); }
+    .biome-card--cold:hover    { box-shadow: var(--shadow-md), 0 0 18px rgba(140,200,255,0.18); }
+    .biome-card--tropical { border-left: 3px solid rgba(255,140,0,0.6); }
+    .biome-card--tropical:hover { box-shadow: var(--shadow-md), 0 0 18px rgba(255,140,0,0.18); }
+    .biome-card--wetland { border-left: 3px solid rgba(0,160,140,0.6); }
+    .biome-card--wetland:hover { box-shadow: var(--shadow-md), 0 0 18px rgba(0,160,140,0.18); }
+    .biome-card--dry     { border-left: 3px solid rgba(231,76,60,0.6); }
+    .biome-card--dry:hover     { box-shadow: var(--shadow-md), 0 0 18px rgba(231,76,60,0.18); }
+    .biome-card--special { border-left: 3px solid rgba(107,47,160,0.7); }
+    .biome-card--special:hover { box-shadow: var(--shadow-md), 0 0 18px rgba(107,47,160,0.25); }
+    .biome-card--vanilla { border-left: 3px solid rgba(52,152,219,0.6); }
+    .biome-card--vanilla:hover { box-shadow: var(--shadow-md), 0 0 18px rgba(52,152,219,0.18); }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .stats-bar-item {
+      padding: 18px 14px;
+      text-align: center;
+      border-right: 1px solid var(--glass-border);
+    }
+    .stats-bar-item:last-child { border-right: none; }
+    .stats-bar-val {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #2ECC71, #00E5FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stats-bar-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero hero-biomes">
+      <div class="hero-badge">🌿 Génération de Monde</div>
+      <h1>Biomes &amp; Monde</h1>
+      <p>
+        Le monde d'Erinium est unique. Il n'y a aucun biome vanilla ici — tout a été créé sur mesure. Explore 53 biomes exclusifs, des forêts lumineuses aux déserts volcaniques !
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🌍 <strong>53 biomes</strong> — 100% exclusifs</div>
+        <div class="hero-meta-item">🌲 <strong>9 catégories</strong> — Forêt, Plaine, Montagne…</div>
+        <div class="hero-meta-item">🚫 <strong>Aucun biome vanilla</strong></div>
+        <div class="hero-meta-item">⛏️ <strong>Même biomes</strong> dans le Monde Minage</div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">🌿 Biomes &amp; Monde</span>
+        </nav>
+
+        <!-- INTRO -->
+        <section id="introduction">
+          <h2>Un monde entièrement custom</h2>
+          <p>
+            Sur Erinium, la génération du monde a été repensée de zéro. Il n'y a pas de plaines vanilla, pas de forêt vanilla — chaque zone du monde est un biome créé spécialement pour le serveur.
+          </p>
+
+          <div class="stats-bar">
+            <div class="stats-bar-item">
+              <div class="stats-bar-val">53</div>
+              <div class="stats-bar-label">Biomes Total</div>
+            </div>
+            <div class="stats-bar-item">
+              <div class="stats-bar-val" style="background:linear-gradient(135deg,#2ECC71,#FFD700);-webkit-background-clip:text;background-clip:text;">36</div>
+              <div class="stats-bar-label">Biomes Originaux</div>
+            </div>
+            <div class="stats-bar-item">
+              <div class="stats-bar-val" style="background:linear-gradient(135deg,#B06EDE,#00E5FF);-webkit-background-clip:text;background-clip:text;">17</div>
+              <div class="stats-bar-label">WorldEnhanced</div>
+            </div>
+            <div class="stats-bar-item">
+              <div class="stats-bar-val" style="background:linear-gradient(135deg,#00E5FF,#B06EDE);-webkit-background-clip:text;background-clip:text;">9</div>
+              <div class="stats-bar-label">Catégories</div>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-cyan" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.5rem;flex-shrink:0;">🏷️</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:6px;">Le badge <span style="color:#B06EDE;">WorldEnhanced</span></strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Les biomes marqués <span class="biome-badge-we">WorldEnhanced</span> ont été ajoutés par le mod WorldEnhanced intégré au serveur. Ils s'intègrent naturellement dans la génération du monde d'Erinium.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FORÊTS -->
+        <section id="forets">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🌲</span>
+            <h2>Forêts — 11 biomes</h2>
+          </div>
+          <p>Des forêts denses aux ambiances radicalement différentes. Idéales pour se cacher et construire en discrétion.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt Dense</div>
+              <div class="biome-card-desc">Forêt primaire très touffue où la lumière perce à peine. Excellente couverture tactique.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Bouleaux Géants</div>
+              <div class="biome-card-desc">Des bouleaux imposants formant des colonnes naturelles. Lumière filtrée, sol tapissé de fougères.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Taïga Ancienne</div>
+              <div class="biome-card-desc">Conifères centenaires, sol de mousse et troncs tombés. Ambiance froide et silencieuse.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">COLD</span><span class="biome-tag">CONIFEROUS</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt de Cerisiers</div>
+              <div class="biome-card-desc">Cerisiers en fleur aux pétales roses. Paysage spectaculaire, très prisé pour les bases.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt d'Automne</div>
+              <div class="biome-card-desc">Feuillage orangé, rouge et ocre permanent. Tapisserie de feuilles mortes au sol.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Séquoia</div>
+              <div class="biome-card-desc">Arbres monumentaux dont les cimes disparaissent dans les nuages. Sol ombragé en permanence.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">CONIFEROUS</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt Brumeuse</div>
+              <div class="biome-card-desc">Brume permanente, visibilité réduite. Parfaite pour les embuscades.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Bosquet de Trembles <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Trembles aux feuilles frémissantes, clairières lumineuses. Biome agréable et serein.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt de Chênes Tordus <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Chênes aux formes grotesques, silhouettes inquiétantes. Parfaite pour les embuscades nocturnes.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">SPOOKY</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Vallée des Séquoias Rouges <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Vallée encaissée aux séquoias rouges, humidité élevée et cascades.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--forest">
+              <div class="biome-card-name">Forêt Bioluminescente <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Champignons et plantes luminescents bleu-vert. La nuit y est magique et féerique.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">MUSHROOM</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PLAINES -->
+        <section id="plaines">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🌾</span>
+            <h2>Plaines — 8 biomes</h2>
+          </div>
+          <p>Étendues ouvertes offrant visibilité maximale. Les plaines sont les champs de bataille naturels d'Erinium.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Prairie Fleurie</div>
+              <div class="biome-card-desc">Paysage idyllique couvert de fleurs sauvages. Terrain plat, parfait pour construire.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Collines Ondulées</div>
+              <div class="biome-card-desc">Douces collines verdoyantes. Bonnes positions en hauteur pour observer les environs.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">HILLS</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Haute Savane</div>
+              <div class="biome-card-desc">Herbes dorées sous la chaleur. Zone ouverte et dangereuse pour les novices.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SAVANNA</span><span class="biome-tag">HOT</span><span class="biome-tag">DRY</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Plateau Venté</div>
+              <div class="biome-card-desc">Vue panoramique exceptionnelle, mais aucune protection. Position stratégique.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">HILLS</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Plaines Volcaniques</div>
+              <div class="biome-card-desc">Sol noir et aride jonché de roches volcaniques. Hostile mais riche en ressources rares.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">HOT</span><span class="biome-tag">WASTELAND</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Champs de Lavande <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">À perte de vue, des rangées de lavande violette. L'un des biomes les plus beaux du serveur.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Prairie Alpine <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Prairie d'altitude aux fleurs délicates. Vue dégagée sur les sommets.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">HILLS</span><span class="biome-tag">COLD</span></div>
+            </div>
+            <div class="biome-card biome-card--plains">
+              <div class="biome-card-name">Plaines de Sel <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Sel cristallisé blanc aveuglant, chaleur intense. Désorientation assurée.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MONTAGNES -->
+        <section id="montagnes">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">⛰️</span>
+            <h2>Montagnes — 3 biomes</h2>
+          </div>
+          <p>Reliefs extrêmes offrant positions défensives naturelles. Difficiles d'accès mais quasi-imprenables.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--mountain">
+              <div class="biome-card-name">Montagnes Abruptes</div>
+              <div class="biome-card-desc">Sommets vertigineux, neige permanente en altitude. Meilleures positions défensives du monde.</div>
+              <div class="biome-card-tags"><span class="biome-tag">MOUNTAIN</span><span class="biome-tag">HILLS</span><span class="biome-tag">COLD</span></div>
+            </div>
+            <div class="biome-card biome-card--mountain">
+              <div class="biome-card-name">Canyon Profond</div>
+              <div class="biome-card-desc">Gorges profondes aux parois à pic. Vision limitée, excellent pour les embuscades. Minerais exposés.</div>
+              <div class="biome-card-tags"><span class="biome-tag">MOUNTAIN</span><span class="biome-tag">DRY</span></div>
+            </div>
+            <div class="biome-card biome-card--mountain">
+              <div class="biome-card-name">Volcan</div>
+              <div class="biome-card-desc">Volcan actif, coulées de lave. Paysage apocalyptique. Riche en obsidienne et minerais rares.</div>
+              <div class="biome-card-tags"><span class="biome-tag">MOUNTAIN</span><span class="biome-tag">HOT</span><span class="biome-tag">WASTELAND</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONES FROIDES -->
+        <section id="froid">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">❄️</span>
+            <h2>Zones Froides — 5 biomes</h2>
+          </div>
+          <p>Les confins glacés d'Erinium. Ressources rares, parfois dangereuses pour les joueurs non préparés.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--cold">
+              <div class="biome-card-name">Glacier</div>
+              <div class="biome-card-desc">Immense glacier aux reflets bleus. Terrain glissant, falaises de glace. La glace y est précieuse.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SNOWY</span><span class="biome-tag">COLD</span><span class="biome-tag">WASTELAND</span></div>
+            </div>
+            <div class="biome-card biome-card--cold">
+              <div class="biome-card-name">Toundra Enneigée</div>
+              <div class="biome-card-desc">Plaine gelée, neige permanente, végétation quasi inexistante. Survie difficile.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SNOWY</span><span class="biome-tag">COLD</span><span class="biome-tag">PLAINS</span></div>
+            </div>
+            <div class="biome-card biome-card--cold">
+              <div class="biome-card-name">Forêt de Bambou</div>
+              <div class="biome-card-desc">Bambous géants dans une zone fraîche. Navigation difficile, bambou abondant.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--cold">
+              <div class="biome-card-name">Delta de Rivière Gelée <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Bras de rivière gelés formant un labyrinthe de glace et de terre. Traversée périlleuse.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SNOWY</span><span class="biome-tag">COLD</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--cold">
+              <div class="biome-card-name">Lande Sombre <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Lande froide aux teintes grises et violacées. Ambiance gothique, idéale pour les bases secrètes.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">WET</span><span class="biome-tag">COLD</span><span class="biome-tag">SPOOKY</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TROPIQUES -->
+        <section id="tropiques">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🌴</span>
+            <h2>Tropiques — 6 biomes</h2>
+          </div>
+          <p>Chaleur, humidité et végétation luxuriante. Les biomes tropicaux sont parmi les plus riches du monde.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Jungle Épaisse</div>
+              <div class="biome-card-desc">Jungle dense et primaire. Navigation difficile mais couverture tactique exceptionnelle.</div>
+              <div class="biome-card-tags"><span class="biome-tag">JUNGLE</span><span class="biome-tag">HOT</span><span class="biome-tag">WET</span><span class="biome-tag">DENSE</span></div>
+            </div>
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Grande Plage</div>
+              <div class="biome-card-desc">Sable fin blanc longeant la mer. Zone ouverte et exposée, ressources marines accessibles.</div>
+              <div class="biome-card-tags"><span class="biome-tag">BEACH</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Lagon Tropical</div>
+              <div class="biome-card-desc">Eaux cristallines peu profondes, récifs colorés. Zone idyllique souvent disputée.</div>
+              <div class="biome-card-tags"><span class="biome-tag">OCEAN</span><span class="biome-tag">WET</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Archipel</div>
+              <div class="biome-card-desc">Chapelet d'îles variées en plein océan. Parfait pour construire une base insulaire.</div>
+              <div class="biome-card-tags"><span class="biome-tag">OCEAN</span><span class="biome-tag">WET</span></div>
+            </div>
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Mangrove Côtière</div>
+              <div class="biome-card-desc">Palétuviers aux racines immergées. Labyrinthe naturel entre terre et mer.</div>
+              <div class="biome-card-tags"><span class="biome-tag">WET</span><span class="biome-tag">LUSH</span><span class="biome-tag">FOREST</span></div>
+            </div>
+            <div class="biome-card biome-card--tropical">
+              <div class="biome-card-name">Îles Volcaniques <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Archipel de volcans fumants. Paysage spectaculaire. Obsidienne et basalte en surface.</div>
+              <div class="biome-card-tags"><span class="biome-tag">HOT</span><span class="biome-tag">WASTELAND</span><span class="biome-tag">OCEAN</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONES HUMIDES -->
+        <section id="humide">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🌊</span>
+            <h2>Zones Humides — 3 biomes</h2>
+          </div>
+          <p>Marais et zones inondées. Difficiles à traverser, riches en ressources et en couverture végétale.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--wetland">
+              <div class="biome-card-name">Marais Profond</div>
+              <div class="biome-card-desc">Eaux sombres et stagnantes, végétation luxuriante. Excellent pour les pièges.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SWAMP</span><span class="biome-tag">WET</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--wetland">
+              <div class="biome-card-name">Vallée Fluviale</div>
+              <div class="biome-card-desc">Rivière aux méandres larges, terres fertiles sur les rives. Zone stratégique.</div>
+              <div class="biome-card-tags"><span class="biome-tag">RIVER</span><span class="biome-tag">WET</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--wetland">
+              <div class="biome-card-name">Mangrove Marécageuse <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Mi-forêt mi-marécage. Orientation quasi impossible sans connaître les lieux.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SWAMP</span><span class="biome-tag">WET</span><span class="biome-tag">FOREST</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONES ARIDES -->
+        <section id="aride">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🏜️</span>
+            <h2>Zones Arides — 4 biomes</h2>
+          </div>
+          <p>Chaleur torride et sécheresse absolue. Ressources rares mais précieuses pour ceux qui survivent.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--dry">
+              <div class="biome-card-name">Désert Rouge</div>
+              <div class="biome-card-desc">Sable rouge orangé à perte de vue. Les tempêtes de sable peuvent rendre aveugle.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SANDY</span><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--dry">
+              <div class="biome-card-name">Oasis</div>
+              <div class="biome-card-desc">Verdure et eau au cœur du désert. Point de passage obligé et zone très disputée.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SANDY</span><span class="biome-tag">WET</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--dry">
+              <div class="biome-card-name">Forêt Pétrifiée</div>
+              <div class="biome-card-desc">Arbres transformés en pierre. Ambiance étrange, pierre abondante en surface.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DRY</span><span class="biome-tag">WASTELAND</span></div>
+            </div>
+            <div class="biome-card biome-card--dry">
+              <div class="biome-card-name">Terres Dévastées <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Wasteland calciné, terre craquelée. Minéraux accessibles à la surface.</div>
+              <div class="biome-card-tags"><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span><span class="biome-tag">WASTELAND</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BIOMES SPÉCIAUX -->
+        <section id="speciaux">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">✨</span>
+            <h2>Biomes Spéciaux — 7 biomes</h2>
+          </div>
+          <p>Des biomes uniques aux caractéristiques extraordinaires. Rares à trouver, exceptionnels à exploiter.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Caverne Ouverte</div>
+              <div class="biome-card-desc">Effondrement donnant accès aux cavernes depuis la surface. Accès direct aux minerais profonds.</div>
+              <div class="biome-card-tags"><span class="biome-tag">WASTELAND</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Mesa Améliorée</div>
+              <div class="biome-card-desc">Couches de terre colorées rouges et oranges. Argile colorée en quantité.</div>
+              <div class="biome-card-tags"><span class="biome-tag">MESA</span><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Clairière aux Champignons <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Champignons géants lumineux sur sol de mycélium. Biome rare et précieux.</div>
+              <div class="biome-card-tags"><span class="biome-tag">MUSHROOM</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Plaines de Cristal <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Cristaux de quartz émergeant du sol. Paysage irréel, quartz accessible en surface.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Ruines Anciennes <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Vestiges d'une civilisation disparue. Trésors possibles, mais aussi pièges anciens.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">SPARSE</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Sources Thermales <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Geysers et sources d'eau chaude. Minéraux rares déposés par les eaux bouillonnantes.</div>
+              <div class="biome-card-tags"><span class="biome-tag">WET</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--special">
+              <div class="biome-card-name">Savane aux Baobabs <span class="biome-badge-we">WorldEnhanced</span></div>
+              <div class="biome-card-desc">Baobabs millénaires aux troncs massifs. Arbres emblématiques servant de repères naturels.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SAVANNA</span><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VANILLA AMÉLIORÉS -->
+        <section id="vanilla">
+          <div class="climate-zone">
+            <span class="climate-zone-icon">🔷</span>
+            <h2>Vanilla Améliorés — 6 biomes</h2>
+          </div>
+          <p>Des réinterprétations des biomes Minecraft classiques, redessinés et enrichis pour le monde d'Erinium.</p>
+          <div class="biome-grid">
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Plaines Erinium</div>
+              <div class="biome-card-desc">Plaines plus vivantes et variées, relief ondulé, végétation plus riche que le vanilla.</div>
+              <div class="biome-card-tags"><span class="biome-tag">PLAINS</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Forêt Erinium</div>
+              <div class="biome-card-desc">Forêt de chênes revisitée. Arbres plus imposants, sous-bois plus touffu.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">LUSH</span></div>
+            </div>
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Désert Erinium</div>
+              <div class="biome-card-desc">Dunes plus réalistes, formations rocheuses variées. Tempêtes de sable impressionnantes.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SANDY</span><span class="biome-tag">DRY</span><span class="biome-tag">HOT</span></div>
+            </div>
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Forêt Sombre Erinium</div>
+              <div class="biome-card-desc">Canopée encore plus dense, ambiance oppressante, champignons géants.</div>
+              <div class="biome-card-tags"><span class="biome-tag">FOREST</span><span class="biome-tag">DENSE</span><span class="biome-tag">SPOOKY</span></div>
+            </div>
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Taïga Froide Erinium</div>
+              <div class="biome-card-desc">Taïga enneigée améliorée. Sapins plus denses, neige accumulée sur les branches.</div>
+              <div class="biome-card-tags"><span class="biome-tag">SNOWY</span><span class="biome-tag">COLD</span><span class="biome-tag">CONIFEROUS</span></div>
+            </div>
+            <div class="biome-card biome-card--vanilla">
+              <div class="biome-card-name">Côte Océanique Erinium</div>
+              <div class="biome-card-desc">Falaises de pierre, plages de galets. Transition entre l'océan et les terres.</div>
+              <div class="biome-card-tags"><span class="biome-tag">BEACH</span><span class="biome-tag">COLD</span></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#introduction" class="toc-link">Vue d'ensemble</a></li>
+          <li class="toc-item"><a href="#forets" class="toc-link">🌲 Forêts (11)</a></li>
+          <li class="toc-item"><a href="#plaines" class="toc-link">🌾 Plaines (8)</a></li>
+          <li class="toc-item"><a href="#montagnes" class="toc-link">⛰️ Montagnes (3)</a></li>
+          <li class="toc-item"><a href="#froid" class="toc-link">❄️ Zones Froides (5)</a></li>
+          <li class="toc-item"><a href="#tropiques" class="toc-link">🌴 Tropiques (6)</a></li>
+          <li class="toc-item"><a href="#humide" class="toc-link">🌊 Zones Humides (3)</a></li>
+          <li class="toc-item"><a href="#aride" class="toc-link">🏜️ Zones Arides (4)</a></li>
+          <li class="toc-item"><a href="#speciaux" class="toc-link">✨ Biomes Spéciaux (7)</a></li>
+          <li class="toc-item"><a href="#vanilla" class="toc-link">🔷 Vanilla Améliorés (6)</a></li>
+        </ul>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

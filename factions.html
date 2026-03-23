@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factions — EriniumFaction Wiki</title>
+  <meta name="description" content="Guide des Factions d'EriniumFaction : créer son équipe, les grades, protéger son territoire, les alliances et la banque." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .role-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .role-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .role-card-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+    .role-card-name { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+    .role-card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 12px; }
+
+    .territory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .territory-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .territory-card:hover { transform: translateY(-2px); border-color: var(--glass-border-hover); }
+    .territory-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .territory-card-name { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .territory-card-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(var(--accent-primary-rgb), 0.4);
+    }
+    .step-body { flex: 1; }
+    .step-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .step-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+    .relation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">🏰 Jouer en Équipe</div>
+      <h1>Les Factions</h1>
+      <p>
+        Une faction, c'est ton équipe ! Rejoins tes amis, construisez une base ensemble et protégez votre territoire.
+        Plus votre faction est forte, plus vous pouvez conquérir de terrain.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🏰 <strong>Taille</strong> — illimitée</div>
+        <div class="hero-meta-item">⚡ <strong>Claims max</strong> — 10 000 chunks</div>
+        <div class="hero-meta-item">🤝 <strong>Alliances max</strong> — 5 actives</div>
+        <div class="hero-meta-item">💰 <strong>Banque max</strong> — 1 000 000 $</div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">🏰 Factions</span>
+        </nav>
+
+        <!-- 1. C'EST QUOI -->
+        <section id="cest-quoi">
+          <h2>C'est quoi une faction ?</h2>
+          <p>
+            Une faction, c'est comme un clan. Tu crées ou rejoins une équipe avec tes amis, vous choisissez un nom et un tag, et vous partez à la conquête du monde d'Erinium ensemble.
+          </p>
+          <p>
+            Votre faction peut <strong>revendiquer des chunks</strong> (des zones de terrain) pour les protéger. Les ennemis ne pourront pas casser tes blocs ou ouvrir tes coffres dans vos territoires.
+          </p>
+
+          <div class="glass-card glass-card-accent accent-violet" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.6rem;flex-shrink:0;">💡</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:6px;">Le conseil du débutant</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Si tu joues tout seul, tu peux quand même créer ta faction ! Ça te permet de protéger ta base. Mais c'est encore mieux à plusieurs — plus vous êtes nombreux, plus vous avez de <strong style="color:var(--text);">Pouvoir</strong> pour sécuriser votre territoire.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CRÉER SA FACTION -->
+        <section id="creer">
+          <h2>Créer ta faction</h2>
+          <p>Tu n'appartiens à aucune faction ? C'est le moment de créer la tienne !</p>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">Tape la commande de création</div>
+                <div class="step-desc">Choisis un nom (3 à 24 lettres) et un tag court (2 à 10 lettres). Le tag s'affiche au-dessus de ta tête.</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">Invite tes amis</div>
+                <div class="step-desc">Utilise <code>/f invite &lt;pseudo&gt;</code> pour inviter tes amis. Ils reçoivent une invitation à accepter.</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">Construis ta base et protège-la</div>
+                <div class="step-desc">Place-toi sur un chunk de terrain et tape <code>/f claim</code> pour le revendiquer. Ce terrain appartient maintenant à ta faction.</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">Définis ton home de faction</div>
+                <div class="step-desc">Tape <code>/f sethome</code> pour fixer le point de ralliement. Tous tes membres pourront s'y téléporter avec <code>/f home</code>.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="command-block">
+            <span class="cmd-prefix">/</span>f create <span class="cmd-arg">&lt;nom&gt;</span> <span class="cmd-arg">&lt;tag&gt;</span>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">
+            Exemple : <code>/f create LesDragons DRG</code> — crée la faction "LesDragons" avec le tag [DRG].
+          </p>
+
+          <div class="glass-card glass-card-accent accent-cyan" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">📐</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:6px;">Règles de nommage</strong>
+                <ul style="margin:0;padding-left:1.2em;color:var(--text-muted);font-size:0.875rem;line-height:1.8;">
+                  <li>Le nom accepte uniquement des lettres, des chiffres et le tiret bas <code>_</code></li>
+                  <li>Le tag doit être court et mémorable — il s'affiche à côté de ton prénom dans le chat</li>
+                  <li>Un nom déjà pris par une autre faction n'est pas disponible</li>
+                  <li>La création est <strong>gratuite</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. LES GRADES -->
+        <section id="grades">
+          <h2>Les grades dans la faction</h2>
+          <p>
+            Il existe 4 grades dans une faction. Plus ton grade est élevé, plus tu as de droits pour gérer la faction.
+          </p>
+
+          <div class="role-grid">
+
+            <div class="role-card" style="border-top:3px solid var(--accent-gold);">
+              <span class="role-card-icon">👑</span>
+              <div class="role-card-name" style="color:var(--accent-gold);">Leader</div>
+              <div class="role-card-desc">Le chef ! Il peut tout faire — renommer la faction, changer la couleur, gérer les membres. Il ne peut pas être rétrogradé.</div>
+              <span class="badge badge-gold">Tout</span>
+            </div>
+
+            <div class="role-card" style="border-top:3px solid var(--danger);">
+              <span class="role-card-icon">⚔️</span>
+              <div class="role-card-name" style="color:var(--danger);">Officier</div>
+              <div class="role-card-desc">Le bras droit du leader. Il peut inviter, expulser, gérer les claims et la banque. C'est lui qui fait tourner la faction.</div>
+              <span class="badge badge-red">Gestion avancée</span>
+            </div>
+
+            <div class="role-card" style="border-top:3px solid var(--accent-secondary);">
+              <span class="role-card-icon">🛡️</span>
+              <div class="role-card-name" style="color:var(--accent-secondary);">Membre</div>
+              <div class="role-card-desc">Le soldat de la faction. Il peut utiliser la banque et bénéficie de la protection du territoire. Il construit et défend.</div>
+              <span class="badge badge-cyan">Banque</span>
+            </div>
+
+            <div class="role-card" style="border-top:3px solid var(--success);">
+              <span class="role-card-icon">🌱</span>
+              <div class="role-card-name" style="color:var(--success);">Recrue</div>
+              <div class="role-card-desc">Le nouveau venu ! Il est protégé par la faction mais n'a pas encore de droits de gestion. Il doit faire ses preuves.</div>
+              <span class="badge badge-green">Découverte</span>
+            </div>
+
+          </div>
+
+          <h3 id="permissions-grades">Qui peut faire quoi ?</h3>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th style="text-align:center;">🌱 Recrue</th>
+                  <th style="text-align:center;">🛡️ Membre</th>
+                  <th style="text-align:center;">⚔️ Officier</th>
+                  <th style="text-align:center;">👑 Leader</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Inviter des joueurs</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Expulser un membre</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Promouvoir / Rétrograder</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Claim / Unclaim des chunks</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Fixer le home de faction</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Utiliser la banque</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Gérer les alliances</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Renommer la faction</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+                <tr><td>Changer le tag / la couleur</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--danger);">✗</td><td style="text-align:center;color:var(--success);">✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. LE TERRITOIRE -->
+        <section id="territoire">
+          <h2>Le territoire — Protéger sa base</h2>
+          <p>
+            Le territoire, c'est la zone que ta faction protège. Pour "revendiquer" un chunk (une zone 16x16 blocs), place-toi dessus et tape <code>/f claim</code>. Les ennemis ne peuvent plus y construire !
+          </p>
+
+          <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:24px 0;">
+            <div class="stat-card">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-value">10</div>
+              <div class="stat-label">Pouvoir initial par joueur</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💀</div>
+              <div class="stat-value" style="color:var(--danger);">-1</div>
+              <div class="stat-label">Pouvoir perdu à chaque mort</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🔄</div>
+              <div class="stat-value" style="color:var(--success);">+0.2</div>
+              <div class="stat-label">Régénération / minute</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📦</div>
+              <div class="stat-value">10 000</div>
+              <div class="stat-label">Claims max par faction</div>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-red" style="margin:20px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.8rem;flex-shrink:0;">⚠️</span>
+              <div>
+                <strong style="color:var(--danger);display:block;margin-bottom:6px;font-size:0.95rem;">Attention au Pouvoir !</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Chaque chunk claimé "coûte" 1 point de Pouvoir. Si ta faction meurt trop souvent et perd plus de Pouvoir qu'elle n'a de chunks, les ennemis peuvent te voler tes territoires — c'est l'<strong style="color:var(--text);">overclaim</strong>. Garde tes membres en vie !
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="types-territoire">Les différents types de zones</h3>
+          <div class="territory-grid">
+            <div class="territory-card" style="border-left:3px solid var(--success);">
+              <span class="territory-card-icon">🟢</span>
+              <div>
+                <div class="territory-card-name">Safezone</div>
+                <div class="territory-card-desc">Zone de paix totale. Le PvP est désactivé. Personne ne peut te blesser ici.</div>
+              </div>
+            </div>
+            <div class="territory-card" style="border-left:3px solid var(--danger);">
+              <span class="territory-card-icon">🔴</span>
+              <div>
+                <div class="territory-card-name">Warzone</div>
+                <div class="territory-card-desc">Zone de guerre. Tout le monde peut se battre ici. Ne va pas là avec des objets précieux !</div>
+              </div>
+            </div>
+            <div class="territory-card" style="border-left:3px solid var(--accent-gold);">
+              <span class="territory-card-icon">🟡</span>
+              <div>
+                <div class="territory-card-name">Territoire de faction</div>
+                <div class="territory-card-desc">Votre base ! Protégée contre les ennemis. Seuls les membres et alliés peuvent construire.</div>
+              </div>
+            </div>
+            <div class="territory-card" style="border-left:3px solid var(--accent-secondary);">
+              <span class="territory-card-icon">🔵</span>
+              <div>
+                <div class="territory-card-name">Territoire allié</div>
+                <div class="territory-card-desc">La base de vos alliés. Vous y avez les mêmes droits que chez vous si votre allié vous l'autorise.</div>
+              </div>
+            </div>
+            <div class="territory-card" style="border-left:3px solid var(--text-faint);">
+              <span class="territory-card-icon">⚪</span>
+              <div>
+                <div class="territory-card-name">Wilderness</div>
+                <div class="territory-card-desc">Terrain sauvage non réclamé. N'appartient à personne. Le PvP est possible.</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="commandes-territoire">Commandes de territoire</h3>
+          <div class="command-block"><span class="cmd-prefix">/</span>f claim</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Revendique le chunk sur lequel tu te trouves.</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f unclaim</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Libère le chunk actuel (le territoire n'est plus protégé).</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f map</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Affiche une carte des claims autour de toi dans le chat.</p>
+        </section>
+
+        <!-- 5. RELATIONS -->
+        <section id="relations">
+          <h2>Les alliés et les ennemis</h2>
+          <p>
+            Votre faction peut avoir des relations avec les autres factions du serveur. Ces relations changent ce que vous pouvez faire les uns envers les autres.
+          </p>
+
+          <div class="relation-grid">
+            <div class="glass-card glass-card-accent accent-cyan" style="padding:24px 20px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:10px;">🤝</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--accent-secondary);margin-bottom:8px;">Allié</div>
+              <ul style="text-align:left;font-size:0.8rem;color:var(--text-muted);line-height:1.8;padding-left:1.1em;margin:0 0 12px;">
+                <li>Chat allié partagé</li>
+                <li>Accès à la base alliée (si autorisé)</li>
+                <li>Pas de PvP entre alliés (en safezone)</li>
+                <li>Maximum 5 alliances à la fois</li>
+              </ul>
+              <span class="badge badge-cyan">Max 5</span>
+            </div>
+            <div class="glass-card" style="padding:24px 20px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:10px;">⚖️</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--text-muted);margin-bottom:8px;">Neutre</div>
+              <ul style="text-align:left;font-size:0.8rem;color:var(--text-muted);line-height:1.8;padding-left:1.1em;margin:0 0 12px;">
+                <li>Aucune règle spéciale</li>
+                <li>Le PvP est possible partout</li>
+                <li>Ni ami, ni ennemi</li>
+                <li>État par défaut</li>
+              </ul>
+              <span class="badge badge-grey">Défaut</span>
+            </div>
+            <div class="glass-card glass-card-accent accent-red" style="padding:24px 20px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:10px;">⚔️</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--danger);margin-bottom:8px;">Ennemi</div>
+              <ul style="text-align:left;font-size:0.8rem;color:var(--text-muted);line-height:1.8;padding-left:1.1em;margin:0 0 12px;">
+                <li>PvP total, sans restriction</li>
+                <li>Peut voler les territoires (overclaim)</li>
+                <li>Guerre déclarée officiellement</li>
+                <li>Un seul côté suffit pour déclarer</li>
+              </ul>
+              <span class="badge badge-red">Guerre totale</span>
+            </div>
+          </div>
+
+          <div class="command-block"><span class="cmd-prefix">/</span>f ally <span class="cmd-arg">&lt;faction&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Propose une alliance à une autre faction (les deux doivent accepter).</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f enemy <span class="cmd-arg">&lt;faction&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Déclare une faction comme ennemie (un seul côté suffit).</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f neutral <span class="cmd-arg">&lt;faction&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Repasse en relation neutre avec une faction.</p>
+        </section>
+
+        <!-- 6. BANQUE -->
+        <section id="banque">
+          <h2>La banque de faction</h2>
+          <p>
+            La faction a une banque commune. Les membres peuvent y déposer ou retirer de l'argent pour financer les besoins de la faction. Seuls les membres (rang Membre et au-dessus) ont accès.
+          </p>
+
+          <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:20px 0;">
+            <div class="stat-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-value" style="font-size:1rem;line-height:1.3;">1 000 000 $</div>
+              <div class="stat-label">Solde maximum</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🛡️</div>
+              <div class="stat-value" style="font-size:1rem;line-height:1.3;">Membre +</div>
+              <div class="stat-label">Accès requis</div>
+            </div>
+          </div>
+
+          <div class="command-block"><span class="cmd-prefix">/</span>f bank deposit <span class="cmd-arg">&lt;montant&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Dépose de l'argent dans la banque de faction.</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f bank withdraw <span class="cmd-arg">&lt;montant&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Retire de l'argent de la banque de faction.</p>
+          <div class="command-block"><span class="cmd-prefix">/</span>f bank</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Consulte le solde actuel de la banque.</p>
+        </section>
+
+        <!-- 7. COMMANDES RAPIDES -->
+        <section id="commandes">
+          <h2>Toutes les commandes de base</h2>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Commande</th><th>Ce que ça fait</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/f create &lt;nom&gt; &lt;tag&gt;</code></td><td>Créer une nouvelle faction</td></tr>
+                <tr><td><code>/f join &lt;faction&gt;</code></td><td>Rejoindre une faction ouverte</td></tr>
+                <tr><td><code>/f accept</code></td><td>Accepter une invitation</td></tr>
+                <tr><td><code>/f deny</code></td><td>Refuser une invitation</td></tr>
+                <tr><td><code>/f leave</code></td><td>Quitter ta faction</td></tr>
+                <tr><td><code>/f info [faction]</code></td><td>Voir les infos d'une faction</td></tr>
+                <tr><td><code>/f list</code></td><td>Voir toutes les factions</td></tr>
+                <tr><td><code>/f home</code></td><td>Se téléporter au home de faction</td></tr>
+                <tr><td><code>/f sethome</code></td><td>Fixer le home de faction</td></tr>
+                <tr><td><code>/f claim</code></td><td>Revendiquer le chunk actuel</td></tr>
+                <tr><td><code>/f unclaim</code></td><td>Libérer le chunk actuel</td></tr>
+                <tr><td><code>/f map</code></td><td>Voir la carte des claims</td></tr>
+                <tr><td><code>/f invite &lt;joueur&gt;</code></td><td>Inviter quelqu'un</td></tr>
+                <tr><td><code>/f kick &lt;joueur&gt;</code></td><td>Expulser quelqu'un</td></tr>
+                <tr><td><code>/f promote &lt;joueur&gt;</code></td><td>Promouvoir un membre</td></tr>
+                <tr><td><code>/f demote &lt;joueur&gt;</code></td><td>Rétrograder un membre</td></tr>
+                <tr><td><code>/f ally &lt;faction&gt;</code></td><td>Proposer une alliance</td></tr>
+                <tr><td><code>/f enemy &lt;faction&gt;</code></td><td>Déclarer une guerre</td></tr>
+                <tr><td><code>/f neutral &lt;faction&gt;</code></td><td>Repasser en neutre</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text-muted);">
+            Pour voir toutes les commandes disponibles (dont les commandes admin), consulte la page <a href="commands.html" style="color:var(--accent-secondary);">Commandes</a>.
+          </p>
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#cest-quoi" class="toc-link">C'est quoi une faction ?</a></li>
+          <li class="toc-item"><a href="#creer" class="toc-link">Créer ta faction</a></li>
+          <li class="toc-item"><a href="#grades" class="toc-link">Les grades</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#permissions-grades" class="toc-link">Qui peut faire quoi ?</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#territoire" class="toc-link">Le territoire</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#types-territoire" class="toc-link">Types de zones</a></li>
+              <li class="toc-item"><a href="#commandes-territoire" class="toc-link">Commandes</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#relations" class="toc-link">Alliés et ennemis</a></li>
+          <li class="toc-item"><a href="#banque" class="toc-link">La banque</a></li>
+          <li class="toc-item"><a href="#commandes" class="toc-link">Toutes les commandes</a></li>
+        </ul>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

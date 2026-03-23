@@ -1,0 +1,651 @@
+<%- include('partials/head', { pageTitle: 'Gemmes — EriniumFaction Wiki' }) %>
+<style>
+    /* ── Gem type cards ── */
+    .gems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .gem-card {
+      position: relative;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 20px 18px;
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .gem-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .gem-card:hover { transform: translateY(-3px); }
+
+    /* Per-gem colors */
+    .gem-ruby    { border-color: rgba(231,76,60,0.45);  }
+    .gem-sapphire{ border-color: rgba(52,152,219,0.45); }
+    .gem-emerald { border-color: rgba(46,204,113,0.45); }
+    .gem-amethyst{ border-color: rgba(155,89,182,0.45); }
+    .gem-topaz   { border-color: rgba(241,196,15,0.45); }
+    .gem-onyx    { border-color: rgba(100,110,130,0.55); }
+
+    .gem-ruby:hover    { box-shadow: 0 4px 24px rgba(231,76,60,0.25);   }
+    .gem-sapphire:hover{ box-shadow: 0 4px 24px rgba(52,152,219,0.22);  }
+    .gem-emerald:hover { box-shadow: 0 4px 24px rgba(46,204,113,0.22);  }
+    .gem-amethyst:hover{ box-shadow: 0 4px 24px rgba(155,89,182,0.22);  }
+    .gem-topaz:hover   { box-shadow: 0 4px 24px rgba(241,196,15,0.22);  }
+    .gem-onyx:hover    { box-shadow: 0 4px 24px rgba(100,110,130,0.20); }
+
+    .gem-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .gem-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      border: 2px solid;
+    }
+    .gem-ruby     .gem-dot { background: rgba(231,76,60,0.18);  border-color: rgba(231,76,60,0.55);  box-shadow: 0 0 14px rgba(231,76,60,0.35); }
+    .gem-sapphire .gem-dot { background: rgba(52,152,219,0.18); border-color: rgba(52,152,219,0.55); box-shadow: 0 0 14px rgba(52,152,219,0.30); }
+    .gem-emerald  .gem-dot { background: rgba(46,204,113,0.18); border-color: rgba(46,204,113,0.55); box-shadow: 0 0 14px rgba(46,204,113,0.30); }
+    .gem-amethyst .gem-dot { background: rgba(155,89,182,0.18); border-color: rgba(155,89,182,0.55); box-shadow: 0 0 14px rgba(155,89,182,0.30); }
+    .gem-topaz    .gem-dot { background: rgba(241,196,15,0.18);  border-color: rgba(241,196,15,0.55);  box-shadow: 0 0 14px rgba(241,196,15,0.30); }
+    .gem-onyx     .gem-dot { background: rgba(100,110,130,0.18); border-color: rgba(100,110,130,0.55); box-shadow: 0 0 14px rgba(100,110,130,0.20); }
+
+    .gem-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .gem-ruby     .gem-card-name { color: #E74C3C; }
+    .gem-sapphire .gem-card-name { color: #3498DB; }
+    .gem-emerald  .gem-card-name { color: #2ECC71; }
+    .gem-amethyst .gem-card-name { color: #9B59B6; }
+    .gem-topaz    .gem-card-name { color: #F1C40F; }
+    .gem-onyx     .gem-card-name { color: #95A0B0; }
+
+    .gem-stat-linked {
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 1px;
+    }
+
+    .gem-effect-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .gem-effect-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+    .gem-effect-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-faint);
+      min-width: 48px;
+    }
+    .gem-effect-value { color: var(--text); font-weight: 600; }
+
+    /* ── Quality cards ── */
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (max-width: 600px) { .quality-grid { grid-template-columns: 1fr; } }
+
+    .quality-card {
+      position: relative;
+      padding: 20px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      text-align: center;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .quality-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+    }
+    .quality-card:hover { transform: translateY(-2px); }
+
+    .qc-brute    { border-color: rgba(200,150,100,0.40); }
+    .qc-taille   { border-color: rgba(0,229,255,0.35);   }
+    .qc-parfaite { border-color: rgba(255,215,0,0.45);   animation: glow-pulse 3s ease infinite; }
+
+    .qc-brute:hover    { box-shadow: 0 4px 20px rgba(200,150,100,0.18); }
+    .qc-taille:hover   { box-shadow: 0 4px 20px rgba(0,229,255,0.18);  }
+    .qc-parfaite:hover { box-shadow: 0 4px 20px rgba(255,215,0,0.25);  }
+
+    .quality-icon { font-size: 2rem; margin-bottom: 8px; }
+    .quality-name {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .qc-brute    .quality-name { color: #C89664; }
+    .qc-taille   .quality-name { color: var(--accent-secondary); }
+    .qc-parfaite .quality-name { color: var(--accent-gold); }
+
+    .quality-stat {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 4px 0;
+    }
+    .quality-stat strong { color: var(--text); }
+    .qc-parfaite .quality-stat strong { color: var(--accent-gold); }
+
+    /* ── Steps (how to socket) ── */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .step-item:hover {
+      border-color: rgba(107,47,160,0.35);
+      box-shadow: 0 2px 12px rgba(107,47,160,0.12);
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(107,47,160,0.40), rgba(0,229,255,0.25));
+      border: 1px solid rgba(107,47,160,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--accent-secondary);
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(107,47,160,0.25);
+    }
+
+    .step-content { flex: 1; }
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .step-desc code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8em;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(107,47,160,0.15);
+      border: 1px solid rgba(107,47,160,0.28);
+      color: var(--accent-secondary);
+    }
+
+    /* ── Recipe block ── */
+    .recipe-block {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 20px;
+      background: rgba(107,47,160,0.07);
+      border: 1px solid rgba(107,47,160,0.22);
+      border-radius: var(--radius-md);
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+    .recipe-pattern {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      letter-spacing: 0.05em;
+    }
+    .recipe-pattern .rk { display: flex; gap: 6px; align-items: center; font-size: 0.78rem; margin-top: 6px; }
+
+    /* ── Formulas block ── */
+    .formula-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.85rem;
+    }
+    .formula-table th, .formula-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .formula-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .formula-table td { color: var(--text-muted); }
+    .formula-table td:first-child { font-weight: 600; color: var(--text); }
+    .formula-table code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8em;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.18);
+      color: var(--accent-secondary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+  <div class="floating-particles">
+    <div class="star" style="top:8%;left:15%;animation-delay:0s"></div>
+    <div class="star" style="top:25%;left:80%;animation-delay:1s"></div>
+    <div class="star" style="top:60%;left:35%;animation-delay:2s"></div>
+    <div class="star" style="top:78%;left:60%;animation-delay:0.5s"></div>
+    <div class="star" style="top:45%;left:5%;animation-delay:1.5s"></div>
+  </div>
+  <div class="main">
+    <div class="hero" style="background:linear-gradient(135deg,rgba(155,89,182,0.13) 0%,rgba(255,215,0,0.07) 50%,transparent 100%);">
+      <div class="hero-badge">💎 Gemmes</div>
+      <h1>Gemmes &amp; Sertissage</h1>
+      <p>Les gemmes sont des pierres précieuses que tu peux insérer dans tes armes et armures pour leur donner des pouvoirs spéciaux. Il y a 6 types et 3 qualités !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">💎 <strong>6 types de gemmes</strong></span>
+        <span class="hero-meta-item">✨ <strong>3 qualités</strong></span>
+        <span class="hero-meta-item">🔨 <strong>Sertissage via Enclume</strong></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="/index">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Gemmes &amp; Sertissage</span>
+      </div>
+
+      <!-- ══════════ C'EST QUOI ══════════ -->
+      <h2 style="margin-top:32px;">C'est quoi une gemme ?</h2>
+      <p>Une gemme est une pierre magique que tu glisses dans un <strong>socket</strong> (emplacement vide) sur une arme ou une armure. Chaque gemme donne un bonus permanent quand elle est sertie. Les armes et armures de tier supérieur ont plus de sockets, donc plus de gemmes possibles.</p>
+
+      <!-- ══════════ LES 6 TYPES ══════════ -->
+      <h2>Les 6 types de gemmes</h2>
+      <p>Chaque type de gemme booste une stat RPG différente et a un effet spécial en combat :</p>
+
+      <div class="gems-grid">
+
+        <!-- RUBY -->
+        <div class="gem-card gem-ruby">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_ruby_perfect.png" alt="Rubis" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Rubis</div>
+              <div class="gem-stat-linked">Stat RPG : Force</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">Lifesteal — vol de vie à chaque coup</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Arme principale seulement</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">+2% lifesteal par Rubis Taillé</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAPPHIRE -->
+        <div class="gem-card gem-sapphire">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_sapphire_perfect.png" alt="Saphir" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Saphir</div>
+              <div class="gem-stat-linked">Stat RPG : Vigueur</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">+PV max</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Armure ou arme</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">+2 PV par Saphir Taillé</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMERALD -->
+        <div class="gem-card gem-emerald">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_emerald_perfect.png" alt="Émeraude" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Émeraude</div>
+              <div class="gem-stat-linked">Stat RPG : Fortune</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">+Chance de drop rare</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Armure ou arme</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Améliore le loot des monstres</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMETHYST -->
+        <div class="gem-card gem-amethyst">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_amethyst_perfect.png" alt="Améthyste" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Améthyste</div>
+              <div class="gem-stat-linked">Stat RPG : Arcane</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">+Régénération de mana</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Armure ou arme</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Idéal pour les mages</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOPAZ -->
+        <div class="gem-card gem-topaz">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_topaz_perfect.png" alt="Topaze" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Topaze</div>
+              <div class="gem-stat-linked">Stat RPG : Agilité</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">+% vitesse de déplacement</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Armure ou arme</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">+3% vitesse par Topaze Taillée</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ONYX -->
+        <div class="gem-card gem-onyx">
+          <div class="gem-card-header">
+            <div class="gem-dot"><img src="/img/items/gem_onyx_perfect.png" alt="Onyx" style="width:28px;height:28px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="gem-card-name">Onyx</div>
+              <div class="gem-stat-linked">Stat RPG : Résistance</div>
+            </div>
+          </div>
+          <div class="gem-effect-row">
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Effet</span>
+              <span class="gem-effect-value">-% dégâts reçus</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Slot</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">Armure ou arme</span>
+            </div>
+            <div class="gem-effect-item">
+              <span class="gem-effect-label">Base</span>
+              <span style="font-size:0.83rem;color:var(--text-muted);">-2% dégâts par Onyx Taillé</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /gems-grid -->
+
+      <!-- ══════════ LES 3 QUALITÉS ══════════ -->
+      <h2>Les 3 qualités</h2>
+      <p>Chaque type de gemme existe en 3 qualités. La qualité détermine combien de stats et de puissance de combat elle donne :</p>
+
+      <div class="quality-grid">
+        <div class="quality-card qc-brute">
+          <div class="quality-icon"><img src="/img/items/gem_ruby_raw.png" alt="Gemme Brute" style="width:48px;height:48px;image-rendering:pixelated;" /></div>
+          <div class="quality-name">Brute</div>
+          <div class="quality-stat"><strong>+1</strong> point de stat RPG</div>
+          <div class="quality-stat">×0.5 effet de combat</div>
+          <div class="quality-stat" style="margin-top:8px;font-size:0.78rem;color:var(--text-faint);">La plus commune, drops fréquents sur les monstres.</div>
+        </div>
+        <div class="quality-card qc-taille">
+          <div class="quality-icon"><img src="/img/items/gem_ruby_cut.png" alt="Gemme Taillée" style="width:48px;height:48px;image-rendering:pixelated;" /></div>
+          <div class="quality-name">Taillée</div>
+          <div class="quality-stat"><strong>+2</strong> points de stat RPG</div>
+          <div class="quality-stat">×1.0 effet de combat (référence)</div>
+          <div class="quality-stat" style="margin-top:8px;font-size:0.78rem;color:var(--text-faint);">Obtenue en taillant une gemme brute avec un outil spécial.</div>
+        </div>
+        <div class="quality-card qc-parfaite">
+          <div class="quality-icon"><img src="/img/items/gem_ruby_perfect.png" alt="Gemme Parfaite" style="width:48px;height:48px;image-rendering:pixelated;" /></div>
+          <div class="quality-name">Parfaite</div>
+          <div class="quality-stat"><strong>+4</strong> points de stat RPG</div>
+          <div class="quality-stat">×2.0 effet de combat (double !)</div>
+          <div class="quality-stat" style="margin-top:8px;font-size:0.78rem;color:var(--text-faint);">Très rare. Vaut deux gemmes taillées à elle seule.</div>
+        </div>
+      </div>
+
+      <!-- ══════════ COMMENT SERTIR ══════════ -->
+      <h2>Comment sertir une gemme ?</h2>
+      <p>Pour mettre une gemme dans ton arme ou ton armure, tu as besoin de l'<strong>Enclume de Diamant</strong>. Voici comment faire :</p>
+
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-title">Fabrique l'Enclume de Diamant</div>
+            <div class="step-desc">
+              C'est un bloc spécial qui ne se casse jamais. Recette : <code>DDD / _I_ / BBB</code><br>
+              <span style="font-size:0.78rem;color:var(--text-faint);margin-top:4px;display:block;">D = Diamant, I = Bloc de fer, B = Lingot de fer</span>
+            </div>
+            <div class="recipe-block" style="margin-top:10px;padding:12px 16px;">
+              <img src="/img/blocks/diamond_anvil_top.png" alt="Enclume de Diamant" style="width:48px;height:48px;image-rendering:pixelated;flex-shrink:0;" />
+              <div style="flex:1;">
+                <pre class="recipe-pattern" style="margin:0;">D D D
+_ I _
+B B B</pre>
+                <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.8;">
+                  D = 💎 Diamant<br>
+                  I = ■ Bloc de fer<br>
+                  B = ⬜ Lingot de fer
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-title">Prends ton arme ou armure en main</div>
+            <div class="step-desc">Tiens l'objet que tu veux sertir dans ta main principale. L'objet doit avoir au moins un socket vide.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-title">Clic droit sur l'Enclume de Diamant</div>
+            <div class="step-desc">Une interface de sertissage s'ouvre. Tu vois les sockets disponibles sur ton objet.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-title">Sélectionne un socket vide</div>
+            <div class="step-desc">Clique sur un emplacement de socket vide (◈) dans l'interface.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <div class="step-title">Clique sur la gemme à insérer</div>
+            <div class="step-desc">Choisis la gemme de ton inventaire. Elle est maintenant fixée dans ton arme ! Le bonus est immédiatement actif.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ L'EXTRACTEUR ══════════ -->
+      <h2>L'Extracteur d'Erinium</h2>
+      <p>Tu peux retirer une gemme de son socket sans la détruire grâce à l'<strong>Extracteur d'Erinium</strong>. C'est un outil rare mais précieux si tu veux réorganiser tes gemmes.</p>
+
+      <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:32px;display:flex;align-items:flex-start;gap:16px;">
+        <img src="/img/items/erinium_extractor.png" alt="Extracteur d'Erinium" style="width:48px;height:48px;image-rendering:pixelated;flex-shrink:0;" />
+        <p style="margin:0;font-size:0.88rem;">
+          L'Extracteur d'Erinium (<code>erinium_extractor</code>) est un item unique. Tiens-le en main, tiens l'objet serti dans l'autre main, et utilise l'interface de sertissage pour retirer les gemmes une par une. La gemme retirée est restituée dans ton inventaire.
+        </p>
+      </div>
+
+      <!-- ══════════ BONUS DE COMBAT ══════════ -->
+      <h2>Bonus de combat — formules exactes</h2>
+      <p>Voici exactement comment les gemmes affectent le combat. Les valeurs sont basées sur une gemme <strong>Taillée</strong> (×1.0) :</p>
+
+      <table class="formula-table">
+        <thead>
+          <tr>
+            <th>Gemme</th>
+            <th>Effet</th>
+            <th>Valeur (Brute / Taillée / Parfaite)</th>
+            <th>Plafond</th>
+            <th>Diminishing returns</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🔴 Rubis</td>
+            <td>Lifesteal % (arme)</td>
+            <td><code>1%</code> / <code>2%</code> / <code>4%</code> par gemme</td>
+            <td>Aucun (mais gem 5+ comptent à ×0.5)</td>
+            <td>Oui — dès la 5e gemme</td>
+          </tr>
+          <tr>
+            <td>🔵 Saphir</td>
+            <td>+PV maximum</td>
+            <td><code>+1</code> / <code>+2</code> / <code>+4</code> PV par gemme</td>
+            <td>Aucun</td>
+            <td>Non</td>
+          </tr>
+          <tr>
+            <td>🟡 Topaze</td>
+            <td>+% vitesse</td>
+            <td><code>1.5%</code> / <code>3%</code> / <code>6%</code> par gemme</td>
+            <td><strong>+15% max</strong></td>
+            <td>Non (plafonné)</td>
+          </tr>
+          <tr>
+            <td>⚫ Onyx</td>
+            <td>-% dégâts reçus</td>
+            <td><code>1%</code> / <code>2%</code> / <code>4%</code> par gemme</td>
+            <td><strong>-20% max</strong></td>
+            <td>Non (plafonné)</td>
+          </tr>
+          <tr>
+            <td>🟢 Émeraude</td>
+            <td>+Loot rare</td>
+            <td>Via stat Fortune RPG</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>🟣 Améthyste</td>
+            <td>+Regen mana</td>
+            <td>Via stat Arcane RPG</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="glass-card glass-card-accent accent-green" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Exemple de build :</strong> 4× Rubis Parfaits dans une épée d'Erinium = <strong>+16% lifesteal</strong>. À chaque coup infligeant 8 dégâts, tu récupères 1.28 PV. En PvP 1.8 où tu cliques rapidement, c'est extrêmement puissant !
+        </p>
+      </div>
+
+    </div>
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+<%- include('partials/footer') %>

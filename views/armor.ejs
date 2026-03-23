@@ -1,0 +1,455 @@
+<%- include('partials/head', { pageTitle: 'Armures — EriniumFaction Wiki' }) %>
+<style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    .item-img { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+    /* ── Armor tier header ── */
+    .armor-tier-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 28px;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      border: 1px solid var(--glass-border);
+      border-bottom: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .armor-tier-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .at-t1 { background: linear-gradient(135deg, rgba(74,224,224,0.13) 0%, var(--glass-bg) 70%); border-color: var(--valterite-border); }
+    .at-t2 { background: linear-gradient(135deg, rgba(155,89,182,0.10) 0%, var(--glass-bg) 70%);   border-color: var(--aetherite-border); }
+    .at-t3 { background: linear-gradient(135deg, rgba(255,215,0,0.12) 0%, var(--glass-bg) 70%);  border-color: var(--erinium-border); }
+
+    .armor-tier-icon { font-size: 2.2rem; line-height: 1; }
+    .armor-tier-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .at-t1 .armor-tier-title { color: var(--valterite); }
+    .at-t2 .armor-tier-title { color: var(--aetherite); }
+    .at-t3 .armor-tier-title {
+      background: linear-gradient(135deg, #D4A017, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .armor-tier-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-top: 3px; }
+
+    .tier-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-left: 10px;
+    }
+    .at-t1 .tier-pill { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .at-t2 .tier-pill { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .at-t3 .tier-pill { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+
+    /* ── Armor pieces grid ── */
+    .armor-pieces-body {
+      border: 1px solid var(--glass-border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      padding: 20px 24px 24px;
+      margin-bottom: 32px;
+      background: var(--glass-bg);
+    }
+    .at-t1.armor-pieces-body { border-color: var(--valterite-border); }
+    .at-t2.armor-pieces-body { border-color: var(--aetherite-border); }
+    .at-t3.armor-pieces-body { border-color: var(--erinium-border); }
+
+    .armor-pieces-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) { .armor-pieces-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .armor-piece-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .armor-piece-card:hover { transform: translateY(-2px); }
+    .at-t1 .armor-piece-card:hover { border-color: var(--valterite-border); box-shadow: 0 4px 16px rgba(74,224,224,0.15); }
+    .at-t2 .armor-piece-card:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 16px rgba(155,89,182,0.12); }
+    .at-t3 .armor-piece-card:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 16px rgba(255,215,0,0.15); }
+
+    .armor-piece-img {
+      width: 48px; height: 48px;
+      image-rendering: pixelated;
+    }
+    .at-t1 .armor-piece-img { filter: drop-shadow(0 2px 8px rgba(74,224,224,0.5)); }
+    .at-t2 .armor-piece-img { filter: drop-shadow(0 2px 8px rgba(155,89,182,0.5)); }
+    .at-t3 .armor-piece-img { filter: drop-shadow(0 2px 8px rgba(255,215,0,0.7)); }
+
+    .armor-piece-name { font-size: 0.78rem; font-weight: 600; color: var(--text); }
+
+    .armor-piece-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      width: 100%;
+    }
+    .armor-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+    }
+    .armor-stat-key { color: var(--text-faint); }
+    .armor-stat-val { color: var(--text-muted); font-weight: 600; }
+
+    .piece-effect {
+      font-size: 0.68rem;
+      color: var(--accent-secondary);
+      font-weight: 600;
+      text-align: center;
+      padding: 3px 6px;
+      background: rgba(0,229,255,0.08);
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    /* ── Set bonus block ── */
+    .set-bonus-block {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      margin-top: 8px;
+    }
+    .at-t1 .set-bonus-block { background: rgba(74,224,224,0.09); border: 1px solid rgba(74,224,224,0.30); }
+    .at-t2 .set-bonus-block { background: rgba(155,89,182,0.07);   border: 1px solid rgba(155,89,182,0.28); }
+    .at-t3 .set-bonus-block { background: rgba(255,215,0,0.09);  border: 1px solid rgba(255,215,0,0.30); }
+
+    .set-bonus-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .set-bonus-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+    .set-bonus-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; }
+    .at-t1 .set-bonus-text strong { color: var(--valterite); }
+    .at-t2 .set-bonus-text strong { color: var(--aetherite); }
+    .at-t3 .set-bonus-text strong { color: var(--erinium); }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px;
+      font-size: 0.83rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .cval  { color: var(--valterite) !important; }
+    .caeth { color: var(--aetherite) !important; }
+    .cerin { color: var(--erinium)   !important; }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+  <div class="floating-particles">
+    <div class="star" style="top:12%;left:18%;animation-delay:0s"></div>
+    <div class="star" style="top:40%;left:72%;animation-delay:1s"></div>
+    <div class="star" style="top:68%;left:30%;animation-delay:2s"></div>
+    <div class="star" style="top:82%;left:88%;animation-delay:0.7s"></div>
+  </div>
+  <div class="main">
+    <div class="hero" style="background:linear-gradient(135deg,rgba(74,224,224,0.10) 0%,rgba(155,89,182,0.08) 50%,transparent 100%);">
+      <div class="hero-badge">🛡️ Protection</div>
+      <h1>Les Armures</h1>
+      <p>Trois tiers d'armures pour te protéger. Porte le set complet pour débloquer un bonus de set puissant !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">🛡️ <strong>3 tiers</strong></span>
+        <span class="hero-meta-item">✨ <strong>Effets spéciaux sur Erinium</strong></span>
+        <span class="hero-meta-item">💎 <strong>Sockets pour gemmes</strong></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="/index">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Armures</span>
+      </div>
+
+      <!-- ══════════ VALTERITE ══════════ -->
+      <h2 style="margin-top:32px;">Armures par tier</h2>
+      <p>Chaque tier d'armure se fabrique avec le matériau du même nom. Plus le tier est élevé, plus la protection est haute et plus tu as de sockets pour les gemmes.</p>
+
+      <!-- HEADER VALTERITE -->
+      <div class="armor-tier-header at-t1" style="margin-top:24px;">
+        <div class="armor-tier-icon">🟠</div>
+        <div>
+          <div class="armor-tier-title">Armure de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="armor-tier-subtitle">La première armure custom. Solidement en avance sur le diamant vanilla.</div>
+        </div>
+      </div>
+      <div class="armor-pieces-body at-t1">
+        <div class="armor-pieces-grid">
+          <div class="armor-piece-card">
+            <img src="/img/items/valterite_helmet.png" alt="Casque Valterite" class="armor-piece-img" />
+            <div class="armor-piece-name">Casque</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">3 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">1 ◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/valterite_chestplate.png" alt="Plastron Valterite" class="armor-piece-img" />
+            <div class="armor-piece-name">Plastron</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">8 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">1 ◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/valterite_leggings.png" alt="Jambières Valterite" class="armor-piece-img" />
+            <div class="armor-piece-name">Jambières</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">6 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">1 ◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/valterite_boots.png" alt="Bottes Valterite" class="armor-piece-img" />
+            <div class="armor-piece-name">Bottes</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">3 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">1 ◈</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="set-bonus-block at-t1">
+          <div class="set-bonus-icon">🟠</div>
+          <div>
+            <div class="set-bonus-title">Bonus de set complet (4/4)</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+10% de PV maximum</strong>. Si tu as 20 PV de base, tu en auras 22 !</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEADER AETHERITE -->
+      <div class="armor-tier-header at-t2">
+        <div class="armor-tier-icon">🔷</div>
+        <div>
+          <div class="armor-tier-title">Armure d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="armor-tier-subtitle">Protection supérieure, 2 sockets par pièce. Bonus de set offensif.</div>
+        </div>
+      </div>
+      <div class="armor-pieces-body at-t2">
+        <div class="armor-pieces-grid">
+          <div class="armor-piece-card">
+            <img src="/img/items/aetherite_helmet.png" alt="Casque Aetherite" class="armor-piece-img" />
+            <div class="armor-piece-name">Casque</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">4 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.5</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">2 ◈◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/aetherite_chestplate.png" alt="Plastron Aetherite" class="armor-piece-img" />
+            <div class="armor-piece-name">Plastron</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">9 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.5</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">2 ◈◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/aetherite_leggings.png" alt="Jambières Aetherite" class="armor-piece-img" />
+            <div class="armor-piece-name">Jambières</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">7 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.5</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">2 ◈◈</span></div>
+            </div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/aetherite_boots.png" alt="Bottes Aetherite" class="armor-piece-img" />
+            <div class="armor-piece-name">Bottes</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">4 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">2.5</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">2 ◈◈</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="set-bonus-block at-t2">
+          <div class="set-bonus-icon">🔷</div>
+          <div>
+            <div class="set-bonus-title">Bonus de set complet (4/4)</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+8% de dégâts infligés</strong>. Tous tes coups font 8% de plus !</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEADER ERINIUM -->
+      <div class="armor-tier-header at-t3">
+        <div class="armor-tier-icon">💜</div>
+        <div>
+          <div class="armor-tier-title">Armure d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="armor-tier-subtitle">L'armure ultime. Chaque pièce a un effet de potion permanent. 3 sockets chacune.</div>
+        </div>
+      </div>
+      <div class="armor-pieces-body at-t3">
+        <div class="armor-pieces-grid">
+          <div class="armor-piece-card">
+            <img src="/img/items/erinium_helmet.png" alt="Casque Erinium" class="armor-piece-img" />
+            <div class="armor-piece-name">Casque</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">5 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">3.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">3 ◈◈◈</span></div>
+            </div>
+            <div class="piece-effect">Vision Nocturne ✨</div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/erinium_chestplate.png" alt="Plastron Erinium" class="armor-piece-img" />
+            <div class="armor-piece-name">Plastron</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">11 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">3.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">3 ◈◈◈</span></div>
+            </div>
+            <div class="piece-effect">Résistance I + Force I ✨</div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/erinium_leggings.png" alt="Jambières Erinium" class="armor-piece-img" />
+            <div class="armor-piece-name">Jambières</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">9 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">3.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">3 ◈◈◈</span></div>
+            </div>
+            <div class="piece-effect">Saut amélioré I ✨</div>
+          </div>
+          <div class="armor-piece-card">
+            <img src="/img/items/erinium_boots.png" alt="Bottes Erinium" class="armor-piece-img" />
+            <div class="armor-piece-name">Bottes</div>
+            <div class="armor-piece-stats">
+              <div class="armor-stat-row"><span class="armor-stat-key">Protection</span><span class="armor-stat-val">5 ✦</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Solidité</span><span class="armor-stat-val">3.0</span></div>
+              <div class="armor-stat-row"><span class="armor-stat-key">Sockets</span><span class="armor-stat-val">3 ◈◈◈</span></div>
+            </div>
+            <div class="piece-effect">Rapidité I ✨</div>
+          </div>
+        </div>
+        <div class="set-bonus-block at-t3">
+          <div class="set-bonus-icon">💜</div>
+          <div>
+            <div class="set-bonus-title">Bonus de set complet (4/4)</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+15% de gain d'XP</strong>. Parfait pour progresser en RPG plus vite !</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ TABLEAU RÉCAP ══════════ -->
+      <h2>Comparaison des armures</h2>
+      <p>Protection totale en portant les 4 pièces du même set :</p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Set</th>
+            <th>Protection totale</th>
+            <th>Solidité (toughness)</th>
+            <th>Sockets total</th>
+            <th>Bonus de set</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cval">Valterite (T1)</td>
+            <td>20 ✦</td>
+            <td>2.0 par pièce</td>
+            <td>4 ◈</td>
+            <td>+10% PV max</td>
+          </tr>
+          <tr>
+            <td class="caeth">Aetherite (T2)</td>
+            <td>24 ✦</td>
+            <td>2.5 par pièce</td>
+            <td>8 ◈◈</td>
+            <td>+8% dégâts infligés</td>
+          </tr>
+          <tr>
+            <td class="cerin">Erinium (T3)</td>
+            <td>30 ✦</td>
+            <td>3.0 par pièce</td>
+            <td>12 ◈◈◈</td>
+            <td>+15% gain XP + effets potion</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="glass-card glass-card-accent accent-gold" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Astuce gemmes :</strong> L'armure Erinium avec 12 sockets te permet de combiner beaucoup de gemmes. Par exemple : Onyx dans le plastron pour réduire les dégâts reçus, Saphir dans le casque pour plus de PV, Topaze dans les bottes pour aller plus vite. Lis la page <a href="/gems">Gemmes</a> pour optimiser ton build !
+        </p>
+      </div>
+
+    </div>
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+<%- include('partials/footer') %>

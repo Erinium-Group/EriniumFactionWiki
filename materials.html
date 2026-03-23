@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les Matériaux — EriniumFaction Wiki</title>
+  <meta name="description" content="Découvrez les 3 matériaux d'EriniumFaction : Valterite, Aetherite et Erinium. Minerais, ingots et tout ce que tu peux fabriquer." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-rgb:    74, 224, 224;
+      --valterite-dark:   rgba(74, 224, 224, 0.12);
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-rgb:    155, 89, 182;
+      --aetherite-dark:   rgba(155, 89, 182, 0.10);
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-rgb:      255, 215, 0;
+      --erinium-dark:     rgba(255, 215, 0, 0.12);
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    .item-img {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* ── Tier hero cards ── */
+    .tier-hero {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 32px 36px 28px;
+      margin-bottom: 32px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+    .tier-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .tier-hero.t1 {
+      background: linear-gradient(135deg, rgba(74,224,224,0.13) 0%, var(--glass-bg) 60%);
+      border-color: var(--valterite-border);
+    }
+    .tier-hero.t2 {
+      background: linear-gradient(135deg, rgba(155,89,182,0.10) 0%, var(--glass-bg) 60%);
+      border-color: var(--aetherite-border);
+    }
+    .tier-hero.t3 {
+      background: linear-gradient(135deg, rgba(255,215,0,0.12) 0%, var(--glass-bg) 60%);
+      border-color: var(--erinium-border);
+    }
+
+    .tier-hero-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .tier-ingot-img {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,0.3));
+      flex-shrink: 0;
+    }
+    .t1 .tier-ingot-img { filter: drop-shadow(0 0 12px rgba(74,224,224,0.6)); }
+    .t2 .tier-ingot-img { filter: drop-shadow(0 0 12px rgba(155,89,182,0.6)); }
+    .t3 .tier-ingot-img { filter: drop-shadow(0 0 16px rgba(255,215,0,0.8)); }
+
+    .tier-hero-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .t1 .tier-hero-title { color: var(--valterite); }
+    .t2 .tier-hero-title { color: var(--aetherite); }
+    .t3 .tier-hero-title {
+      background: linear-gradient(135deg, #D4A017, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tier-hero-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+    .t1 .tier-badge { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .t2 .tier-badge { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .t3 .tier-badge { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+
+    /* ── Ore info block ── */
+    .ore-info-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+    }
+    .ore-info-content { flex: 1; }
+    .ore-info-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+    .ore-info-value {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .ore-info-value strong { color: var(--text); }
+
+    /* ── Craftable items grid ── */
+    .craft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .craft-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 8px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      text-align: center;
+    }
+    .craft-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--glass-border-hover);
+    }
+    .t1 .craft-item:hover { border-color: var(--valterite-border); box-shadow: 0 4px 16px rgba(74,224,224,0.15); }
+    .t2 .craft-item:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 16px rgba(155,89,182,0.12); }
+    .t3 .craft-item:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 16px rgba(255,215,0,0.15); }
+
+    .craft-item-img {
+      width: 40px;
+      height: 40px;
+      image-rendering: pixelated;
+    }
+    .craft-item-name {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .craft-item-sockets {
+      font-size: 0.65rem;
+      color: var(--text-faint);
+    }
+    .craft-item-sockets span {
+      font-size: 0.8rem;
+    }
+
+    /* ── Socket badge ── */
+    .socket-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+    .t1 .socket-badge { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .t2 .socket-badge { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .t3 .socket-badge { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0 40px;
+      font-size: 0.85rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .cmp-val { color: var(--valterite) !important; }
+    .cmp-aeth { color: var(--aetherite) !important; }
+    .cmp-erin { color: var(--erinium) !important; }
+
+    /* ── Section divider label ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(var(--accent-primary-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.25);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--accent-secondary);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="floating-particles">
+    <div class="star" style="top:10%;left:15%;animation-delay:0s"></div>
+    <div class="star" style="top:30%;left:70%;animation-delay:1s"></div>
+    <div class="star" style="top:65%;left:40%;animation-delay:2s"></div>
+    <div class="star" style="top:80%;left:85%;animation-delay:0.5s"></div>
+    <div class="star" style="top:50%;left:5%;animation-delay:1.5s"></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+  <!-- ═══════════════════════ MAIN ═══════════════════════ -->
+  <div class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">⚒️ Fabrication</div>
+      <h1>Les Matériaux</h1>
+      <p>Il y a 3 matériaux dans EriniumFaction, chacun plus puissant que le précédent. Ils servent à fabriquer toutes tes armes, armures et outils.</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">⛏️ <strong>3 matériaux</strong></span>
+        <span class="hero-meta-item">🔩 <strong>Valterite → Aetherite → Erinium</strong></span>
+        <span class="hero-meta-item">💎 <strong>Jusqu'à 3 sockets par pièce</strong></span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Matériaux</span>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════
+           TIER 1 — VALTERITE
+           ══════════════════════════════════════════════════════ -->
+      <h2 style="margin-top:32px;">Les 3 Matériaux</h2>
+      <p>Chaque matériau se trouve dans un biome différent et offre des équipements de plus en plus puissants. Commence par la Valterite, passe à l'Aetherite, et vise l'Erinium !</p>
+
+      <!-- VALTERITE -->
+      <div class="tier-hero t1">
+        <div class="tier-hero-header">
+          <img src="img/items/valterite_ingot.png" alt="Lingot de Valterite" class="tier-ingot-img" />
+          <div>
+            <div class="tier-hero-title">Valterite <span class="tier-badge">Tier 1</span></div>
+            <div class="tier-hero-subtitle">Le premier matériau à obtenir. Plus fort que le diamant, plus facile à trouver.</div>
+          </div>
+        </div>
+
+        <div class="ore-info-row">
+          <img src="img/items/valterite_raw.png" alt="Minerai Valterite" class="item-img" style="width:36px;height:36px;" />
+          <div class="ore-info-content">
+            <div class="ore-info-label">Comment l'obtenir</div>
+            <div class="ore-info-value">Mine le <strong>minerai de Valterite</strong> avec une pioche en fer ou mieux. Il se trouve dans les biomes de plaines entre les niveaux Y=16 et Y=48. Fais fondre le minerai brut dans un four pour obtenir un <strong>lingot de Valterite</strong>.</div>
+          </div>
+        </div>
+
+        <div class="section-tag">⚙️ Ce que tu peux fabriquer</div>
+        <div class="craft-grid">
+          <div class="craft-item">
+            <img src="img/items/valterite_sword.png" alt="Épée" class="craft-item-img" />
+            <div class="craft-item-name">Épée</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_dagger.png" alt="Dague" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Dague</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_warhammer.png" alt="Marteau" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Marteau</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_bow.png" alt="Arc" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Arc</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_pickaxe.png" alt="Pioche" class="craft-item-img" />
+            <div class="craft-item-name">Pioche</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_axe.png" alt="Hache" class="craft-item-img" />
+            <div class="craft-item-name">Hache</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_shovel.png" alt="Pelle" class="craft-item-img" />
+            <div class="craft-item-name">Pelle</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_helmet.png" alt="Casque" class="craft-item-img" />
+            <div class="craft-item-name">Casque</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_chestplate.png" alt="Plastron" class="craft-item-img" />
+            <div class="craft-item-name">Plastron</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_leggings.png" alt="Jambières" class="craft-item-img" />
+            <div class="craft-item-name">Jambières</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/valterite_boots.png" alt="Bottes" class="craft-item-img" />
+            <div class="craft-item-name">Bottes</div>
+            <div class="craft-item-sockets">1 socket <span>◈</span></div>
+          </div>
+        </div>
+
+        <span class="socket-badge">◈ 1 socket par pièce — place 1 gemme</span>
+      </div>
+
+      <!-- AETHERITE -->
+      <div class="tier-hero t2">
+        <div class="tier-hero-header">
+          <img src="img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" class="tier-ingot-img" />
+          <div>
+            <div class="tier-hero-title">Aetherite <span class="tier-badge">Tier 2</span></div>
+            <div class="tier-hero-subtitle">Un cristal mystérieux qui brille d'une lumière bleue. Nettement plus puissant que la Valterite.</div>
+          </div>
+        </div>
+
+        <div class="ore-info-row">
+          <img src="img/items/aetherite_raw.png" alt="Minerai Aetherite" class="item-img" style="width:36px;height:36px;" />
+          <div class="ore-info-content">
+            <div class="ore-info-label">Comment l'obtenir</div>
+            <div class="ore-info-value">Mine le <strong>minerai d'Aetherite</strong> avec une pioche en Valterite ou mieux. Il apparaît dans les biomes de cavernes profondes entre Y=-16 et Y=16. Fais fondre le minerai brut pour obtenir un <strong>cristal d'Aetherite</strong>.</div>
+          </div>
+        </div>
+
+        <div class="section-tag">⚙️ Ce que tu peux fabriquer</div>
+        <div class="craft-grid">
+          <div class="craft-item">
+            <img src="img/items/aetherite_sword.png" alt="Épée" class="craft-item-img" />
+            <div class="craft-item-name">Épée</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_dagger.png" alt="Dague" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Dague</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_warhammer.png" alt="Marteau" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Marteau</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_bow.png" alt="Arc" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Arc</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_pickaxe.png" alt="Pioche" class="craft-item-img" />
+            <div class="craft-item-name">Pioche</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_axe.png" alt="Hache" class="craft-item-img" />
+            <div class="craft-item-name">Hache</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_shovel.png" alt="Pelle" class="craft-item-img" />
+            <div class="craft-item-name">Pelle</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_helmet.png" alt="Casque" class="craft-item-img" />
+            <div class="craft-item-name">Casque</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_chestplate.png" alt="Plastron" class="craft-item-img" />
+            <div class="craft-item-name">Plastron</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_leggings.png" alt="Jambières" class="craft-item-img" />
+            <div class="craft-item-name">Jambières</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/aetherite_boots.png" alt="Bottes" class="craft-item-img" />
+            <div class="craft-item-name">Bottes</div>
+            <div class="craft-item-sockets">2 sockets <span>◈◈</span></div>
+          </div>
+        </div>
+
+        <span class="socket-badge">◈◈ 2 sockets par pièce — place 2 gemmes</span>
+      </div>
+
+      <!-- ERINIUM -->
+      <div class="tier-hero t3">
+        <div class="tier-hero-header">
+          <img src="img/items/erinium_fragment.png" alt="Fragment d'Erinium" class="tier-ingot-img" />
+          <div>
+            <div class="tier-hero-title">Erinium <span class="tier-badge">Tier 3</span></div>
+            <div class="tier-hero-subtitle">Le matériau ultime. Extrêmement rare, il brille d'une lueur dorée et brillante. Les équipements Erinium ont des effets spéciaux.</div>
+          </div>
+        </div>
+
+        <div class="ore-info-row">
+          <img src="img/items/erinium_raw.png" alt="Minerai Erinium" class="item-img" style="width:36px;height:36px;" />
+          <div class="ore-info-content">
+            <div class="ore-info-label">Comment l'obtenir</div>
+            <div class="ore-info-value">Mine le <strong>minerai d'Erinium</strong> avec une pioche en Aetherite ou mieux. Il est très rare et se trouve uniquement dans les biomes volcaniques et abyssaux entre Y=-48 et Y=-24. Fais fondre le minerai brut pour obtenir un <strong>fragment d'Erinium</strong>.</div>
+          </div>
+        </div>
+
+        <div class="section-tag">⚙️ Ce que tu peux fabriquer</div>
+        <div class="craft-grid">
+          <div class="craft-item">
+            <img src="img/items/erinium_sword.png" alt="Épée" class="craft-item-img" />
+            <div class="craft-item-name">Épée</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_dagger.png" alt="Dague" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Dague</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_warhammer.png" alt="Marteau" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Marteau</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_bow.png" alt="Arc" class="craft-item-img" style="image-rendering:pixelated;" />
+            <div class="craft-item-name">Arc</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_pickaxe.png" alt="Pioche" class="craft-item-img" />
+            <div class="craft-item-name">Pioche</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_axe.png" alt="Hache" class="craft-item-img" />
+            <div class="craft-item-name">Hache</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_shovel.png" alt="Pelle" class="craft-item-img" />
+            <div class="craft-item-name">Pelle</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_helmet.png" alt="Casque" class="craft-item-img" />
+            <div class="craft-item-name">Casque</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_chestplate.png" alt="Plastron" class="craft-item-img" />
+            <div class="craft-item-name">Plastron</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_leggings.png" alt="Jambières" class="craft-item-img" />
+            <div class="craft-item-name">Jambières</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+          <div class="craft-item">
+            <img src="img/items/erinium_boots.png" alt="Bottes" class="craft-item-img" />
+            <div class="craft-item-name">Bottes</div>
+            <div class="craft-item-sockets">3 sockets <span>◈◈◈</span></div>
+          </div>
+        </div>
+
+        <span class="socket-badge">◈◈◈ 3 sockets par pièce — place 3 gemmes</span>
+      </div>
+
+      <!-- ══════ COMPARISON TABLE ══════ -->
+      <h2>Comparaison rapide</h2>
+      <p>Voici un résumé pour choisir le bon matériau selon où tu en es dans le jeu.</p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Matériau</th>
+            <th>Raffiné en</th>
+            <th>Pioche requise</th>
+            <th>Rareté</th>
+            <th>Sockets</th>
+            <th>Effets spéciaux</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cmp-val">⬛ Valterite</td>
+            <td>Lingot</td>
+            <td>Fer+</td>
+            <td>Peu commun</td>
+            <td>1 socket</td>
+            <td>Aucun</td>
+          </tr>
+          <tr>
+            <td class="cmp-aeth">🔷 Aetherite</td>
+            <td>Cristal</td>
+            <td>Valterite+</td>
+            <td>Rare</td>
+            <td>2 sockets</td>
+            <td>Aucun</td>
+          </tr>
+          <tr>
+            <td class="cmp-erin">💜 Erinium</td>
+            <td>Fragment</td>
+            <td>Aetherite+</td>
+            <td>Épique</td>
+            <td>3 sockets</td>
+            <td>Effets de potion par pièce</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Conseil :</strong> Plus tu as de sockets, plus tu peux placer de gemmes puissantes. Une armure complète en Erinium avec 3 sockets chacune = 12 slots de gemmes ! Consulte la page <a href="gems.html">Gemmes</a> pour savoir lesquelles choisir.
+        </p>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <footer class="footer" style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup — Minecraft 1.12.2</span>
+      <div style="display:flex;gap:16px;">
+        <a href="index.html" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Accueil</a>
+        <a href="weapons.html" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Armes</a>
+        <a href="armor.html" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Armures</a>
+        <a href="gems.html" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Gemmes</a>
+      </div>
+    </footer>
+  </div><!-- /main -->
+
+  
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

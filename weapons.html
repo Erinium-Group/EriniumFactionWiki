@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les Armes — EriniumFaction Wiki</title>
+  <meta name="description" content="Toutes les armes d'EriniumFaction : épées, dagues, marteaux de guerre, arcs et haches. Stats, dégâts et sockets par tier." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-rgb:    74, 224, 224;
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-rgb:    155, 89, 182;
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-rgb:      255, 215, 0;
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    .item-img { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+    /* ── Weapon type section header ── */
+    .weapon-type-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 40px 0 20px;
+    }
+    .weapon-type-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .weapon-type-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .weapon-type-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Weapon tier card ── */
+    .weapon-card {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .weapon-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .weapon-card:hover { transform: translateY(-2px); }
+    .weapon-card.t1:hover { border-color: var(--valterite-border); box-shadow: 0 4px 20px rgba(74,224,224,0.15); }
+    .weapon-card.t2:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 20px rgba(155,89,182,0.12); }
+    .weapon-card.t3:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 20px rgba(255,215,0,0.18); }
+    .weapon-card.t1 { border-left: 3px solid var(--valterite); }
+    .weapon-card.t2 { border-left: 3px solid var(--aetherite); }
+    .weapon-card.t3 { border-left: 3px solid var(--erinium); }
+
+    .weapon-card-img {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    }
+    .t1 .weapon-card-img { filter: drop-shadow(0 2px 8px rgba(74,224,224,0.5)); }
+    .t2 .weapon-card-img { filter: drop-shadow(0 2px 8px rgba(155,89,182,0.5)); }
+    .t3 .weapon-card-img { filter: drop-shadow(0 2px 8px rgba(255,215,0,0.7)); }
+
+    .weapon-card-body { flex: 1; }
+    .weapon-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+    .t1 .tier-pill { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .t2 .tier-pill { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .t3 .tier-pill { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+
+    .weapon-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .weapon-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 80px;
+    }
+    .weapon-stat-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+    }
+    .weapon-stat-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .weapon-stat-value.red   { color: #FF6B6B; }
+    .weapon-stat-value.cyan  { color: var(--accent-secondary); }
+    .weapon-stat-value.gold  { color: var(--accent-gold); }
+    .weapon-stat-value.green { color: var(--success); }
+
+    .weapon-special {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(var(--accent-primary-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.20);
+      border-radius: var(--radius-sm);
+      font-size: 0.80rem;
+      color: var(--text-muted);
+    }
+    .weapon-special strong { color: var(--accent-secondary); }
+
+    /* ── Info callout ── */
+    .info-callout {
+      display: flex;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      margin-bottom: 28px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .info-callout.warn {
+      background: rgba(243,156,18,0.08);
+      border: 1px solid rgba(243,156,18,0.28);
+    }
+    .info-callout.tip {
+      background: rgba(46,204,113,0.08);
+      border: 1px solid rgba(46,204,113,0.28);
+    }
+    .info-callout-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 40px;
+      font-size: 0.83rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .cval  { color: var(--valterite)  !important; }
+    .caeth { color: var(--aetherite) !important; }
+    .cerin { color: var(--erinium)   !important; }
+  </style>
+</head>
+<body>
+  <div class="floating-particles">
+    <div class="star" style="top:8%;left:20%;animation-delay:0s"></div>
+    <div class="star" style="top:35%;left:75%;animation-delay:1.2s"></div>
+    <div class="star" style="top:70%;left:45%;animation-delay:0.6s"></div>
+    <div class="star" style="top:85%;left:10%;animation-delay:2s"></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+  <div class="main">
+    <div class="hero" style="background:linear-gradient(135deg,rgba(231,76,60,0.13) 0%,rgba(243,156,18,0.07) 50%,transparent 100%);">
+      <div class="hero-badge">⚔️ Combat</div>
+      <h1>Les Armes</h1>
+      <p>Il y a 5 types d'armes dans EriniumFaction. Chaque type a ses avantages. Choisis selon ton style de jeu !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">⚔️ <strong>5 types d'armes</strong></span>
+        <span class="hero-meta-item">🔩 <strong>3 tiers chacun</strong></span>
+        <span class="hero-meta-item">💎 <strong>Sockets pour gemmes</strong></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Armes</span>
+      </div>
+
+      <div class="info-callout warn" style="margin-top:24px;">
+        <div class="info-callout-icon">⚡</div>
+        <div><strong>PvP 1.8 :</strong> Le serveur utilise le système PvP de Minecraft 1.8. Il n'y a <strong>pas de délai d'attaque</strong> entre les coups. Tu peux cliquer aussi vite que tu veux ! La vitesse d'attaque ne compte pas — seuls les dégâts bruts et les mécaniques spéciales importent.</div>
+      </div>
+
+      <!-- ══════════════ ÉPÉES ══════════════ -->
+      <div class="weapon-type-header">
+        <div class="weapon-type-icon">⚔️</div>
+        <div>
+          <div class="weapon-type-name">Épées</div>
+          <div class="weapon-type-desc">L'arme principale de tout combattant. Bon équilibre entre dégâts et durabilité.</div>
+        </div>
+      </div>
+
+      <div class="weapon-card t1">
+        <img src="img/items/valterite_sword.png" alt="Épée de Valterite" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Épée de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">7.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">1 600</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Enchantabilité</span>
+              <span class="weapon-stat-value">12</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">1 ◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t2">
+        <img src="img/items/aetherite_sword.png" alt="Épée d'Aetherite" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Épée d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">7.5 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">2 200</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Enchantabilité</span>
+              <span class="weapon-stat-value">14</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">2 ◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t3">
+        <img src="img/items/erinium_sword.png" alt="Épée d'Erinium" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Épée d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">8.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">3 100</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Enchantabilité</span>
+              <span class="weapon-stat-value">18</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">3 ◈◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ DAGUES ══════════════ -->
+      <div class="weapon-type-header">
+        <div class="weapon-type-icon">🗡️</div>
+        <div>
+          <div class="weapon-type-name">Dagues</div>
+          <div class="weapon-type-desc">Arme rapide et furtive. Moins de dégâts bruts, mais un bonus de backstab si tu attaques par derrière.</div>
+        </div>
+      </div>
+
+      <div class="info-callout tip" style="margin-bottom:20px;">
+        <div class="info-callout-icon">🎯</div>
+        <div><strong>Backstab :</strong> Attaquer un joueur dans le dos avec une dague inflige des dégâts bonus. Idéal pour les joueurs qui aiment se faufiler derrière leurs ennemis.</div>
+      </div>
+
+      <div class="weapon-card t1">
+        <img src="img/items/valterite_dagger.png" alt="Dague de Valterite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Dague de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">4.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">300</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">1 ◈</span>
+            </div>
+          </div>
+          <div class="weapon-special">Bonus backstab via <strong>BackstabHandler</strong> — dégâts amplifiés en attaquant par derrière.</div>
+        </div>
+      </div>
+
+      <div class="weapon-card t2">
+        <img src="img/items/aetherite_dagger.png" alt="Dague d'Aetherite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Dague d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">5.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">450</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">2 ◈◈</span>
+            </div>
+          </div>
+          <div class="weapon-special">Bonus backstab — plus efficace avec des gemmes Topaze pour la vitesse.</div>
+        </div>
+      </div>
+
+      <div class="weapon-card t3">
+        <img src="img/items/erinium_dagger.png" alt="Dague d'Erinium" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Dague d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">6.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">700</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">3 ◈◈◈</span>
+            </div>
+          </div>
+          <div class="weapon-special">Bonus backstab maximal — aucun enchantement possible par design, la dague est déjà très puissante.</div>
+        </div>
+      </div>
+
+      <!-- ══════════════ MARTEAUX DE GUERRE ══════════════ -->
+      <div class="weapon-type-header">
+        <div class="weapon-type-icon">🔨</div>
+        <div>
+          <div class="weapon-type-name">Marteaux de Guerre</div>
+          <div class="weapon-type-desc">Arme lourde à zone d'effet (AoE). Inflige des dégâts à tous les ennemis proches, mais avec un temps de recharge.</div>
+        </div>
+      </div>
+
+      <div class="info-callout warn" style="margin-bottom:20px;">
+        <div class="info-callout-icon">💥</div>
+        <div><strong>AoE :</strong> Chaque coup de marteau touche tous les joueurs et monstres dans un rayon autour de ta cible. Parfait pour les combats de groupe ! Le marteau a un <strong>cooldown</strong> — tu dois attendre entre chaque frappe. Aucun enchantement possible.</div>
+      </div>
+
+      <div class="weapon-card t1">
+        <img src="img/items/valterite_warhammer.png" alt="Marteau de Valterite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Marteau de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">7.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Rayon AoE</span>
+              <span class="weapon-stat-value gold">2.0 blocs</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Cooldown</span>
+              <span class="weapon-stat-value">40 ticks (2s)</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">400</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">1 ◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t2">
+        <img src="img/items/aetherite_warhammer.png" alt="Marteau d'Aetherite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Marteau d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">8.5 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Rayon AoE</span>
+              <span class="weapon-stat-value gold">2.5 blocs</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Cooldown</span>
+              <span class="weapon-stat-value">50 ticks (2.5s)</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">600</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">2 ◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t3">
+        <img src="img/items/erinium_warhammer.png" alt="Marteau d'Erinium" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Marteau d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">10.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Rayon AoE</span>
+              <span class="weapon-stat-value gold">3.0 blocs</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Cooldown</span>
+              <span class="weapon-stat-value">60 ticks (3s)</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">1 000</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">3 ◈◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ ARCS ══════════════ -->
+      <div class="weapon-type-header">
+        <div class="weapon-type-icon">🏹</div>
+        <div>
+          <div class="weapon-type-name">Arcs</div>
+          <div class="weapon-type-desc">Combat à distance. Chaque tier améliore les dégâts, la vitesse des flèches et la vitesse de chargement.</div>
+        </div>
+      </div>
+
+      <div class="weapon-card t1">
+        <img src="img/items/valterite_bow.png" alt="Arc de Valterite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Arc de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. dégâts</span>
+              <span class="weapon-stat-value red">×1.20</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. vitesse flèche</span>
+              <span class="weapon-stat-value gold">×1.10</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Chargement</span>
+              <span class="weapon-stat-value green">×1.00</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">500</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">1 ◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t2">
+        <img src="img/items/aetherite_bow.png" alt="Arc d'Aetherite" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Arc d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. dégâts</span>
+              <span class="weapon-stat-value red">×1.35</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. vitesse flèche</span>
+              <span class="weapon-stat-value gold">×1.20</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Chargement</span>
+              <span class="weapon-stat-value green">×1.25 (plus rapide)</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">750</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">2 ◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t3">
+        <img src="img/items/erinium_bow.png" alt="Arc d'Erinium" class="weapon-card-img" style="image-rendering:pixelated;" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Arc d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. dégâts</span>
+              <span class="weapon-stat-value red">×1.50</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Mult. vitesse flèche</span>
+              <span class="weapon-stat-value gold">×1.30</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Chargement</span>
+              <span class="weapon-stat-value green">×1.43 (très rapide)</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">1 200</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">3 ◈◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ HACHES ══════════════ -->
+      <div class="weapon-type-header">
+        <div class="weapon-type-icon">🪓</div>
+        <div>
+          <div class="weapon-type-name">Haches</div>
+          <div class="weapon-type-desc">Outil polyvalent — peut couper le bois ET combattre. En PvP 1.8, les haches sont moins efficaces que les épées en dégâts bruts.</div>
+        </div>
+      </div>
+
+      <div class="info-callout warn" style="margin-bottom:20px;">
+        <div class="info-callout-icon">⚠️</div>
+        <div><strong>PvP 1.8 :</strong> Les haches ont <strong>moins de dégâts</strong> que les épées intentionnellement. En Minecraft 1.8 sans cooldown d'attaque, l'hache serait trop forte sinon. Utilise une épée si tu veux maximiser tes dégâts en PvP.</div>
+      </div>
+
+      <div class="weapon-card t1">
+        <img src="img/items/valterite_axe.png" alt="Hache de Valterite" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Hache de Valterite <span class="tier-pill">Tier 1</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">5.0 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Vitesse de minage</span>
+              <span class="weapon-stat-value green">8.5</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">1 600</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">1 ◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t2">
+        <img src="img/items/aetherite_axe.png" alt="Hache d'Aetherite" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Hache d'Aetherite <span class="tier-pill">Tier 2</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">5.25 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Vitesse de minage</span>
+              <span class="weapon-stat-value green">10.0</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">2 200</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">2 ◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weapon-card t3">
+        <img src="img/items/erinium_axe.png" alt="Hache d'Erinium" class="weapon-card-img" />
+        <div class="weapon-card-body">
+          <div class="weapon-card-name">Hache d'Erinium <span class="tier-pill">Tier 3</span></div>
+          <div class="weapon-stats">
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Dégâts</span>
+              <span class="weapon-stat-value red">5.5 ❤</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Vitesse de minage</span>
+              <span class="weapon-stat-value green">20.0</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Durabilité</span>
+              <span class="weapon-stat-value">3 100</span>
+            </div>
+            <div class="weapon-stat">
+              <span class="weapon-stat-label">Sockets</span>
+              <span class="weapon-stat-value cyan">3 ◈◈◈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ TABLEAU RÉCAP ══════════════ -->
+      <h2 style="margin-top:48px;">Comparaison toutes armes</h2>
+      <p>Quel type d'arme choisir selon ton style de jeu ?</p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Style</th>
+            <th>Dégâts T1 / T2 / T3</th>
+            <th>Sockets T1/T2/T3</th>
+            <th>Particularité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>⚔️ Épée</td>
+            <td>Polyvalent</td>
+            <td><span class="cval">7.0</span> / <span class="caeth">7.5</span> / <span class="cerin">8.0</span></td>
+            <td>1 / 2 / 3</td>
+            <td>Enchantable, idéale pour tous</td>
+          </tr>
+          <tr>
+            <td>🗡️ Dague</td>
+            <td>Furtif</td>
+            <td><span class="cval">4.0</span> / <span class="caeth">5.0</span> / <span class="cerin">6.0</span></td>
+            <td>1 / 2 / 3</td>
+            <td>Bonus backstab puissant</td>
+          </tr>
+          <tr>
+            <td>🔨 Marteau</td>
+            <td>AoE / Groupe</td>
+            <td><span class="cval">7.0</span> / <span class="caeth">8.5</span> / <span class="cerin">10.0</span></td>
+            <td>1 / 2 / 3</td>
+            <td>Zone d'effet 2–3 blocs, cooldown, non enchantable</td>
+          </tr>
+          <tr>
+            <td>🏹 Arc</td>
+            <td>Distance</td>
+            <td><span class="cval">×1.20</span> / <span class="caeth">×1.35</span> / <span class="cerin">×1.50</span></td>
+            <td>1 / 2 / 3</td>
+            <td>Multiplicateur sur les dégâts de flèche vanilla</td>
+          </tr>
+          <tr>
+            <td>🪓 Hache</td>
+            <td>Polyvalent / Outil</td>
+            <td><span class="cval">5.0</span> / <span class="caeth">5.25</span> / <span class="cerin">5.5</span></td>
+            <td>1 / 2 / 3</td>
+            <td>Moins efficace en PvP, meilleure pour couper le bois</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="glass-card glass-card-accent accent-cyan" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Conseil :</strong> Tu peux mettre des gemmes Rubis dans ton arme pour voler de la vie à chaque coup (Lifesteal). C'est très puissant en PvP 1.8 ! Consulte la page <a href="gems.html">Gemmes</a> pour en savoir plus.
+        </p>
+      </div>
+
+    </div><!-- /content -->
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+  
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perks — EriniumFaction Wiki</title>
+  <meta name="description" content="Découvre les 15 perks d'EriniumFaction : capacités spéciales débloquées aux niveaux 10, 20, 30, 40 et 50." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Tier header ── */
+    .tier-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 36px 0 18px;
+    }
+    .tier-header-line {
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tier-10 { background: rgba(46,204,113,0.15);  border: 1px solid rgba(46,204,113,0.35);  color: #2ECC71; }
+    .tier-20 { background: rgba(52,152,219,0.15);  border: 1px solid rgba(52,152,219,0.35);  color: #3498DB; }
+    .tier-30 { background: rgba(241,196,15,0.15);  border: 1px solid rgba(241,196,15,0.35);  color: #F1C40F; }
+    .tier-40 { background: rgba(230,126,34,0.15);  border: 1px solid rgba(230,126,34,0.35);  color: #E67E22; }
+    .tier-50 { background: rgba(231,76,60,0.15);   border: 1px solid rgba(231,76,60,0.35);   color: #E74C3C; animation: glow-pulse 2.5s ease-in-out infinite; }
+
+    /* ── Perk cards grid ── */
+    .perk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .perk-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: default;
+    }
+    .perk-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+    }
+    .perk-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .perk-card-t10:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(46,204,113,0.20); border-color: rgba(46,204,113,0.30); }
+    .perk-card-t20:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(52,152,219,0.20); border-color: rgba(52,152,219,0.30); }
+    .perk-card-t30:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(241,196,15,0.20); border-color: rgba(241,196,15,0.30); }
+    .perk-card-t40:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(230,126,34,0.20); border-color: rgba(230,126,34,0.30); }
+    .perk-card-t50:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(231,76,60,0.25);  border-color: rgba(231,76,60,0.35); }
+
+    .perk-icon   { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+    .perk-name   { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); margin-bottom: 6px; }
+    .perk-desc   { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+    .perk-tag    {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 9px;
+      border-radius: 100px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 10px;
+    }
+    .tag-passif  { background: rgba(107,47,160,0.18); border: 1px solid rgba(107,47,160,0.35); color: var(--accent-secondary); }
+    .tag-actif   { background: rgba(241,196,15,0.14); border: 1px solid rgba(241,196,15,0.32); color: #F1C40F; }
+    .tag-aura    { background: rgba(46,204,113,0.14); border: 1px solid rgba(46,204,113,0.32); color: #2ECC71; }
+
+    /* ── "1 parmi 3" indicator ── */
+    .pick-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+    .pick-notice::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-gold);
+      flex-shrink: 0;
+    }
+
+    /* ── Hero override ── */
+    .hero-perks {
+      background: linear-gradient(135deg,
+        rgba(107, 47, 160, 0.12) 0%,
+        rgba(0, 229, 255, 0.06) 100%);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:8%;top:15%;animation-delay:0s;animation-duration:3.5s;"></span>
+  <span class="star" style="left:25%;top:8%;animation-delay:1.2s;animation-duration:4.1s;"></span>
+  <span class="star" style="left:55%;top:20%;animation-delay:0.6s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:76%;top:12%;animation-delay:2.1s;animation-duration:2.8s;"></span>
+  <span class="star" style="left:89%;top:38%;animation-delay:0.9s;animation-duration:4.6s;"></span>
+  <span class="star" style="left:40%;top:58%;animation-delay:1.8s;animation-duration:3.3s;"></span>
+  <span class="star" style="left:62%;top:72%;animation-delay:0.4s;animation-duration:5.1s;"></span>
+  <span class="star" style="left:4%;top:82%;animation-delay:2.5s;animation-duration:3.9s;"></span>
+  <span class="star" style="left:92%;top:68%;animation-delay:1.4s;animation-duration:4.3s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-perks" aria-labelledby="hero-title">
+      <span class="hero-badge">✨ Perks</span>
+      <h1 id="hero-title">Tes capacités spéciales</h1>
+      <p>Aux niveaux 10, 20, 30, 40 et 50, tu débloques un perk — une capacité unique qui change ton style de jeu. À chaque palier, choisis <strong>1 perk parmi 3</strong> !</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🔓 <strong>5 paliers</strong></div>
+        <div class="hero-meta-item">✨ <strong>15 perks disponibles</strong></div>
+        <div class="hero-meta-item">🎯 <strong>5 choix à faire</strong></div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <a href="rpg.html">RPG</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Perks</span>
+        </nav>
+
+        <div class="alert alert-info" role="note" style="margin-bottom:32px;">
+          <span class="alert-icon">💡</span>
+          <div class="alert-body">
+            <strong class="alert-title">Comment ça marche ?</strong>
+            <span class="alert-desc">Quand tu atteins un niveau clé, un menu s'ouvre et te propose 3 perks. Tu en choisis <strong>un seul</strong> et il reste actif pour toujours. Un bon choix au niveau 10 peut changer toute ta façon de jouer !</span>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════
+             PALIER 10
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="tier-10">
+          <div class="tier-header">
+            <div class="tier-header-line"></div>
+            <span class="tier-badge tier-10">🔓 Niveau 10</span>
+            <div class="tier-header-line"></div>
+          </div>
+          <div class="pick-notice">Choisis 1 perk parmi les 3 ci-dessous</div>
+
+          <div class="perk-grid">
+
+            <div class="perk-card perk-card-t10">
+              <span class="perk-icon">🎯</span>
+              <div class="perk-name">Instinct du Chasseur</div>
+              <div class="perk-desc">Un signal visuel te montre la direction des joueurs ennemis qui se trouvent dans un rayon de <strong>50 blocs</strong>. Tu sais toujours où est la menace !</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+            <div class="perk-card perk-card-t10">
+              <span class="perk-icon">💚</span>
+              <div class="perk-name">Second Souffle</div>
+              <div class="perk-desc">Quand tu passes sous <strong>20% de PV</strong>, tu regagnes instantanément <strong>3 cœurs</strong>. Ce n'est pas de la triche, c'est du talent !</div>
+              <span class="perk-tag tag-actif">Recharge : 5 min</span>
+            </div>
+
+            <div class="perk-card perk-card-t10">
+              <span class="perk-icon">🤫</span>
+              <div class="perk-name">Pas Légers</div>
+              <div class="perk-desc">Tes pas ne font <strong>aucun bruit</strong> et tu ne peux pas être détecté par proximité. Parfait pour les embuscades !</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             PALIER 20
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="tier-20">
+          <div class="tier-header">
+            <div class="tier-header-line"></div>
+            <span class="tier-badge tier-20">🔓 Niveau 20</span>
+            <div class="tier-header-line"></div>
+          </div>
+          <div class="pick-notice">Choisis 1 perk parmi les 3 ci-dessous</div>
+
+          <div class="perk-grid">
+
+            <div class="perk-card perk-card-t20">
+              <span class="perk-icon">🔥</span>
+              <div class="perk-name">Furie d'Erinium</div>
+              <div class="perk-desc">Chaque kill PvP active la <strong>Furie pendant 10 secondes</strong> : +15% dégâts mêlée et +10% vitesse. Se cumule jusqu'à <strong>3 kills</strong> !</div>
+              <span class="perk-tag tag-actif">Se déclenche sur kill PvP</span>
+            </div>
+
+            <div class="perk-card perk-card-t20">
+              <span class="perk-icon">🏰</span>
+              <div class="perk-name">Bastion</div>
+              <div class="perk-desc">En restant immobile <strong>2 secondes ou plus</strong>, tu gagnes <strong>+15% de réduction de dégâts</strong>. Disparaît dès que tu bouges.</div>
+              <span class="perk-tag tag-passif">Passif conditionnel</span>
+            </div>
+
+            <div class="perk-card perk-card-t20">
+              <span class="perk-icon">💰</span>
+              <div class="perk-name">Pillard</div>
+              <div class="perk-desc">Chaque kill PvP te rapporte <strong>10% de l'argent</strong> de ta victime. +25% XP sur les défis quotidiens de type kill.</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             PALIER 30
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="tier-30">
+          <div class="tier-header">
+            <div class="tier-header-line"></div>
+            <span class="tier-badge tier-30">🔓 Niveau 30</span>
+            <div class="tier-header-line"></div>
+          </div>
+          <div class="pick-notice">Choisis 1 perk parmi les 3 ci-dessous</div>
+
+          <div class="perk-grid">
+
+            <div class="perk-card perk-card-t30">
+              <span class="perk-icon">💀</span>
+              <div class="perk-name">Exécution</div>
+              <div class="perk-desc">Tes attaques sur des cibles à moins de <strong>25% PV</strong> infligent <strong>+35% de dégâts</strong>. Pour ne jamais rater l'estocade finale.</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+            <div class="perk-card perk-card-t30">
+              <span class="perk-icon">🪨</span>
+              <div class="perk-name">Mur d'Acier</div>
+              <div class="perk-desc">Absorbe les <strong>3 premiers points de dégâts</strong> de chaque attaque reçue, sans réduction. Indispensable contre les spammeurs !</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+            <div class="perk-card perk-card-t30">
+              <span class="perk-icon">🧛</span>
+              <div class="perk-name">Vampirisme</div>
+              <div class="perk-desc">Chaque attaque mêlée te soigne <strong>8% des dégâts infligés</strong>, dans la limite de <strong>2 cœurs par coup</strong>.</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             PALIER 40
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="tier-40">
+          <div class="tier-header">
+            <div class="tier-header-line"></div>
+            <span class="tier-badge tier-40">🔓 Niveau 40</span>
+            <div class="tier-header-line"></div>
+          </div>
+          <div class="pick-notice">Choisis 1 perk parmi les 3 ci-dessous</div>
+
+          <div class="perk-grid">
+
+            <div class="perk-card perk-card-t40">
+              <span class="perk-icon">⚡</span>
+              <div class="perk-name">Frappe d'Erinium</div>
+              <div class="perk-desc">Toutes les <strong>30 secondes</strong>, ta prochaine attaque mêlée inflige <strong>x2.5 les dégâts</strong> avec un recul amplifié. Un indicateur visuel s'affiche sur ton arme.</div>
+              <span class="perk-tag tag-actif">Recharge : 30 sec</span>
+            </div>
+
+            <div class="perk-card perk-card-t40">
+              <span class="perk-icon">👼</span>
+              <div class="perk-name">Résurgence</div>
+              <div class="perk-desc">À la mort, tu ressuscites avec <strong>3 cœurs</strong> et <strong>3 secondes d'invincibilité</strong>. Une seconde vie pour renverser le combat !</div>
+              <span class="perk-tag tag-actif">Recharge : 15 min</span>
+            </div>
+
+            <div class="perk-card perk-card-t40">
+              <span class="perk-icon">🔗</span>
+              <div class="perk-name">Lien Cristallin</div>
+              <div class="perk-desc">Les coéquipiers de faction dans un rayon de <strong>20 blocs</strong> reçoivent <strong>+5% de soin</strong> et <strong>+5% de réduction de dégâts</strong>. Une aura qui protège toute l'équipe.</div>
+              <span class="perk-tag tag-aura">Aura passive</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             PALIER 50
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="tier-50">
+          <div class="tier-header">
+            <div class="tier-header-line"></div>
+            <span class="tier-badge tier-50">👑 Niveau 50 — Légendaire</span>
+            <div class="tier-header-line"></div>
+          </div>
+          <div class="pick-notice">Choisis 1 perk parmi les 3 ci-dessous — les plus puissants du jeu !</div>
+
+          <div class="perk-grid">
+
+            <div class="perk-card perk-card-t50">
+              <span class="perk-icon">💥</span>
+              <div class="perk-name">Écho du Noyau</div>
+              <div class="perk-desc">Chaque kill PvP libère une <strong>onde d'énergie</strong> qui inflige <strong>3 cœurs</strong> à tous les ennemis dans un rayon de <strong>5 blocs</strong>. Parfait contre les groupes !</div>
+              <span class="perk-tag tag-actif">Se déclenche sur kill PvP</span>
+            </div>
+
+            <div class="perk-card perk-card-t50">
+              <span class="perk-icon">💎</span>
+              <div class="perk-name">Forme Cristalline</div>
+              <div class="perk-desc">Pendant <strong>30 secondes</strong> : tu deviens semi-invisible, tu gagnes <strong>+25% de vitesse</strong> et tu es immunisé au poison et au ralentissement.</div>
+              <span class="perk-tag tag-actif">Recharge : 3 min</span>
+            </div>
+
+            <div class="perk-card perk-card-t50">
+              <span class="perk-icon">👁️</span>
+              <div class="perk-name">Omniscience</div>
+              <div class="perk-desc">Vois en permanence le <strong>niveau, les PV et la faction</strong> de tous les joueurs en ligne de mire dans un rayon de <strong>80 blocs</strong>. La connaissance, c'est le pouvoir.</div>
+              <span class="perk-tag tag-passif">Passif permanent</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Retour vers RPG ── -->
+        <div style="text-align:center;margin-top:36px;">
+          <a href="rpg.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(107,47,160,0.18);border:1px solid rgba(107,47,160,0.38);border-radius:var(--radius-md);color:var(--accent-secondary);font-weight:700;font-size:0.85rem;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.background='rgba(107,47,160,0.32)'" onmouseout="this.style.background='rgba(107,47,160,0.18)'">
+            ← Retour au Système RPG
+          </a>
+        </div>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="rpg.html">RPG</a></li>
+        <li><a href="magic.html">Magie</a></li>
+        <li><a href="builds.html">Builds</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

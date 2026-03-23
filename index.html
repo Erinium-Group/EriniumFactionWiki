@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Wiki officiel d'EriniumFaction — le mod Faction PvP pour Minecraft 1.12.2. Tout ce qu'il faut savoir pour jouer.">
+  <title>EriniumFaction Wiki — Accueil</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Hero ───────────────────────────────────────────────────── */
+    .hero-home {
+      position: relative;
+      padding: 80px 60px 70px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(107, 47, 160, 0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0, 229, 255, 0.10) 0%, transparent 65%);
+      border-bottom: 1px solid var(--glass-border);
+      overflow: hidden;
+    }
+    .hero-home::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: -80px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(107, 47, 160, 0.18), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 10s ease-in-out infinite;
+    }
+    .hero-home::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.12), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 14s ease-in-out infinite reverse;
+    }
+    .hero-home-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 16px;
+      border-radius: 100px;
+      background: rgba(107, 47, 160, 0.18);
+      border: 1px solid rgba(107, 47, 160, 0.40);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--accent-secondary);
+      margin-bottom: 24px;
+      animation: fade-in-up 0.5s ease both;
+    }
+    .hero-home h1 {
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #B06EDE 35%, #00E5FF 65%, #FFD700 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite, fade-in-up 0.6s ease both;
+    }
+    .hero-tagline {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      animation: fade-in-up 0.7s ease both;
+    }
+    .hero-desc {
+      font-size: 0.95rem;
+      color: var(--text-faint);
+      line-height: 1.75;
+      max-width: 580px;
+      margin: 0 auto 36px;
+      animation: fade-in-up 0.8s ease both;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fade-in-up 0.9s ease both;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--accent-primary), rgba(0, 229, 255, 0.8));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+      box-shadow: 0 4px 20px rgba(107, 47, 160, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      border-radius: inherit;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 32px rgba(107, 47, 160, 0.60);
+      filter: brightness(1.08);
+      border-bottom: none;
+      color: #fff;
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border-hover);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform var(--transition), background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .btn-outline:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(0,229,255,0.35);
+      color: var(--text);
+      border-bottom: 1px solid rgba(0,229,255,0.35);
+    }
+
+    /* ── Section layout ────────────────────────────────────────── */
+    .section-wrap {
+      padding: 52px 60px 0;
+    }
+    .section-wrap:last-of-type {
+      padding-bottom: 64px;
+    }
+    .section-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+    }
+    .section-heading {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* ── Category cards grid ───────────────────────────────────── */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 0;
+    }
+    .cat-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px 20px;
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform var(--transition), box-shadow var(--transition),
+                  border-color var(--transition), background var(--transition);
+      cursor: pointer;
+    }
+    .cat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22) 40%, rgba(255,255,255,0.30) 50%, rgba(255,255,255,0.22) 60%, transparent);
+    }
+    .cat-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      opacity: 0;
+      filter: blur(24px);
+      transition: opacity var(--transition);
+    }
+    .cat-card:hover { transform: translateY(-4px) scale(1.01); }
+    .cat-card:hover::after { opacity: 0.50; }
+
+    /* Accent variants */
+    .cc-green::after  { background: var(--success); }
+    .cc-green:hover   { border-color: rgba(46,204,113,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(46,204,113,0.18); }
+    .cc-purple::after { background: var(--accent-primary); }
+    .cc-purple:hover  { border-color: rgba(107,47,160,0.45); box-shadow: var(--shadow-lg), 0 0 28px rgba(107,47,160,0.25); }
+    .cc-gold::after   { background: var(--accent-gold); }
+    .cc-gold:hover    { border-color: rgba(255,215,0,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(255,215,0,0.18); }
+    .cc-cyan::after   { background: var(--accent-secondary); }
+    .cc-cyan:hover    { border-color: rgba(0,229,255,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(0,229,255,0.18); }
+    .cc-red::after    { background: var(--danger); }
+    .cc-red:hover     { border-color: rgba(231,76,60,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(231,76,60,0.18); }
+    .cc-amethyst::after { background: #C084FC; }
+    .cc-amethyst:hover  { border-color: rgba(192,132,252,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(192,132,252,0.18); }
+    .cc-orange::after { background: #F97316; }
+    .cc-orange:hover  { border-color: rgba(249,115,22,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(249,115,22,0.18); }
+    .cc-pink::after   { background: #EC4899; }
+    .cc-pink:hover    { border-color: rgba(236,72,153,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(236,72,153,0.18); }
+    .cc-blue::after   { background: var(--info); }
+    .cc-blue:hover    { border-color: rgba(52,152,219,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(52,152,219,0.18); }
+    .cc-brown::after  { background: #A16207; }
+    .cc-brown:hover   { border-color: rgba(161,98,7,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(161,98,7,0.18); }
+    .cc-gray::after   { background: #64748B; }
+    .cc-gray:hover    { border-color: rgba(100,116,139,0.40); box-shadow: var(--shadow-lg), 0 0 28px rgba(100,116,139,0.18); }
+
+    .cat-icon {
+      font-size: 2.1rem;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .cat-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .cat-desc {
+      font-size: 0.80rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+    .cat-arrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap var(--transition);
+    }
+    .cat-card:hover .cat-arrow { gap: 10px; }
+
+    .cc-green .cat-arrow   { color: var(--success); }
+    .cc-purple .cat-arrow  { color: #B06EDE; }
+    .cc-gold .cat-arrow    { color: var(--accent-gold); }
+    .cc-cyan .cat-arrow    { color: var(--accent-secondary); }
+    .cc-red .cat-arrow     { color: var(--danger); }
+    .cc-amethyst .cat-arrow{ color: #C084FC; }
+    .cc-orange .cat-arrow  { color: #F97316; }
+    .cc-pink .cat-arrow    { color: #EC4899; }
+    .cc-blue .cat-arrow    { color: var(--info); }
+    .cc-brown .cat-arrow   { color: #CA8A04; }
+    .cc-gray .cat-arrow    { color: #94A3B8; }
+
+    /* ── Stats bar ─────────────────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .stats-bar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .stat-item {
+      flex: 1;
+      min-width: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 22px 16px;
+      border-right: 1px solid var(--glass-border);
+      transition: background var(--transition);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: rgba(107,47,160,0.07); }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+    }
+
+    /* ── Sidebar (inline styles for this page) ─────────────────── */
+    .wiki-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-right: 1px solid var(--glass-border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: var(--header-height);
+      padding: 0 20px;
+      border-bottom: 1px solid var(--glass-border);
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .sidebar-brand-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sidebar-brand-sub {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .nav-group {
+      padding: 10px 0 4px;
+    }
+    .nav-group-label {
+      padding: 0 16px 5px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .nav-links {
+      list-style: none;
+      padding: 0;
+    }
+    .nav-links li a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 16px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.855rem;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+      transition: color var(--transition);
+      white-space: nowrap;
+    }
+    .nav-links li a::before {
+      content: '';
+      position: absolute;
+      inset: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(107,47,160,0);
+      transition: background var(--transition);
+      z-index: -1;
+    }
+    .nav-links li a:hover { color: var(--text); }
+    .nav-links li a:hover::before { background: rgba(107,47,160,0.12); }
+    .nav-links li a.active {
+      color: var(--accent-secondary);
+      font-weight: 600;
+    }
+    .nav-links li a.active::before { background: rgba(107,47,160,0.18); }
+    .nav-links li a.active::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 60%;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary));
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar-footer-note {
+      margin-top: auto;
+      padding: 14px 16px;
+      border-top: 1px solid var(--glass-border);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Header ────────────────────────────────────────────────── */
+    .site-header {
+      position: fixed;
+      top: 0; left: var(--sidebar-width); right: 0;
+      height: var(--header-height);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px;
+      background: var(--surface);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-sm);
+      transition: left var(--transition), background var(--transition);
+    }
+    .header-hamburger {
+      display: none;
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .header-hamburger:hover {
+      background: rgba(107,47,160,0.15);
+      border-color: rgba(107,47,160,0.35);
+      color: var(--text);
+    }
+    .header-search-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .header-search {
+      width: 100%;
+      max-width: 320px;
+      height: 36px;
+      padding: 0 16px 0 36px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.83rem;
+      outline: none;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .header-search::placeholder { color: var(--text-faint); }
+    .header-search:focus {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(0,229,255,0.45);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.12);
+    }
+    .header-search-wrap::before {
+      content: '🔍';
+      position: absolute;
+      left: 11px;
+      font-size: 0.72rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .header-theme-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--text-muted);
+      transition: background var(--transition), border-color var(--transition),
+                  color var(--transition), transform var(--transition);
+      flex-shrink: 0;
+    }
+    .header-theme-btn:hover {
+      background: rgba(107,47,160,0.15);
+      border-color: rgba(107,47,160,0.35);
+      color: var(--text);
+      transform: rotate(15deg);
+    }
+
+    /* ── Main ──────────────────────────────────────────────────── */
+    .main-wrap {
+      margin-left: var(--sidebar-width);
+      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+      display: flex;
+      flex-direction: column;
+    }
+    .main-content {
+      flex: 1;
+      padding: 0;
+      animation: fade-in-up 0.5s ease both;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    .site-footer {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-top: 1px solid var(--glass-border);
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .footer-brand {
+      font-weight: 700;
+      font-size: 0.88rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+    .footer-links { display: flex; gap: 18px; }
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      text-decoration: none;
+      border: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--accent-secondary); border: none; }
+
+    /* ── Sidebar overlay ───────────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 85;
+      backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.is-visible { display: block; }
+
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .wiki-sidebar { transform: translateX(-100%); z-index: 95; }
+      .wiki-sidebar.is-open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+      .main-wrap { margin-left: 0; }
+      .site-header { left: 0; padding-left: 12px; }
+      .header-hamburger { display: flex; }
+      .hero-home { padding: 50px 24px 50px; }
+      .section-wrap { padding: 36px 24px 0; }
+      .site-footer { padding: 22px 24px; flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .hero-home h1 { font-size: 2.4rem; }
+      .cat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stats-bar { border-radius: var(--radius-lg); }
+      .stat-item { min-width: 45%; border-right: none; border-bottom: 1px solid var(--glass-border); }
+      .stat-item:nth-child(odd) { border-right: 1px solid var(--glass-border); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="floating-particles"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONTENU PRINCIPAL
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="main-wrap">
+    <main class="main-content">
+
+      <!-- ─── HERO ─────────────────────────────────────────────── -->
+      <section class="hero-home">
+        <div class="hero-home-inner">
+          <div class="hero-badge">
+            <span>⚡</span>
+            <span>Minecraft 1.12.2 &nbsp;·&nbsp; Mod Forge &nbsp;·&nbsp; PvP Faction</span>
+          </div>
+
+          <h1>EriniumFaction</h1>
+
+          <p class="hero-tagline">Bienvenue sur le Wiki officiel !</p>
+
+          <p class="hero-desc">
+            Ici tu trouveras tout ce qu'il faut pour jouer : les factions, le RPG, la magie,
+            les gemmes, les armes... Tout est expliqué simplement, étape par étape.
+          </p>
+
+          <div class="hero-ctas">
+            <a href="getting-started.html" class="btn-primary">🌟 Débuter l'aventure</a>
+            <a href="factions.html" class="btn-outline">🏰 Les Factions</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CHIFFRES CLÉS ─────────────────────────────────────── -->
+      <section class="section-wrap">
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-value">50</div>
+            <div class="stat-label">Niveaux</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">20</div>
+            <div class="stat-label">Sorts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">18</div>
+            <div class="stat-label">Gemmes</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Matériaux</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Écoles de magie</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">53</div>
+            <div class="stat-label">Biomes</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CATÉGORIES ────────────────────────────────────────── -->
+      <section class="section-wrap">
+        <p class="section-eyebrow">Explorer le wiki</p>
+        <h2 class="section-heading">Toutes les sections</h2>
+        <p class="section-sub">Clique sur une carte pour tout apprendre sur ce sujet.</p>
+
+        <div class="cat-grid">
+
+          <!-- Premiers Pas -->
+          <a href="getting-started.html" class="cat-card cc-green">
+            <div class="cat-icon">🌟</div>
+            <div class="cat-title">Premiers Pas</div>
+            <div class="cat-desc">Nouveau sur le serveur ? Commence ici. Guide étape par étape.</div>
+            <div class="cat-arrow">Commencer <span>→</span></div>
+          </a>
+
+          <!-- Factions -->
+          <a href="factions.html" class="cat-card cc-purple">
+            <div class="cat-icon">🏰</div>
+            <div class="cat-title">Factions</div>
+            <div class="cat-desc">Crée ta faction, revendique du terrain et affronte les autres clans.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Système RPG -->
+          <a href="rpg.html" class="cat-card cc-gold">
+            <div class="cat-icon">📈</div>
+            <div class="cat-title">Système RPG</div>
+            <div class="cat-desc">Gagne des niveaux, améliore tes stats et deviens plus puissant à chaque combat.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Magie & Sorts -->
+          <a href="magic.html" class="cat-card cc-cyan">
+            <div class="cat-icon">🔮</div>
+            <div class="cat-title">Magie &amp; Sorts</div>
+            <div class="cat-desc">4 écoles, 20 sorts puissants. Feu, Glace, Ombre ou Sacré — choisis ton camp.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Armes -->
+          <a href="weapons.html" class="cat-card cc-red">
+            <div class="cat-icon">⚔️</div>
+            <div class="cat-title">Armes</div>
+            <div class="cat-desc">Épées, dagues, arcs, marteaux de guerre... Trouve l'arme qui te convient.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Armures -->
+          <a href="armor.html" class="cat-card cc-red">
+            <div class="cat-icon">🛡️</div>
+            <div class="cat-title">Armures</div>
+            <div class="cat-desc">3 tiers d'armures custom avec bonus de set. Protège-toi pour survivre.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Gemmes -->
+          <a href="gems.html" class="cat-card cc-amethyst">
+            <div class="cat-icon">💎</div>
+            <div class="cat-title">Gemmes &amp; Sertissage</div>
+            <div class="cat-desc">18 gemmes à insérer dans tes armes et armures pour booster leurs effets.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Matériaux -->
+          <a href="materials.html" class="cat-card cc-orange">
+            <div class="cat-icon">🪨</div>
+            <div class="cat-title">Matériaux</div>
+            <div class="cat-desc">Valterite, Aetherite, Erinium — les 3 minerais custom du serveur.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Accessoires -->
+          <a href="accessories.html" class="cat-card cc-pink">
+            <div class="cat-icon">💍</div>
+            <div class="cat-title">Accessoires</div>
+            <div class="cat-desc">Anneaux, amulettes et autres équipements pour compléter ton build.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Builds -->
+          <a href="builds.html" class="cat-card cc-blue">
+            <div class="cat-icon">🏆</div>
+            <div class="cat-title">Builds</div>
+            <div class="cat-desc">Combinaisons d'équipements conseillées par type de jeu (mage, guerrier, archer...).</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Économie -->
+          <a href="economy.html" class="cat-card cc-gold">
+            <div class="cat-icon">💰</div>
+            <div class="cat-title">Économie</div>
+            <div class="cat-desc">Gagne des ErinCoins, achète et vends des ressources avec les autres joueurs.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Chat -->
+          <a href="chat.html" class="cat-card cc-green">
+            <div class="cat-icon">💬</div>
+            <div class="cat-title">Chat</div>
+            <div class="cat-desc">Canaux de discussion, messages privés, chat faction... Communique avec tout le monde.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Minage -->
+          <a href="mining.html" class="cat-card cc-brown">
+            <div class="cat-icon">⛏️</div>
+            <div class="cat-title">Minage</div>
+            <div class="cat-desc">Un monde dédié au minage qui se réinitialise régulièrement. Ressources infinies !</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Biomes -->
+          <a href="biomes.html" class="cat-card cc-green">
+            <div class="cat-icon">🌿</div>
+            <div class="cat-title">Biomes</div>
+            <div class="cat-desc">53 biomes uniques générés sur mesure. Aucun biome vanilla n'existe sur ce serveur.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Téléportation -->
+          <a href="teleportation.html" class="cat-card cc-cyan">
+            <div class="cat-icon">🌀</div>
+            <div class="cat-title">Téléportation</div>
+            <div class="cat-desc">Homes, warps, /tpa, retour après mort... Voyager sur le serveur simplement.</div>
+            <div class="cat-arrow">Découvrir <span>→</span></div>
+          </a>
+
+          <!-- Commandes -->
+          <a href="commands.html" class="cat-card cc-gray">
+            <div class="cat-icon">📋</div>
+            <div class="cat-title">Commandes</div>
+            <div class="cat-desc">Liste complète de toutes les commandes disponibles avec leur description.</div>
+            <div class="cat-arrow">Voir la liste <span>→</span></div>
+          </a>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ─── FOOTER ──────────────────────────────────────────────── -->
+    <footer class="site-footer">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <span class="footer-copy">EriniumGroup &copy; 2026 &nbsp;·&nbsp; Minecraft 1.12.2 Forge Mod</span>
+      <div class="footer-links">
+        <a href="getting-started.html">Premiers Pas</a>
+        <a href="commands.html">Commandes</a>
+        <a href="factions.html">Factions</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Animate cards on scroll
+    const cards = document.querySelectorAll('.cat-card');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, i * 40);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+
+    cards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(16px)';
+      card.style.transition = 'opacity 0.45s ease, transform 0.45s ease, box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), border-color 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s cubic-bezier(0.4,0,0.2,1)';
+      io.observe(card);
+    });
+  </script>
+</body>
+</html>

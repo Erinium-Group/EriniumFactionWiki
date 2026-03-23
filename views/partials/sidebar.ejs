@@ -1,0 +1,47 @@
+<nav class="sidebar wiki-sidebar" id="wiki-sidebar">
+  <a href="/" class="sidebar-header">
+    <span class="sidebar-logo-text">EriniumFaction</span>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Découverte</div>
+    <a href="/" class="nav-link <%= currentPage === 'index' ? 'is-active' : '' %>"><span class="nav-icon">🏠</span><span class="nav-label">Accueil</span></a>
+    <a href="/getting-started" class="nav-link <%= currentPage === 'getting-started' ? 'is-active' : '' %>"><span class="nav-icon">🌟</span><span class="nav-label">Premiers Pas</span></a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Combat</div>
+    <a href="/materials" class="nav-link <%= currentPage === 'materials' ? 'is-active' : '' %>"><span class="nav-icon">🪨</span><span class="nav-label">Matériaux</span></a>
+    <a href="/weapons" class="nav-link <%= currentPage === 'weapons' ? 'is-active' : '' %>"><span class="nav-icon">⚔️</span><span class="nav-label">Armes</span></a>
+    <a href="/armor" class="nav-link <%= currentPage === 'armor' ? 'is-active' : '' %>"><span class="nav-icon">🛡️</span><span class="nav-label">Armures</span></a>
+    <a href="/gems" class="nav-link <%= currentPage === 'gems' ? 'is-active' : '' %>"><span class="nav-icon">💎</span><span class="nav-label">Gemmes</span></a>
+    <a href="/accessories" class="nav-link <%= currentPage === 'accessories' ? 'is-active' : '' %>"><span class="nav-icon">💍</span><span class="nav-label">Accessoires</span></a>
+    <a href="/builds" class="nav-link <%= currentPage === 'builds' ? 'is-active' : '' %>"><span class="nav-icon">🏆</span><span class="nav-label">Builds</span></a>
+    <a href="/artifacts" class="nav-link <%= currentPage === 'artifacts' ? 'is-active' : '' %>"><span class="nav-icon">🏺</span><span class="nav-label">Artefacts</span></a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Progression</div>
+    <a href="/rpg" class="nav-link <%= currentPage === 'rpg' ? 'is-active' : '' %>"><span class="nav-icon">📊</span><span class="nav-label">RPG</span></a>
+    <a href="/perks" class="nav-link <%= currentPage === 'perks' ? 'is-active' : '' %>"><span class="nav-icon">✨</span><span class="nav-label">Perks</span></a>
+    <a href="/magic" class="nav-link <%= currentPage === 'magic' ? 'is-active' : '' %>"><span class="nav-icon">🔮</span><span class="nav-label">Magie</span></a>
+    <a href="/spells" class="nav-link <%= currentPage === 'spells' ? 'is-active' : '' %>"><span class="nav-icon">💫</span><span class="nav-label">Sorts</span></a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Monde</div>
+    <a href="/factions" class="nav-link <%= currentPage === 'factions' ? 'is-active' : '' %>"><span class="nav-icon">🏰</span><span class="nav-label">Factions</span></a>
+    <a href="/economy" class="nav-link <%= currentPage === 'economy' ? 'is-active' : '' %>"><span class="nav-icon">💰</span><span class="nav-label">Économie</span></a>
+    <a href="/mining" class="nav-link <%= currentPage === 'mining' ? 'is-active' : '' %>"><span class="nav-icon">⛏️</span><span class="nav-label">Minage</span></a>
+    <a href="/biomes" class="nav-link <%= currentPage === 'biomes' ? 'is-active' : '' %>"><span class="nav-icon">🌿</span><span class="nav-label">Biomes</span></a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Utilitaire</div>
+    <a href="/chat" class="nav-link <%= currentPage === 'chat' ? 'is-active' : '' %>"><span class="nav-icon">💬</span><span class="nav-label">Chat</span></a>
+    <a href="/teleportation" class="nav-link <%= currentPage === 'teleportation' ? 'is-active' : '' %>"><span class="nav-icon">🌀</span><span class="nav-label">Téléportation</span></a>
+    <a href="/commands" class="nav-link <%= currentPage === 'commands' ? 'is-active' : '' %>"><span class="nav-icon">📋</span><span class="nav-label">Commandes</span></a>
+  </div>
+
+  <div class="sidebar-footer">© 2026 EriniumGroup</div>
+</nav>

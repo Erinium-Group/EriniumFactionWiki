@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Builds — EriniumFaction Wiki</title>
+  <meta name="description" content="5 builds complets pour EriniumFaction : Berserker, Tank, Assassin, Mage et Paladin. Stats, gemmes, perks et sorts recommandés." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Build color tokens ── */
+    :root {
+      --berserker: #E74C3C; --berserker-rgb: 231,76,60;
+      --tank:      #5B9BD5; --tank-rgb:      91,155,213;
+      --assassin:  #2ECC71; --assassin-rgb:  46,204,113;
+      --mage:      #9B59B6; --mage-rgb:      155,89,182;
+      --paladin:   #F1C40F; --paladin-rgb:   241,196,15;
+    }
+
+    /* ── Hero override ── */
+    .hero-builds {
+      background: linear-gradient(135deg,
+        rgba(155,89,182,0.12) 0%,
+        rgba(231,76,60,0.07) 50%,
+        transparent 100%);
+    }
+
+    /* ── Quick compare table ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin: 24px 0 36px;
+    }
+    .compare-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .compare-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .compare-card:hover { transform: translateY(-4px); }
+    .cc-berserker { border-top: 3px solid var(--berserker); background: linear-gradient(160deg, rgba(var(--berserker-rgb),0.08) 0%, var(--glass-bg) 60%); }
+    .cc-berserker:hover { box-shadow: var(--shadow-md), 0 0 22px rgba(var(--berserker-rgb),0.20); }
+    .cc-tank      { border-top: 3px solid var(--tank);      background: linear-gradient(160deg, rgba(var(--tank-rgb),0.08) 0%, var(--glass-bg) 60%); }
+    .cc-tank:hover      { box-shadow: var(--shadow-md), 0 0 22px rgba(var(--tank-rgb),0.18); }
+    .cc-assassin  { border-top: 3px solid var(--assassin);  background: linear-gradient(160deg, rgba(var(--assassin-rgb),0.07) 0%, var(--glass-bg) 60%); }
+    .cc-assassin:hover  { box-shadow: var(--shadow-md), 0 0 22px rgba(var(--assassin-rgb),0.18); }
+    .cc-mage      { border-top: 3px solid var(--mage);      background: linear-gradient(160deg, rgba(var(--mage-rgb),0.09) 0%, var(--glass-bg) 60%); }
+    .cc-mage:hover      { box-shadow: var(--shadow-md), 0 0 22px rgba(var(--mage-rgb),0.22); }
+    .cc-paladin   { border-top: 3px solid var(--paladin);   background: linear-gradient(160deg, rgba(var(--paladin-rgb),0.07) 0%, var(--glass-bg) 60%); }
+    .cc-paladin:hover   { box-shadow: var(--shadow-md), 0 0 22px rgba(var(--paladin-rgb),0.18); }
+    .cc-icon { font-size: 2rem; line-height: 1; }
+    .cc-name { font-size: 1rem; font-weight: 800; }
+    .cc-berserker .cc-name { color: var(--berserker); }
+    .cc-tank      .cc-name { color: var(--tank); }
+    .cc-assassin  .cc-name { color: var(--assassin); }
+    .cc-mage      .cc-name { color: var(--mage); }
+    .cc-paladin   .cc-name { color: var(--paladin); }
+    .cc-tagline { font-size: 0.75rem; color: var(--text-faint); font-style: italic; }
+    .cc-diff { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+    .diff-easy   { color: #2ECC71; }
+    .diff-medium { color: #F1C40F; }
+    .diff-hard   { color: #E74C3C; }
+
+    /* ── Build section card ── */
+    .build-section {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 32px 28px 24px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .build-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 8%; right: 8%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+    }
+    .bs-berserker { border-left: 4px solid var(--berserker); background: linear-gradient(160deg, rgba(var(--berserker-rgb),0.08) 0%, var(--glass-bg) 55%); }
+    .bs-berserker:hover { box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--berserker-rgb),0.18); border-color: rgba(var(--berserker-rgb),0.40); border-left-color: var(--berserker); }
+    .bs-tank { border-left: 4px solid var(--tank); background: linear-gradient(160deg, rgba(var(--tank-rgb),0.08) 0%, var(--glass-bg) 55%); }
+    .bs-tank:hover { box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--tank-rgb),0.18); border-color: rgba(var(--tank-rgb),0.40); border-left-color: var(--tank); }
+    .bs-assassin { border-left: 4px solid var(--assassin); background: linear-gradient(160deg, rgba(var(--assassin-rgb),0.07) 0%, var(--glass-bg) 55%); }
+    .bs-assassin:hover { box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--assassin-rgb),0.18); border-color: rgba(var(--assassin-rgb),0.38); border-left-color: var(--assassin); }
+    .bs-mage { border-left: 4px solid var(--mage); background: linear-gradient(160deg, rgba(var(--mage-rgb),0.09) 0%, var(--glass-bg) 55%); }
+    .bs-mage:hover { box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--mage-rgb),0.22); border-color: rgba(var(--mage-rgb),0.42); border-left-color: var(--mage); }
+    .bs-paladin { border-left: 4px solid var(--paladin); background: linear-gradient(160deg, rgba(var(--paladin-rgb),0.07) 0%, var(--glass-bg) 55%); }
+    .bs-paladin:hover { box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--paladin-rgb),0.18); border-color: rgba(var(--paladin-rgb),0.38); border-left-color: var(--paladin); }
+
+    /* ── Build header ── */
+    .build-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--glass-border);
+      flex-wrap: wrap;
+    }
+    .build-class-icon { font-size: 2.8rem; line-height: 1; flex-shrink: 0; }
+    .build-title-block { flex: 1; min-width: 0; }
+    .build-class-name  { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.03em; color: var(--text); margin-bottom: 4px; }
+    .bs-berserker .build-class-name { color: var(--berserker); }
+    .bs-tank      .build-class-name { color: var(--tank); }
+    .bs-assassin  .build-class-name { color: var(--assassin); }
+    .bs-mage      .build-class-name { color: var(--mage); }
+    .bs-paladin   .build-class-name { color: var(--paladin); }
+    .build-class-tagline { font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 10px; }
+    .build-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .build-tag {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 100px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12); color: var(--text-muted);
+    }
+    .build-difficulty-badge {
+      padding: 5px 14px; border-radius: 100px; font-size: 0.72rem;
+      font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; flex-shrink: 0;
+    }
+    .difficulty-easy   { background: rgba(46,204,113,0.18); border: 1px solid rgba(46,204,113,0.40); color: #2ECC71; }
+    .difficulty-medium { background: rgba(241,196,15,0.14); border: 1px solid rgba(241,196,15,0.38); color: #F1C40F; }
+    .difficulty-hard   { background: rgba(231,76,60,0.15);  border: 1px solid rgba(231,76,60,0.38);  color: #E74C3C; }
+
+    /* ── Build body ── */
+    .build-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .build-block {
+      background: rgba(0,0,0,0.18);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+    .build-block-title {
+      font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-faint); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .build-block-line {
+      font-size: 0.83rem; color: var(--text-muted);
+      margin-bottom: 6px; display: flex; align-items: baseline; gap: 6px;
+    }
+    .build-block-line strong { color: var(--text); flex-shrink: 0; }
+
+    /* ── Stat alloc bars ── */
+    .stat-alloc-row  { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.83rem; }
+    .stat-alloc-name { font-weight: 700; min-width: 88px; flex-shrink: 0; }
+    .stat-alloc-bar  { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .stat-alloc-fill { height: 100%; border-radius: 3px; }
+    .stat-alloc-pts  { font-weight: 700; min-width: 32px; text-align: right; font-size: 0.78rem; }
+    .saf-vigueur    { background: #E74C3C; } .saf-force    { background: #E67E22; }
+    .saf-resistance { background: #5B9BD5; } .saf-agilite  { background: #2ECC71; }
+    .saf-fortune    { background: #F1C40F; } .saf-arcane   { background: #9B59B6; }
+    .san-vigueur    { color: #E74C3C; } .san-force    { color: #E67E22; }
+    .san-resistance { color: #5B9BD5; } .san-agilite  { color: #2ECC71; }
+    .san-fortune    { color: #F1C40F; } .san-arcane   { color: #9B59B6; }
+
+    /* ── Gem pills ── */
+    .gem-socket-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 0.82rem; color: var(--text-muted); }
+    .gem-socket-piece { font-weight: 700; color: var(--text); min-width: 80px; flex-shrink: 0; }
+    .gem-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 9px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; margin-right: 2px;
+    }
+    .gem-ruby      { background: rgba(231,76,60,0.18);  border: 1px solid rgba(231,76,60,0.40);  color: #E74C3C; }
+    .gem-sapphire  { background: rgba(52,152,219,0.18); border: 1px solid rgba(52,152,219,0.40); color: #3498DB; }
+    .gem-emerald   { background: rgba(46,204,113,0.16); border: 1px solid rgba(46,204,113,0.38); color: #2ECC71; }
+    .gem-amethyst  { background: rgba(155,89,182,0.18); border: 1px solid rgba(155,89,182,0.40); color: #9B59B6; }
+    .gem-topaz     { background: rgba(241,196,15,0.16); border: 1px solid rgba(241,196,15,0.38); color: #F1C40F; }
+    .gem-onyx      { background: rgba(44,62,80,0.55);   border: 1px solid rgba(127,140,141,0.45); color: #95A5A6; }
+
+    /* ── Perk selector ── */
+    .perk-sel-list { display: flex; flex-direction: column; gap: 8px; }
+    .perk-sel-item {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+      border-radius: var(--radius-md); background: rgba(0,0,0,0.15);
+      border: 1px solid var(--glass-border); font-size: 0.82rem;
+    }
+    .perk-sel-tier {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(107,47,160,0.20); border: 1px solid rgba(107,47,160,0.35);
+      font-size: 0.65rem; font-weight: 800; color: var(--accent-secondary);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .perk-sel-name { font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .perk-sel-desc { color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; }
+
+    /* ── Spell loadout ── */
+    .spell-loadout { display: flex; flex-direction: column; gap: 8px; }
+    .spell-slot-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+      border-radius: var(--radius-md); background: rgba(0,0,0,0.15);
+      border: 1px solid var(--glass-border);
+    }
+    .spell-slot-num   { font-size: 0.68rem; font-weight: 800; color: var(--text-faint); width: 18px; flex-shrink: 0; }
+    .spell-slot-icon  { width: 28px; height: 28px; image-rendering: pixelated; border-radius: 4px; flex-shrink: 0; }
+    .spell-slot-name  { font-size: 0.84rem; font-weight: 700; color: var(--text); flex: 1; }
+    .spell-slot-school {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 7px; border-radius: 100px;
+    }
+    .school-fracture       { background: rgba(168,47,160,0.20); border: 1px solid rgba(168,47,160,0.40); color: #C84FC0; }
+    .school-cristallisation { background: rgba(0,229,255,0.14);  border: 1px solid rgba(0,229,255,0.35);  color: #00E5FF; }
+    .school-corruption     { background: rgba(46,204,113,0.15);  border: 1px solid rgba(46,204,113,0.35); color: #2ECC71; }
+    .school-resonance      { background: rgba(242,196,15,0.14);  border: 1px solid rgba(242,196,15,0.32); color: #F2C40F; }
+
+    /* ── Final stats ── */
+    .final-stats { background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 18px 16px; margin-top: 8px; }
+    .final-stats-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-faint); margin-bottom: 12px; }
+    .final-stats-grid  { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .stat-bubble { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px 10px; text-align: center; }
+    .stat-bubble-value { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+    .stat-bubble-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); }
+
+    /* ── Playstyle block ── */
+    .playstyle-block {
+      border-radius: var(--radius-lg); padding: 16px 20px; margin-top: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15));
+      border: 1px solid var(--glass-border);
+    }
+    .bs-berserker .playstyle-block { border-left: 3px solid var(--berserker); }
+    .bs-tank      .playstyle-block { border-left: 3px solid var(--tank); }
+    .bs-assassin  .playstyle-block { border-left: 3px solid var(--assassin); }
+    .bs-mage      .playstyle-block { border-left: 3px solid var(--mage); }
+    .bs-paladin   .playstyle-block { border-left: 3px solid var(--paladin); }
+    .playstyle-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-faint); margin-bottom: 8px; }
+    .playstyle-text  { font-size: 0.86rem; color: var(--text-muted); line-height: 1.7; }
+    .sv-hp    { color: #E74C3C; } .sv-dmg  { color: #E67E22; }
+    .sv-def   { color: #5B9BD5; } .sv-spd  { color: #2ECC71; }
+    .sv-mana  { color: #9B59B6; } .sv-ls   { color: #C0392B; }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:10%;top:15%;animation-delay:0s;animation-duration:3.5s;"></span>
+  <span class="star" style="left:25%;top:8%;animation-delay:1.2s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:50%;top:20%;animation-delay:0.6s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:72%;top:12%;animation-delay:2.1s;animation-duration:3.0s;"></span>
+  <span class="star" style="left:86%;top:30%;animation-delay:0.9s;animation-duration:4.6s;"></span>
+  <span class="star" style="left:40%;top:60%;animation-delay:1.8s;animation-duration:3.3s;"></span>
+  <span class="star" style="left:63%;top:72%;animation-delay:0.4s;animation-duration:5.1s;"></span>
+  <span class="star" style="left:6%;top:78%;animation-delay:2.5s;animation-duration:3.9s;"></span>
+  <span class="star" style="left:90%;top:62%;animation-delay:1.4s;animation-duration:4.3s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-builds" aria-labelledby="hero-title">
+      <span class="hero-badge">🏆 Builds</span>
+      <h1 id="hero-title">Quelle classe vas-tu jouer ?</h1>
+      <p>5 builds différents, 5 styles de jeu. Choisis celui qui te correspond et domine le PvP !</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">⚔️ <strong>PvP 1.8</strong> sans cooldown</div>
+        <div class="hero-meta-item">📊 <strong>49 points</strong> à distribuer</div>
+        <div class="hero-meta-item">💎 <strong>Gemmes</strong> Erinium Parfaites</div>
+        <div class="hero-meta-item">🏆 <strong>5 archétypes</strong></div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Builds</span>
+        </nav>
+
+        <!-- ── Quelle classe choisir ? ── -->
+        <section aria-labelledby="section-overview">
+          <h2 id="section-overview">Quelle classe choisir ?</h2>
+          <p>Clique sur un archétype pour accéder directement à son guide !</p>
+
+          <div class="compare-grid">
+            <a href="#build-berserker" class="compare-card cc-berserker">
+              <span class="cc-icon">⚔️</span>
+              <span class="cc-name">Berserker</span>
+              <span class="cc-tagline">Frappe fort, vol de vie</span>
+              <span class="cc-diff diff-easy">Facile</span>
+            </a>
+            <a href="#build-tank" class="compare-card cc-tank">
+              <span class="cc-icon">🛡️</span>
+              <span class="cc-name">Tank Cristallin</span>
+              <span class="cc-tagline">Maximum de PV et défense</span>
+              <span class="cc-diff diff-easy">Facile</span>
+            </a>
+            <a href="#build-assassin" class="compare-card cc-assassin">
+              <span class="cc-icon">🗡️</span>
+              <span class="cc-name">Assassin d'Ombre</span>
+              <span class="cc-tagline">Vitesse, furtivité, burst</span>
+              <span class="cc-diff diff-hard">Difficile</span>
+            </a>
+            <a href="#build-mage" class="compare-card cc-mage">
+              <span class="cc-icon">🔮</span>
+              <span class="cc-name">Mage Corrupteur</span>
+              <span class="cc-tagline">Sorts, drain, contrôle</span>
+              <span class="cc-diff diff-medium">Moyen</span>
+            </a>
+            <a href="#build-paladin" class="compare-card cc-paladin">
+              <span class="cc-icon">✨</span>
+              <span class="cc-name">Paladin de Soutien</span>
+              <span class="cc-tagline">Soin, aura, faction</span>
+              <span class="cc-diff diff-medium">Moyen</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             BUILD 1 — BERSERKER
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="build-berserker">
+          <h2 id="build-berserker">Build 1 — Berserker</h2>
+          <div class="build-section bs-berserker">
+            <div class="build-header">
+              <span class="build-class-icon">⚔️</span>
+              <div class="build-title-block">
+                <div class="build-class-name">Berserker</div>
+                <div class="build-class-tagline">« Plus tu frappes, plus tu te soignes. Et tu frappes beaucoup. »</div>
+                <div class="build-tags">
+                  <span class="build-tag">DPS Mêlée</span>
+                  <span class="build-tag">Vol de vie</span>
+                  <span class="build-tag">Épée Erinium</span>
+                </div>
+              </div>
+              <span class="build-difficulty-badge difficulty-easy">Facile</span>
+            </div>
+
+            <div class="build-body">
+              <div class="build-block">
+                <div class="build-block-title">📊 Stats (49 pts)</div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-force">Force</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-force" style="width:100%;"></div></div><span class="stat-alloc-pts san-force">25</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-vigueur">Vigueur</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-vigueur" style="width:80%;"></div></div><span class="stat-alloc-pts san-vigueur">20</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-resistance">Résistance</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-resistance" style="width:16%;"></div></div><span class="stat-alloc-pts san-resistance">4</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-agilite">Agilité</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-agilite" style="width:0%;"></div></div><span class="stat-alloc-pts san-agilite">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-arcane">Arcane</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-arcane" style="width:0%;"></div></div><span class="stat-alloc-pts san-arcane">0</span></div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">🗡️ Équipement</div>
+                <div class="build-block-line"><strong>Arme :</strong> Épée d'Erinium</div>
+                <div class="build-block-line"><strong>Armure :</strong> Set complet Erinium</div>
+                <div class="build-block-line"><strong>Gemmes arme :</strong><span class="gem-pill gem-ruby" style="margin-left:4px;">Rubis ×3</span></div>
+                <div class="build-block-line"><strong>Gemmes armure :</strong><span class="gem-pill gem-onyx" style="margin-left:4px;">Onyx ×9</span><span class="gem-pill gem-sapphire">Saphir ×3</span></div>
+                <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">+12% vol de vie en arme — Onyx cap réduction dégâts</div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">✨ Sorts</div>
+                <div class="spell-loadout">
+                  <div class="spell-slot-row"><span class="spell-slot-num">①</span><img class="spell-slot-icon" src="img/spells/eclat.png" alt=""><span class="spell-slot-name">Éclat</span><span class="spell-slot-school school-fracture">Fracture</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">②</span><img class="spell-slot-icon" src="img/spells/fracture.png" alt=""><span class="spell-slot-name">Fracture</span><span class="spell-slot-school school-fracture">Fracture</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">③</span><img class="spell-slot-icon" src="img/spells/implosion.png" alt=""><span class="spell-slot-name">Implosion</span><span class="spell-slot-school school-fracture">Fracture</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">④</span><img class="spell-slot-icon" src="img/spells/pulse.png" alt=""><span class="spell-slot-name">Pulse</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-bottom:16px;">
+              <div class="build-block-title">🔓 Perks recommandés</div>
+              <div class="perk-sel-list">
+                <div class="perk-sel-item"><span class="perk-sel-tier">10</span><div><div class="perk-sel-name">Instinct du Chasseur</div><div class="perk-sel-desc">Détecte les ennemis à 50 blocs — anticipe les approches en mêlée.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">20</span><div><div class="perk-sel-name">Furie d'Erinium</div><div class="perk-sel-desc">+15% dégâts + +10% vitesse après chaque kill — se cumule ×3.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">30</span><div><div class="perk-sel-name">Exécution</div><div class="perk-sel-desc">+35% dégâts sur les cibles sous 25% PV — one-shot assuré.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">40</span><div><div class="perk-sel-name">Frappe d'Erinium</div><div class="perk-sel-desc">Coup ×2.5 toutes les 30 secondes — combo parfait avec Exécution.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">50</span><div><div class="perk-sel-name">Écho du Noyau</div><div class="perk-sel-desc">Onde de 3 cœurs sur kill PvP — ravage les groupes d'ennemis.</div></div></div>
+              </div>
+            </div>
+
+            <div class="final-stats">
+              <div class="final-stats-title">Stats finales calculées</div>
+              <div class="final-stats-grid">
+                <div class="stat-bubble"><div class="stat-bubble-value sv-hp">48 PV</div><div class="stat-bubble-label">HP Total</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-dmg">+37,5%</div><div class="stat-bubble-label">Dégâts Mêlée</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-ls">+12%</div><div class="stat-bubble-label">Vol de Vie</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-def">−35%</div><div class="stat-bubble-label">Réduction Dégâts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-mana">100</div><div class="stat-bubble-label">Mana</div></div>
+              </div>
+            </div>
+
+            <div class="playstyle-block">
+              <div class="playstyle-title">Comment jouer</div>
+              <p class="playstyle-text">
+                Approche ton ennemi et frappe sans arrêter. Avec +37,5% de dégâts et 12% de vol de vie, tu te soignes en combattant. Lance <strong>Éclat</strong> pour ouvrir le combat, enchaîne au mêlée. Quand la cible passe sous 25% PV, <strong>Exécution</strong> et <strong>Frappe d'Erinium</strong> finissent le travail. En groupe, chaque kill déclenche <strong>Furie d'Erinium</strong> et tu deviens inarrêtable.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             BUILD 2 — TANK CRISTALLIN
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="build-tank">
+          <h2 id="build-tank">Build 2 — Tank Cristallin</h2>
+          <div class="build-section bs-tank">
+            <div class="build-header">
+              <span class="build-class-icon">🛡️</span>
+              <div class="build-title-block">
+                <div class="build-class-name">Tank Cristallin</div>
+                <div class="build-class-tagline">« Ils frappent. Tu résistes. Ils s'épuisent. Tu gagnes. »</div>
+                <div class="build-tags">
+                  <span class="build-tag">Défensif</span>
+                  <span class="build-tag">PV Maximum</span>
+                  <span class="build-tag">Marteau Erinium</span>
+                </div>
+              </div>
+              <span class="build-difficulty-badge difficulty-easy">Facile</span>
+            </div>
+
+            <div class="build-body">
+              <div class="build-block">
+                <div class="build-block-title">📊 Stats (49 pts)</div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-vigueur">Vigueur</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-vigueur" style="width:100%;"></div></div><span class="stat-alloc-pts san-vigueur">25</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-resistance">Résistance</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-resistance" style="width:96%;"></div></div><span class="stat-alloc-pts san-resistance">24</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-force">Force</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-force" style="width:0%;"></div></div><span class="stat-alloc-pts san-force">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-agilite">Agilité</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-agilite" style="width:0%;"></div></div><span class="stat-alloc-pts san-agilite">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-arcane">Arcane</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-arcane" style="width:0%;"></div></div><span class="stat-alloc-pts san-arcane">0</span></div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">🗡️ Équipement</div>
+                <div class="build-block-line"><strong>Arme :</strong> Marteau de Guerre Erinium</div>
+                <div class="build-block-line"><strong>Armure :</strong> Set complet Erinium</div>
+                <div class="build-block-line"><strong>Gemmes arme :</strong><span class="gem-pill gem-ruby" style="margin-left:4px;">Rubis ×3</span></div>
+                <div class="build-block-line"><strong>Gemmes armure :</strong><span class="gem-pill gem-sapphire" style="margin-left:4px;">Saphir ×12</span></div>
+                <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">12 Saphir = +48 PV max supplémentaires !</div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">✨ Sorts</div>
+                <div class="spell-loadout">
+                  <div class="spell-slot-row"><span class="spell-slot-num">①</span><img class="spell-slot-icon" src="img/spells/bouclier.png" alt=""><span class="spell-slot-name">Bouclier</span><span class="spell-slot-school school-cristallisation">Cristallisation</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">②</span><img class="spell-slot-icon" src="img/spells/mur.png" alt=""><span class="spell-slot-name">Mur</span><span class="spell-slot-school school-cristallisation">Cristallisation</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">③</span><img class="spell-slot-icon" src="img/spells/armure.png" alt=""><span class="spell-slot-name">Armure Cristalline</span><span class="spell-slot-school school-cristallisation">Cristallisation</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">④</span><img class="spell-slot-icon" src="img/spells/prison.png" alt=""><span class="spell-slot-name">Prison</span><span class="spell-slot-school school-cristallisation">Cristallisation</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-bottom:16px;">
+              <div class="build-block-title">🔓 Perks recommandés</div>
+              <div class="perk-sel-list">
+                <div class="perk-sel-item"><span class="perk-sel-tier">10</span><div><div class="perk-sel-name">Second Souffle</div><div class="perk-sel-desc">+3 cœurs sous 20% PV — complète la survie massive du Tank.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">20</span><div><div class="perk-sel-name">Bastion</div><div class="perk-sel-desc">+15% réduction en restant immobile — parfait quand tu tiens une position.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">30</span><div><div class="perk-sel-name">Mur d'Acier</div><div class="perk-sel-desc">Absorbe 3 points de dégâts fixes par coup — contre les attaquants rapides.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">40</span><div><div class="perk-sel-name">Résurgence</div><div class="perk-sel-desc">Ressuscite avec 3 cœurs + 3 secondes d'invincibilité — survie ultime.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">50</span><div><div class="perk-sel-name">Forme Cristalline</div><div class="perk-sel-desc">30s de semi-invisibilité + +25% vitesse — repositionnement d'urgence.</div></div></div>
+              </div>
+            </div>
+
+            <div class="final-stats">
+              <div class="final-stats-title">Stats finales calculées</div>
+              <div class="final-stats-grid">
+                <div class="stat-bubble"><div class="stat-bubble-value sv-hp">78 PV</div><div class="stat-bubble-label">HP Total</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-def">−43,8%</div><div class="stat-bubble-label">Réduction Dégâts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-dmg">+0%</div><div class="stat-bubble-label">Dégâts Mêlée</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-ls">+12%</div><div class="stat-bubble-label">Vol de Vie</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-mana">100</div><div class="stat-bubble-label">Mana</div></div>
+              </div>
+            </div>
+
+            <div class="playstyle-block">
+              <div class="playstyle-title">Comment jouer</div>
+              <p class="playstyle-text">
+                Tu es un mur humain. Avec 78 PV et −43,8% de réduction de dégâts, les ennemis s'épuisent contre toi. Utilise <strong>Bouclier</strong> en ouvrant le combat, <strong>Armure Cristalline</strong> pour les moments chauds, et <strong>Prison</strong> pour immobiliser la cible et frapper tranquillement au Marteau. <strong>Mur</strong> bloque les angles et force les ennemis à te contourner.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             BUILD 3 — ASSASSIN D'OMBRE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="build-assassin">
+          <h2 id="build-assassin">Build 3 — Assassin d'Ombre</h2>
+          <div class="build-section bs-assassin">
+            <div class="build-header">
+              <span class="build-class-icon">🗡️</span>
+              <div class="build-title-block">
+                <div class="build-class-name">Assassin d'Ombre</div>
+                <div class="build-class-tagline">« Approche en silence. Frappe vite. Disparais. »</div>
+                <div class="build-tags">
+                  <span class="build-tag">Burst</span>
+                  <span class="build-tag">Mobilité</span>
+                  <span class="build-tag">Furtivité</span>
+                </div>
+              </div>
+              <span class="build-difficulty-badge difficulty-hard">Difficile</span>
+            </div>
+
+            <div class="build-body">
+              <div class="build-block">
+                <div class="build-block-title">📊 Stats (49 pts)</div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-force">Force</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-force" style="width:76%;"></div></div><span class="stat-alloc-pts san-force">19</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-agilite">Agilité</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-agilite" style="width:76%;"></div></div><span class="stat-alloc-pts san-agilite">19</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-vigueur">Vigueur</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-vigueur" style="width:44%;"></div></div><span class="stat-alloc-pts san-vigueur">11</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-resistance">Résistance</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-resistance" style="width:0%;"></div></div><span class="stat-alloc-pts san-resistance">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-arcane">Arcane</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-arcane" style="width:0%;"></div></div><span class="stat-alloc-pts san-arcane">0</span></div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">🗡️ Équipement</div>
+                <div class="build-block-line"><strong>Arme :</strong> Épée d'Erinium</div>
+                <div class="build-block-line"><strong>Armure :</strong> Set complet Erinium</div>
+                <div class="build-block-line"><strong>Gemmes arme :</strong><span class="gem-pill gem-emerald" style="margin-left:4px;">Émeraude ×3</span></div>
+                <div class="build-block-line"><strong>Gemmes armure :</strong><span class="gem-pill gem-emerald" style="margin-left:4px;">Émeraude ×8</span><span class="gem-pill gem-ruby">Rubis ×4</span></div>
+                <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">Émeraude = bonus de vitesse additionnel</div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">✨ Sorts</div>
+                <div class="spell-loadout">
+                  <div class="spell-slot-row"><span class="spell-slot-num">①</span><img class="spell-slot-icon" src="img/spells/toucher.png" alt=""><span class="spell-slot-name">Toucher Corrompu</span><span class="spell-slot-school school-corruption">Corruption</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">②</span><img class="spell-slot-icon" src="img/spells/eclat.png" alt=""><span class="spell-slot-name">Éclat</span><span class="spell-slot-school school-fracture">Fracture</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">③</span><img class="spell-slot-icon" src="img/spells/teleportation.png" alt=""><span class="spell-slot-name">Téléportation</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">④</span><img class="spell-slot-icon" src="img/spells/drain.png" alt=""><span class="spell-slot-name">Drain</span><span class="spell-slot-school school-corruption">Corruption</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-bottom:16px;">
+              <div class="build-block-title">🔓 Perks recommandés</div>
+              <div class="perk-sel-list">
+                <div class="perk-sel-item"><span class="perk-sel-tier">10</span><div><div class="perk-sel-name">Pas Légers</div><div class="perk-sel-desc">Aucun bruit de pas, indétectable à la proximité — l'embuscade parfaite.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">20</span><div><div class="perk-sel-name">Furie d'Erinium</div><div class="perk-sel-desc">+15% dégâts + vitesse après chaque kill — enchaîne les cibles facilement.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">30</span><div><div class="perk-sel-name">Vampirisme</div><div class="perk-sel-desc">8% de vol de vie par coup — compense l'absence de Résistance.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">40</span><div><div class="perk-sel-name">Frappe d'Erinium</div><div class="perk-sel-desc">Coup ×2.5 toutes les 30 sec — one-shot potentiel sur cible fragilisée.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">50</span><div><div class="perk-sel-name">Forme Cristalline</div><div class="perk-sel-desc">30s semi-invisible + +25% vitesse — approche ou fuite garantie.</div></div></div>
+              </div>
+            </div>
+
+            <div class="final-stats">
+              <div class="final-stats-title">Stats finales calculées</div>
+              <div class="final-stats-grid">
+                <div class="stat-bubble"><div class="stat-bubble-value sv-hp">42,2 PV</div><div class="stat-bubble-label">HP Total</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-dmg">+28,5%</div><div class="stat-bubble-label">Dégâts Mêlée</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-spd">+24,7%</div><div class="stat-bubble-label">Vitesse</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-def">−15%</div><div class="stat-bubble-label">Réduction Dégâts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-mana">100</div><div class="stat-bubble-label">Mana</div></div>
+              </div>
+            </div>
+
+            <div class="playstyle-block">
+              <div class="playstyle-title">Comment jouer</div>
+              <p class="playstyle-text">
+                Approche en silence grâce aux <strong>Pas Légers</strong>. Active <strong>Toucher Corrompu</strong> avant d'engager — ton premier coup empoisonne la cible. Lance <strong>Éclat</strong> puis frappe au mêlée à toute vitesse (+24,7% vitesse). Si la cible fuit, utilise <strong>Téléportation</strong> pour la rattraper. En danger, <strong>Drain</strong> te soigne. C'est le build le plus technique mais aussi le plus redoutable dans les bonnes mains.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             BUILD 4 — MAGE CORRUPTEUR
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="build-mage">
+          <h2 id="build-mage">Build 4 — Mage Corrupteur</h2>
+          <div class="build-section bs-mage">
+            <div class="build-header">
+              <span class="build-class-icon">🔮</span>
+              <div class="build-title-block">
+                <div class="build-class-name">Mage Corrupteur</div>
+                <div class="build-class-tagline">« Le feu et l'ombre à ma guise. »</div>
+                <div class="build-tags">
+                  <span class="build-tag">Sorts</span>
+                  <span class="build-tag">Arcane max</span>
+                  <span class="build-tag">Corruption</span>
+                </div>
+              </div>
+              <span class="build-difficulty-badge difficulty-medium">Moyen</span>
+            </div>
+
+            <div class="build-body">
+              <div class="build-block">
+                <div class="build-block-title">📊 Stats (49 pts)</div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-arcane">Arcane</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-arcane" style="width:100%;"></div></div><span class="stat-alloc-pts san-arcane">25</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-vigueur">Vigueur</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-vigueur" style="width:60%;"></div></div><span class="stat-alloc-pts san-vigueur">15</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-agilite">Agilité</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-agilite" style="width:36%;"></div></div><span class="stat-alloc-pts san-agilite">9</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-resistance">Résistance</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-resistance" style="width:0%;"></div></div><span class="stat-alloc-pts san-resistance">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-force">Force</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-force" style="width:0%;"></div></div><span class="stat-alloc-pts san-force">0</span></div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">🗡️ Équipement</div>
+                <div class="build-block-line"><strong>Arme :</strong> Bâton d'Erinium ou Épée</div>
+                <div class="build-block-line"><strong>Armure :</strong> Set complet Erinium</div>
+                <div class="build-block-line"><strong>Gemmes arme :</strong><span class="gem-pill gem-amethyst" style="margin-left:4px;">Améthyste ×3</span></div>
+                <div class="build-block-line"><strong>Gemmes armure :</strong><span class="gem-pill gem-amethyst" style="margin-left:4px;">Améthyste ×8</span><span class="gem-pill gem-sapphire">Saphir ×4</span></div>
+                <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">Améthyste = bonus de mana/puissance magique</div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">✨ Sorts</div>
+                <div class="spell-loadout">
+                  <div class="spell-slot-row"><span class="spell-slot-num">①</span><img class="spell-slot-icon" src="img/spells/malediction.png" alt=""><span class="spell-slot-name">Malédiction</span><span class="spell-slot-school school-corruption">Corruption</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">②</span><img class="spell-slot-icon" src="img/spells/brume.png" alt=""><span class="spell-slot-name">Brume</span><span class="spell-slot-school school-corruption">Corruption</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">③</span><img class="spell-slot-icon" src="img/spells/drain.png" alt=""><span class="spell-slot-name">Drain</span><span class="spell-slot-school school-corruption">Corruption</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">④</span><img class="spell-slot-icon" src="img/spells/cataclysme.png" alt=""><span class="spell-slot-name">Cataclysme</span><span class="spell-slot-school school-fracture">Fracture</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-bottom:16px;">
+              <div class="build-block-title">🔓 Perks recommandés</div>
+              <div class="perk-sel-list">
+                <div class="perk-sel-item"><span class="perk-sel-tier">10</span><div><div class="perk-sel-name">Second Souffle</div><div class="perk-sel-desc">+3 cœurs sous 20% PV — essentiel car tu évites le mêlée direct.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">20</span><div><div class="perk-sel-name">Pillard</div><div class="perk-sel-desc">+10% de l'argent ennemi par kill — récompense le gameplay basé sur les kills.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">30</span><div><div class="perk-sel-name">Vampirisme</div><div class="perk-sel-desc">8% de vol de vie par coup mêlée — soin d'urgence si quelqu'un t'approche.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">40</span><div><div class="perk-sel-name">Résurgence</div><div class="perk-sel-desc">Ressuscite avec invincibilité — te donne le temps de te téléporter.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">50</span><div><div class="perk-sel-name">Écho du Noyau</div><div class="perk-sel-desc">Onde de 3 cœurs sur kill — bonus gratuit sur tes kills magiques en groupe.</div></div></div>
+              </div>
+            </div>
+
+            <div class="final-stats">
+              <div class="final-stats-title">Stats finales calculées</div>
+              <div class="final-stats-grid">
+                <div class="stat-bubble"><div class="stat-bubble-value sv-hp">38 PV</div><div class="stat-bubble-label">HP Total</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-mana">150</div><div class="stat-bubble-label">Mana Max</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-dmg">+25%</div><div class="stat-bubble-label">Puissance Sorts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-spd">+11,7%</div><div class="stat-bubble-label">Vitesse</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-def">−15%</div><div class="stat-bubble-label">Réduction Dégâts</div></div>
+              </div>
+            </div>
+
+            <div class="playstyle-block">
+              <div class="playstyle-title">Comment jouer</div>
+              <p class="playstyle-text">
+                Ouvre avec <strong>Malédiction</strong> pour affaiblir la cible dès le départ. Dépose une <strong>Brume</strong> pour empoisonner et forcer la fuite. Utilise <strong>Drain</strong> pour te soigner à distance. Garde <strong>Cataclysme</strong> pour les combats de groupe ou les zones de défense. Avec 150 mana et +25% de puissance de sorts, tes attaques magiques font très mal. Garde la distance et ne te laisse jamais coincer.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             BUILD 5 — PALADIN DE SOUTIEN
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="build-paladin">
+          <h2 id="build-paladin">Build 5 — Paladin de Soutien</h2>
+          <div class="build-section bs-paladin">
+            <div class="build-header">
+              <span class="build-class-icon">✨</span>
+              <div class="build-title-block">
+                <div class="build-class-name">Paladin de Soutien</div>
+                <div class="build-class-tagline">« Mes alliés ne meurent jamais. »</div>
+                <div class="build-tags">
+                  <span class="build-tag">Soutien</span>
+                  <span class="build-tag">Soins</span>
+                  <span class="build-tag">Auras</span>
+                </div>
+              </div>
+              <span class="build-difficulty-badge difficulty-medium">Moyen</span>
+            </div>
+
+            <div class="build-body">
+              <div class="build-block">
+                <div class="build-block-title">📊 Stats (49 pts)</div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-arcane">Arcane</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-arcane" style="width:76%;"></div></div><span class="stat-alloc-pts san-arcane">19</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-vigueur">Vigueur</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-vigueur" style="width:72%;"></div></div><span class="stat-alloc-pts san-vigueur">18</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-resistance">Résistance</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-resistance" style="width:48%;"></div></div><span class="stat-alloc-pts san-resistance">12</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-force">Force</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-force" style="width:0%;"></div></div><span class="stat-alloc-pts san-force">0</span></div>
+                <div class="stat-alloc-row"><span class="stat-alloc-name san-agilite">Agilité</span><div class="stat-alloc-bar"><div class="stat-alloc-fill saf-agilite" style="width:0%;"></div></div><span class="stat-alloc-pts san-agilite">0</span></div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">🗡️ Équipement</div>
+                <div class="build-block-line"><strong>Arme :</strong> Marteau ou Épée Erinium</div>
+                <div class="build-block-line"><strong>Armure :</strong> Set complet Erinium</div>
+                <div class="build-block-line"><strong>Gemmes arme :</strong><span class="gem-pill gem-amethyst" style="margin-left:4px;">Améthyste ×3</span></div>
+                <div class="build-block-line"><strong>Gemmes armure :</strong><span class="gem-pill gem-sapphire" style="margin-left:4px;">Saphir ×6</span><span class="gem-pill gem-amethyst">Améthyste ×6</span></div>
+                <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">Mix Saphir (PV) + Améthyste (mana) — polyvalent</div>
+              </div>
+
+              <div class="build-block">
+                <div class="build-block-title">✨ Sorts</div>
+                <div class="spell-loadout">
+                  <div class="spell-slot-row"><span class="spell-slot-num">①</span><img class="spell-slot-icon" src="img/spells/pulse.png" alt=""><span class="spell-slot-name">Pulse</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">②</span><img class="spell-slot-icon" src="img/spells/aura.png" alt=""><span class="spell-slot-name">Aura</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">③</span><img class="spell-slot-icon" src="img/spells/lien.png" alt=""><span class="spell-slot-name">Lien</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                  <div class="spell-slot-row"><span class="spell-slot-num">④</span><img class="spell-slot-icon" src="img/spells/resurrection.png" alt=""><span class="spell-slot-name">Résurrection</span><span class="spell-slot-school school-resonance">Résonance</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-bottom:16px;">
+              <div class="build-block-title">🔓 Perks recommandés</div>
+              <div class="perk-sel-list">
+                <div class="perk-sel-item"><span class="perk-sel-tier">10</span><div><div class="perk-sel-name">Second Souffle</div><div class="perk-sel-desc">+3 cœurs d'urgence — tu dois rester en vie pour soigner les autres !</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">20</span><div><div class="perk-sel-name">Bastion</div><div class="perk-sel-desc">+15% réduction si immobile — parfait pendant les soins en arrière.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">30</span><div><div class="perk-sel-name">Mur d'Acier</div><div class="perk-sel-desc">Absorbe 3 dégâts fixes par coup — survie contre les rushers.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">40</span><div><div class="perk-sel-name">Lien Cristallin</div><div class="perk-sel-desc">+5% soin et réduction pour les alliés dans 20 blocs — aura de soutien permanente.</div></div></div>
+                <div class="perk-sel-item"><span class="perk-sel-tier">50</span><div><div class="perk-sel-name">Omniscience</div><div class="perk-sel-desc">Vois niveau/PV/faction de tous les joueurs à 80 blocs — information = survie.</div></div></div>
+              </div>
+            </div>
+
+            <div class="final-stats">
+              <div class="final-stats-title">Stats finales calculées</div>
+              <div class="final-stats-grid">
+                <div class="stat-bubble"><div class="stat-bubble-value sv-hp">45,6 PV</div><div class="stat-bubble-label">HP Total</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-mana">138</div><div class="stat-bubble-label">Mana Max</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-def">−29,4%</div><div class="stat-bubble-label">Réduction Dégâts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-dmg">+19%</div><div class="stat-bubble-label">Puissance Sorts</div></div>
+                <div class="stat-bubble"><div class="stat-bubble-value sv-spd">0%</div><div class="stat-bubble-label">Vitesse</div></div>
+              </div>
+            </div>
+
+            <div class="playstyle-block">
+              <div class="playstyle-title">Comment jouer</div>
+              <p class="playstyle-text">
+                Tu es le pilier de ta faction. Active <strong>Aura</strong> au début de chaque combat pour donner Régénération + Vitesse à tous tes alliés proches. Utilise <strong>Pulse</strong> en continu pour soigner les alliés blessés. <strong>Lien</strong> protège ton Berserker ou ton Tank en échange d'un peu de ta force. Et si un allié tombe au combat, <strong>Résurrection</strong> peut changer totalement l'issue de la bataille !
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div class="alert alert-tip" role="note">
+          <span class="alert-icon">💡</span>
+          <div class="alert-body">
+            <strong class="alert-title">Construis ton propre style !</strong>
+            <span class="alert-desc">Ces builds sont des points de départ. Avec 49 points à distribuer librement, ton build unique peut surprendre des adversaires qui ont appris à contrer les archétypes classiques. Expérimente !</span>
+          </div>
+        </div>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="rpg.html">RPG</a></li>
+        <li><a href="spells.html">Sorts</a></li>
+        <li><a href="perks.html">Perks</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

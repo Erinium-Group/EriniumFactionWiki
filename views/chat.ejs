@@ -1,0 +1,362 @@
+<%- include('partials/head', { pageTitle: 'Chat — EriniumFaction Wiki' }) %>
+<style>
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .channel-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .channel-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .channel-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .channel-card-global  { border-top: 3px solid #F0F2FF; }
+    .channel-card-faction { border-top: 3px solid #55FF55; }
+    .channel-card-ally    { border-top: 3px solid #55FFFF; }
+    .channel-card-local   { border-top: 3px solid #FFAA00; }
+    .channel-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+    .channel-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .channel-name { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .channel-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+
+    .chat-demo {
+      background: rgba(0,0,0,0.45);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .chat-demo-bar {
+      display: flex;
+      gap: 2px;
+      padding: 8px 10px 0;
+      background: rgba(0,0,0,0.30);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .chat-tab {
+      padding: 7px 14px;
+      border-radius: 6px 6px 0 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-faint);
+      position: relative;
+    }
+    .chat-tab.active {
+      background: rgba(var(--accent-primary-rgb), 0.18);
+      color: var(--accent-secondary);
+    }
+    .chat-demo-body { padding: 14px 16px; }
+    .chat-line {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      line-height: 1.5;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .chat-tag-g  { color: #F0F2FF; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; background: rgba(240,242,255,0.10); padding: 1px 5px; border-radius: 3px; }
+    .chat-tag-f  { color: #55FF55; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; background: rgba(85,255,85,0.10); padding: 1px 5px; border-radius: 3px; }
+    .chat-tag-a  { color: #55FFFF; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; background: rgba(85,255,255,0.10); padding: 1px 5px; border-radius: 3px; }
+    .chat-tag-mp { color: #FFAA00; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; background: rgba(255,170,0,0.10); padding: 1px 5px; border-radius: 3px; }
+    .chat-player { font-weight: 700; color: var(--text); }
+    .chat-mention { color: var(--accent-gold); font-weight: 700; background: rgba(255,215,0,0.12); padding: 0 3px; border-radius: 3px; }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .color-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      transition: transform var(--transition);
+    }
+    .color-item:hover { transform: translateX(3px); }
+    .color-swatch { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; box-shadow: 0 0 6px rgba(0,0,0,0.5); }
+    .color-item-code { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 600; }
+    .color-item-name { font-size: 0.65rem; color: var(--text-faint); margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">💬 Communication</div>
+      <h1>Le Système de Chat</h1>
+      <p>
+        Sur Erinium, le chat est divisé en plusieurs canaux. Tu peux parler à tout le monde, seulement à ta faction, à tes alliés, ou en privé à un joueur.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🌍 <strong>Global</strong> — tout le monde vous lit</div>
+        <div class="hero-meta-item">🏰 <strong>Faction</strong> — membres uniquement</div>
+        <div class="hero-meta-item">🤝 <strong>Allié</strong> — faction + alliés</div>
+        <div class="hero-meta-item">💌 <strong>MP</strong> — messages privés</div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/index">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">💬 Chat</span>
+        </nav>
+
+        <!-- 1. LES CANAUX -->
+        <section id="canaux">
+          <h2>Les canaux de chat</h2>
+          <p>
+            Il existe plusieurs canaux de chat. Chaque canal a son propre préfixe qui s'affiche devant les messages. Tu choisis dans quel canal tu parles avec la commande <code>/ch</code>.
+          </p>
+
+          <div class="channel-grid">
+
+            <div class="channel-card channel-card-global">
+              <span class="channel-icon">🌍</span>
+              <span class="channel-tag" style="background:rgba(240,242,255,0.10);color:#F0F2FF;">[G]</span>
+              <div class="channel-name">Global</div>
+              <div class="channel-desc">Tout le monde sur le serveur peut lire et écrire. Parle à n'importe qui depuis n'importe où.</div>
+              <div class="command-block" style="font-size:0.78rem;padding:6px 12px;">/ch global</div>
+            </div>
+
+            <div class="channel-card channel-card-faction">
+              <span class="channel-icon">🏰</span>
+              <span class="channel-tag" style="background:rgba(85,255,85,0.10);color:#55FF55;">[F]</span>
+              <div class="channel-name">Faction</div>
+              <div class="channel-desc">Uniquement tes coéquipiers peuvent lire. Parfait pour coordonner en combat sans que les ennemis t'entendent.</div>
+              <div class="command-block" style="font-size:0.78rem;padding:6px 12px;">/ch faction</div>
+            </div>
+
+            <div class="channel-card channel-card-ally">
+              <span class="channel-icon">🤝</span>
+              <span class="channel-tag" style="background:rgba(85,255,255,0.10);color:#55FFFF;">[A]</span>
+              <div class="channel-name">Allié</div>
+              <div class="channel-desc">Ta faction et toutes les factions alliées peuvent lire. Coordonne les batailles entre alliés.</div>
+              <div class="command-block" style="font-size:0.78rem;padding:6px 12px;">/ch ally</div>
+            </div>
+
+            <div class="channel-card channel-card-local">
+              <span class="channel-icon">📍</span>
+              <span class="channel-tag" style="background:rgba(255,170,0,0.10);color:#FFAA00;">[L]</span>
+              <div class="channel-name">Local</div>
+              <div class="channel-desc">Seuls les joueurs proches de toi peuvent lire. Utile pour parler à quelqu'un à côté sans encombrer le chat global.</div>
+              <div class="command-block" style="font-size:0.78rem;padding:6px 12px;">/ch local</div>
+            </div>
+
+          </div>
+
+          <!-- Chat demo -->
+          <div class="chat-demo">
+            <div class="chat-demo-bar">
+              <div class="chat-tab active">Tout</div>
+              <div class="chat-tab">Faction</div>
+              <div class="chat-tab">Allié</div>
+            </div>
+            <div class="chat-demo-body">
+              <div class="chat-line"><span class="chat-tag-g">G</span> <span class="chat-player">Steve</span> Quelqu'un sait où trouver de l'Aetherite ?</div>
+              <div class="chat-line"><span class="chat-tag-f">F</span> <span class="chat-player">Alex</span> On attaque depuis le nord, prêts ?</div>
+              <div class="chat-line"><span class="chat-tag-a">A</span> <span class="chat-player">Dragon54</span> On couvre votre flanc gauche !</div>
+              <div class="chat-line"><span class="chat-tag-mp">MP</span> <span class="chat-player">Notch</span> T'as l'ender pearl que je t'ai demandée ?</div>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin:16px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">💡</span>
+              <div>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  <strong style="color:var(--accent-gold);">Astuce :</strong> Tu peux aussi écrire directement dans un canal sans changer de canal actif en ajoutant un préfixe. Écris <code>!message</code> pour le global, <code>@message</code> pour la faction ou <code>#message</code> pour les alliés.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. MESSAGES PRIVÉS -->
+        <section id="mp">
+          <h2>Messages privés</h2>
+          <p>
+            Tu peux envoyer un message privé à n'importe quel joueur en ligne. Seuls toi et lui pouvez le lire.
+          </p>
+
+          <div class="command-block"><span class="cmd-prefix">/</span>msg <span class="cmd-arg">&lt;joueur&gt;</span> <span class="cmd-arg">&lt;message&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Exemple : <code>/msg Steve Salut, t'as du fer en spare ?</code></p>
+
+          <div class="command-block"><span class="cmd-prefix">/</span>r <span class="cmd-arg">&lt;message&gt;</span></div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Répond directement au dernier joueur qui t'a écrit en MP.</p>
+
+          <div class="command-block"><span class="cmd-prefix">/</span>msgtoggle</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Active ou désactive la réception des messages privés.</p>
+        </section>
+
+        <!-- 3. MENTIONS -->
+        <section id="mentions">
+          <h2>Mentionner quelqu'un</h2>
+          <p>
+            Tu peux mentionner un joueur dans le chat en écrivant <code>@pseudo</code>. Le joueur reçoit une notification sonore et son nom est mis en évidence en doré.
+          </p>
+
+          <div class="glass-card" style="padding:16px 18px;margin:16px 0;">
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-faint);margin-bottom:8px;">Exemple de message avec mention</div>
+            <div class="chat-line" style="margin:0;"><span class="chat-tag-g">G</span> <span class="chat-player">Alex</span> Hé <span class="chat-mention">@Steve</span> viens voir ça !</div>
+          </div>
+
+          <p style="color:var(--text-muted);font-size:0.875rem;">
+            La mention fonctionne dans tous les canaux. Le joueur mentionné reçoit un son même s'il ne regarde pas le chat.
+          </p>
+        </section>
+
+        <!-- 4. CODES COULEUR -->
+        <section id="couleurs">
+          <h2>Codes couleur dans le chat</h2>
+          <p>
+            Si tu as la permission d'utiliser les couleurs, tu peux colorier tes messages avec le symbole <code>&amp;</code> suivi d'un code.
+          </p>
+
+          <div class="color-grid">
+            <div class="color-item"><div class="color-swatch" style="background:#000000;"></div><div><div class="color-item-code" style="color:#888;">&amp;0</div><div class="color-item-name">Noir</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#0000AA;"></div><div><div class="color-item-code" style="color:#5555FF;">&amp;1</div><div class="color-item-name">Bleu foncé</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#00AA00;"></div><div><div class="color-item-code" style="color:#55FF55;">&amp;2</div><div class="color-item-name">Vert foncé</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#00AAAA;"></div><div><div class="color-item-code" style="color:#55FFFF;">&amp;3</div><div class="color-item-name">Cyan foncé</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#AA0000;"></div><div><div class="color-item-code" style="color:#FF5555;">&amp;4</div><div class="color-item-name">Rouge foncé</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#AA00AA;"></div><div><div class="color-item-code" style="color:#FF55FF;">&amp;5</div><div class="color-item-name">Violet</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#FFAA00;"></div><div><div class="color-item-code" style="color:#FFAA00;">&amp;6</div><div class="color-item-name">Or</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#AAAAAA;"></div><div><div class="color-item-code" style="color:#AAAAAA;">&amp;7</div><div class="color-item-name">Gris</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#555555;"></div><div><div class="color-item-code" style="color:#555555;">&amp;8</div><div class="color-item-name">Gris foncé</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#5555FF;"></div><div><div class="color-item-code" style="color:#5555FF;">&amp;9</div><div class="color-item-name">Bleu</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#55FF55;"></div><div><div class="color-item-code" style="color:#55FF55;">&amp;a</div><div class="color-item-name">Vert</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#55FFFF;"></div><div><div class="color-item-code" style="color:#55FFFF;">&amp;b</div><div class="color-item-name">Cyan</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#FF5555;"></div><div><div class="color-item-code" style="color:#FF5555;">&amp;c</div><div class="color-item-name">Rouge</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#FF55FF;"></div><div><div class="color-item-code" style="color:#FF55FF;">&amp;d</div><div class="color-item-name">Rose</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#FFFF55;"></div><div><div class="color-item-code" style="color:#FFFF55;">&amp;e</div><div class="color-item-name">Jaune</div></div></div>
+            <div class="color-item"><div class="color-swatch" style="background:#FFFFFF;"></div><div><div class="color-item-code" style="color:#FFFFFF;">&amp;f</div><div class="color-item-name">Blanc</div></div></div>
+          </div>
+
+          <h3 id="formats">Codes de mise en forme</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin:14px 0;">
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;l</span>
+              <span style="font-size:0.82rem;font-weight:900;">Gras</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;o</span>
+              <span style="font-size:0.82rem;font-style:italic;">Italique</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;n</span>
+              <span style="font-size:0.82rem;text-decoration:underline;">Souligné</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;m</span>
+              <span style="font-size:0.82rem;text-decoration:line-through;">Barré</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;k</span>
+              <span style="font-size:0.82rem;color:var(--text-muted);">Aléatoire</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 12px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--accent-secondary);width:28px;">&amp;r</span>
+              <span style="font-size:0.82rem;color:var(--text-muted);">Reset</span>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-cyan" style="margin:16px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">ℹ️</span>
+              <div>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Les codes couleur et de mise en forme ne fonctionnent que si tu as la permission <code>chat.color</code>. Par défaut, seuls certains grades y ont accès. Consulte la page <a href="/commands" style="color:var(--accent-secondary);">Commandes</a> pour les permissions complètes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. COMMANDES -->
+        <section id="commandes">
+          <h2>Toutes les commandes de chat</h2>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Commande</th><th>Ce que ça fait</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/ch global</code> ou <code>/ch g</code></td><td>Passer en canal global</td></tr>
+                <tr><td><code>/ch faction</code> ou <code>/ch f</code></td><td>Passer en canal faction</td></tr>
+                <tr><td><code>/ch ally</code> ou <code>/ch a</code></td><td>Passer en canal allié</td></tr>
+                <tr><td><code>/ch local</code> ou <code>/ch l</code></td><td>Passer en canal local</td></tr>
+                <tr><td><code>/msg &lt;joueur&gt; &lt;message&gt;</code></td><td>Envoyer un message privé</td></tr>
+                <tr><td><code>/r &lt;message&gt;</code></td><td>Répondre au dernier MP</td></tr>
+                <tr><td><code>/msgtoggle</code></td><td>Activer / désactiver les MP</td></tr>
+                <tr><td><code>/ignore &lt;joueur&gt;</code></td><td>Ignorer un joueur</td></tr>
+                <tr><td><code>/unignore &lt;joueur&gt;</code></td><td>Arrêter d'ignorer un joueur</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#canaux" class="toc-link">Les canaux</a></li>
+          <li class="toc-item"><a href="#mp" class="toc-link">Messages privés</a></li>
+          <li class="toc-item"><a href="#mentions" class="toc-link">Mentionner quelqu'un</a></li>
+          <li class="toc-item"><a href="#couleurs" class="toc-link">Codes couleur</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#formats" class="toc-link">Mise en forme</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#commandes" class="toc-link">Commandes</a></li>
+        </ul>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

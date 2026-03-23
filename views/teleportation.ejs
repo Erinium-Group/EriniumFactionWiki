@@ -1,0 +1,385 @@
+<%- include('partials/head', { pageTitle: 'Téléportation — EriniumFaction Wiki' }) %>
+<style>
+    .hero-tp {
+      background: linear-gradient(135deg,
+        rgba(0, 229, 255, 0.10) 0%,
+        rgba(107, 47, 160, 0.08) 50%,
+        transparent 100%);
+    }
+
+    .tp-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px;
+      margin: 16px 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .tp-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+    }
+    .tp-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .tp-card-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tp-card-title code {
+      font-size: 0.85em;
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent-secondary);
+      border-radius: 6px;
+      padding: 2px 10px;
+    }
+    .tp-card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 12px; }
+
+    .warmup-box {
+      position: relative;
+      background: linear-gradient(135deg,
+        rgba(243, 156, 18, 0.10) 0%,
+        rgba(255, 215, 0, 0.05) 100%);
+      border: 1px solid rgba(243, 156, 18, 0.30);
+      border-left: 4px solid #F39C12;
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin: 20px 0;
+    }
+
+    .timing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .timing-table th {
+      padding: 10px 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      border-bottom: 1px solid var(--glass-border);
+      text-align: left;
+    }
+    .timing-table td {
+      padding: 11px 14px;
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .timing-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .timing-table td:first-child { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--accent-secondary); }
+    .t-warmup { color: #F39C12; font-weight: 700; }
+    .t-cooldown { color: #E74C3C; font-weight: 700; }
+    .t-none { color: var(--success); font-weight: 700; }
+
+    .tp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .tp-cmd-chip {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .tp-cmd-chip:hover { border-color: rgba(var(--accent-secondary-rgb),0.3); transform: translateY(-2px); }
+    .tp-cmd-chip-cmd { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 600; color: var(--accent-secondary); margin-bottom: 4px; }
+    .tp-cmd-chip-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero hero-tp">
+      <div class="hero-badge">🌀 Se Déplacer</div>
+      <h1>La Téléportation</h1>
+      <p>
+        Maîtrise les déplacements sur Erinium. Tes homes, le spawn, les warps, les TPA et bien plus — tout ce qu'il faut pour traverser le monde rapidement.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">⏳ <strong>Warmup</strong> — 3 à 5 secondes</div>
+        <div class="hero-meta-item">🔄 <strong>Cooldown /spawn</strong> — 30 sec</div>
+        <div class="hero-meta-item">🎲 <strong>RTP radius</strong> — 500 à 10 000 blocs</div>
+        <div class="hero-meta-item">🏠 <strong>Homes max</strong> — 1 par défaut</div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/index">Accueil</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">🌀 Téléportation</span>
+        </nav>
+
+        <!-- WARMUP -->
+        <section id="warmup">
+          <h2>Le Warmup — Attendre avant de TP</h2>
+          <p>
+            Sur Erinium, la téléportation n'est pas instantanée. Avant chaque TP, tu dois attendre quelques secondes sans bouger — c'est le <strong>warmup</strong>.
+          </p>
+
+          <div class="warmup-box">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.5rem;flex-shrink:0;">⚠️</span>
+              <div>
+                <strong style="color:#F39C12;display:block;margin-bottom:6px;font-size:0.95rem;">Bouge = annulation du TP !</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  Si tu bouges ou si tu reçois des dégâts pendant le warmup, la téléportation est <strong style="color:#E74C3C;">immédiatement annulée</strong>. Attends toujours d'être dans un endroit sûr avant de lancer un TP.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="tableau-timing">Warmups &amp; Cooldowns</h3>
+          <div class="table-wrapper">
+            <table class="timing-table">
+              <thead>
+                <tr>
+                  <th>Commande</th>
+                  <th>Warmup</th>
+                  <th>Cooldown</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>/spawn</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 30 sec</span></td></tr>
+                <tr><td>/home</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 15 sec</span></td></tr>
+                <tr><td>/warp</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 15 sec</span></td></tr>
+                <tr><td>/tpa / /tpahere</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 30 sec</span></td></tr>
+                <tr><td>/back</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 60 sec</span></td></tr>
+                <tr><td>/rtp</td><td><span class="t-warmup">⏳ 5 sec</span></td><td><span class="t-cooldown">🔄 120 sec</span></td></tr>
+                <tr><td>/f home</td><td><span class="t-warmup">⏳ 3 sec</span></td><td><span class="t-cooldown">🔄 15 sec</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- HOMES -->
+        <section id="homes">
+          <h2>Les Homes — Ta maison</h2>
+          <p>
+            Un home, c'est un point de téléportation personnel que tu peux fixer où tu veux dans le monde. Par défaut, tu as droit à <strong>1 home</strong>. Certains grades donnent accès à plus de homes.
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--accent-secondary);">
+            <div class="tp-card-title"><code>/sethome [nom]</code></div>
+            <div class="tp-card-desc">Fixe un home à ta position actuelle. Si tu ne donnes pas de nom, il s'appelle "home" par défaut. Exemple : <code>/sethome base</code> crée un home nommé "base".</div>
+          </div>
+
+          <div class="tp-card" style="border-left:3px solid var(--accent-primary);">
+            <div class="tp-card-title"><code>/home [nom]</code></div>
+            <div class="tp-card-desc">Te téléporte à ton home. Si tu as plusieurs homes, précise le nom. Exemple : <code>/home base</code>. Sans nom, va au home par défaut.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 15 sec</div>
+          </div>
+
+          <div class="tp-card">
+            <div class="tp-card-title"><code>/delhome [nom]</code></div>
+            <div class="tp-card-desc">Supprime un home. Exemple : <code>/delhome base</code>.</div>
+          </div>
+
+          <div class="tp-card">
+            <div class="tp-card-title"><code>/homes</code></div>
+            <div class="tp-card-desc">Affiche la liste de tous tes homes enregistrés.</div>
+          </div>
+        </section>
+
+        <!-- TPA -->
+        <section id="tpa">
+          <h2>TPA — Se téléporter chez un ami</h2>
+          <p>
+            Le TPA te permet de demander à te téléporter chez un autre joueur, ou d'inviter un joueur à venir chez toi. La demande doit être acceptée !
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--success);">
+            <div class="tp-card-title"><code>/tpa &lt;joueur&gt;</code></div>
+            <div class="tp-card-desc">Envoie une demande pour te téléporter chez un joueur. Il doit accepter avec <code>/tpaccept</code>. La demande expire après 60 secondes.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 30 sec</div>
+          </div>
+
+          <div class="tp-card" style="border-left:3px solid var(--warning);">
+            <div class="tp-card-title"><code>/tpahere &lt;joueur&gt;</code></div>
+            <div class="tp-card-desc">Demande à un joueur de venir chez toi. Il doit accepter avec <code>/tpaccept</code>. C'est toi qui restes immobile, c'est lui qui bouge.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 30 sec</div>
+          </div>
+
+          <div class="tp-grid">
+            <div class="tp-cmd-chip">
+              <div class="tp-cmd-chip-cmd">/tpaccept</div>
+              <div class="tp-cmd-chip-desc">Accepter une demande de TP reçue.</div>
+            </div>
+            <div class="tp-cmd-chip">
+              <div class="tp-cmd-chip-cmd">/tpdeny</div>
+              <div class="tp-cmd-chip-desc">Refuser une demande de TP.</div>
+            </div>
+            <div class="tp-cmd-chip">
+              <div class="tp-cmd-chip-cmd">/tptoggle</div>
+              <div class="tp-cmd-chip-desc">Activer / désactiver les demandes de TP.</div>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-red" style="margin:16px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">⚠️</span>
+              <div>
+                <strong style="color:var(--danger);display:block;margin-bottom:4px;">Attention aux pièges TPA !</strong>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  N'accepte jamais un TPA d'un inconnu ! Les joueurs malveillants peuvent t'attirer dans un piège en PvP. Le TPA est désactivé dans les zones de combat actif.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SPAWN -->
+        <section id="spawn">
+          <h2>Spawn — Retour à la zone de départ</h2>
+          <p>
+            Le spawn est la zone centrale du serveur. C'est un endroit sûr où le PvP est désactivé. Tu peux y revenir à tout moment.
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--accent-gold);">
+            <div class="tp-card-title"><code>/spawn</code></div>
+            <div class="tp-card-desc">Te téléporte au spawn du serveur. Le PvP est totalement désactivé au spawn. Tu peux y acheter des items, accéder au Monde Minage et faire plein d'autres choses.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 30 sec</div>
+          </div>
+        </section>
+
+        <!-- WARP -->
+        <section id="warp">
+          <h2>Warps — Points rapides du serveur</h2>
+          <p>
+            Les warps sont des points de téléportation configurés par les admins du serveur. Ils donnent accès à des lieux importants comme les arènes PvP, le marché, etc.
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--accent-secondary);">
+            <div class="tp-card-title"><code>/warp &lt;nom&gt;</code></div>
+            <div class="tp-card-desc">Te téléporte à un warp. Exemple : <code>/warp arene</code> pour aller à l'arène PvP.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 15 sec</div>
+          </div>
+
+          <div class="tp-card">
+            <div class="tp-card-title"><code>/warps</code></div>
+            <div class="tp-card-desc">Affiche la liste de tous les warps disponibles sur le serveur.</div>
+          </div>
+        </section>
+
+        <!-- BACK -->
+        <section id="back">
+          <h2>Back — Retour au dernier emplacement</h2>
+          <p>
+            La commande <code>/back</code> te ramène à ta position juste avant ta dernière téléportation. Super utile si tu t'es téléporté par erreur, ou pour revenir à l'endroit où tu es mort.
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--danger);">
+            <div class="tp-card-title"><code>/back</code></div>
+            <div class="tp-card-desc">Retourne à l'endroit où tu étais avant le dernier TP, ou à l'endroit où tu es mort. Le cooldown est plus long car c'est une commande puissante.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 3 sec &nbsp;|&nbsp; Cooldown : 60 sec</div>
+          </div>
+        </section>
+
+        <!-- RTP -->
+        <section id="rtp">
+          <h2>RTP — Téléportation Aléatoire</h2>
+          <p>
+            Le RTP (Random Teleport) te téléporte à un endroit aléatoire dans le monde. Parfait pour explorer ou trouver un bon coin pour construire.
+          </p>
+
+          <div class="tp-card" style="border-left:3px solid var(--accent-primary);">
+            <div class="tp-card-title"><code>/rtp</code></div>
+            <div class="tp-card-desc">Te téléporte dans une zone aléatoire, entre 500 et 10 000 blocs du spawn. Évite de tomber dans l'eau ou la lave. Warmup plus long car la recherche d'une zone sûre prend du temps.</div>
+            <div style="font-size:0.78rem;color:var(--text-faint);">Warmup : 5 sec &nbsp;|&nbsp; Cooldown : 2 minutes</div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin:16px 0;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">💡</span>
+              <div>
+                <p style="margin:0;color:var(--text-muted);font-size:0.875rem;line-height:1.7;">
+                  <strong style="color:var(--accent-gold);">Conseil :</strong> Utilise <code>/rtp</code> dans le Monde Minage pour trouver des zones non encore explorées et remplies de minerais.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RÉCAP -->
+        <section id="recap">
+          <h2>Récapitulatif — Toutes les commandes</h2>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Commande</th><th>Ce que ça fait</th><th>Cooldown</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/spawn</code></td><td>Retourner au spawn</td><td>30 sec</td></tr>
+                <tr><td><code>/sethome [nom]</code></td><td>Fixer un home</td><td>—</td></tr>
+                <tr><td><code>/home [nom]</code></td><td>Aller à un home</td><td>15 sec</td></tr>
+                <tr><td><code>/homes</code></td><td>Voir ses homes</td><td>—</td></tr>
+                <tr><td><code>/delhome [nom]</code></td><td>Supprimer un home</td><td>—</td></tr>
+                <tr><td><code>/tpa &lt;joueur&gt;</code></td><td>Demander à aller chez un joueur</td><td>30 sec</td></tr>
+                <tr><td><code>/tpahere &lt;joueur&gt;</code></td><td>Demander à un joueur de venir</td><td>30 sec</td></tr>
+                <tr><td><code>/tpaccept</code></td><td>Accepter une demande de TP</td><td>—</td></tr>
+                <tr><td><code>/tpdeny</code></td><td>Refuser une demande de TP</td><td>—</td></tr>
+                <tr><td><code>/tptoggle</code></td><td>Activer/désactiver les TP entrants</td><td>—</td></tr>
+                <tr><td><code>/warp &lt;nom&gt;</code></td><td>Aller à un warp serveur</td><td>15 sec</td></tr>
+                <tr><td><code>/warps</code></td><td>Voir la liste des warps</td><td>—</td></tr>
+                <tr><td><code>/back</code></td><td>Retour au dernier emplacement / mort</td><td>60 sec</td></tr>
+                <tr><td><code>/rtp</code></td><td>Téléportation aléatoire</td><td>2 min</td></tr>
+                <tr><td><code>/f home</code></td><td>Aller au home de ta faction</td><td>15 sec</td></tr>
+                <tr><td><code>/minage</code></td><td>Aller dans le Monde Minage</td><td>30 sec</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#warmup" class="toc-link">Le Warmup</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#tableau-timing" class="toc-link">Tableau des timings</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#homes" class="toc-link">🏠 Les Homes</a></li>
+          <li class="toc-item"><a href="#tpa" class="toc-link">👥 TPA</a></li>
+          <li class="toc-item"><a href="#spawn" class="toc-link">🏛️ Spawn</a></li>
+          <li class="toc-item"><a href="#warp" class="toc-link">📍 Warps</a></li>
+          <li class="toc-item"><a href="#back" class="toc-link">↩️ Back</a></li>
+          <li class="toc-item"><a href="#rtp" class="toc-link">🎲 RTP</a></li>
+          <li class="toc-item"><a href="#recap" class="toc-link">Récapitulatif</a></li>
+        </ul>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

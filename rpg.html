@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Système RPG — EriniumFaction Wiki</title>
+  <meta name="description" content="Apprends le système RPG d'EriniumFaction : niveaux, stats, prestige et perks." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Stat cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      margin: 24px 0;
+    }
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .stat-card-vigueur   { border-top: 3px solid #E74C3C; background: linear-gradient(160deg, rgba(231,76,60,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-card-force     { border-top: 3px solid #E67E22; background: linear-gradient(160deg, rgba(230,126,34,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-card-resistance{ border-top: 3px solid #5B9BD5; background: linear-gradient(160deg, rgba(91,155,213,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-card-agilite   { border-top: 3px solid #2ECC71; background: linear-gradient(160deg, rgba(46,204,113,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-card-fortune   { border-top: 3px solid #F1C40F; background: linear-gradient(160deg, rgba(241,196,15,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-card-arcane    { border-top: 3px solid #9B4FCF; background: linear-gradient(160deg, rgba(155,79,207,0.08) 0%, var(--glass-bg) 60%); }
+    .stat-emoji  { font-size: 2rem; margin-bottom: 10px; display: block; }
+    .stat-name   { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .stat-bonus  { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; }
+    .stat-max    { font-size: 0.78rem; font-weight: 700; }
+    .stat-tip    { font-size: 0.72rem; color: var(--text-faint); font-style: italic; line-height: 1.45; margin-top: 8px; }
+    .c-vigueur   { color: #E74C3C; }
+    .c-force     { color: #E67E22; }
+    .c-resistance{ color: #5B9BD5; }
+    .c-agilite   { color: #2ECC71; }
+    .c-fortune   { color: #F1C40F; }
+    .c-arcane    { color: #9B4FCF; }
+
+    /* ── Prestige grid ── */
+    .prestige-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .prestige-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 10px;
+      text-align: center;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .prestige-item:hover { transform: translateY(-3px); box-shadow: 0 0 20px rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.3); }
+    .prestige-item.p-5   { border-color: rgba(255,215,0,0.4); background: linear-gradient(160deg, rgba(255,215,0,0.08) 0%, var(--glass-bg) 70%); animation: glow-pulse 2.5s ease-in-out infinite; }
+    .prestige-stars { font-size: 1.1rem; margin-bottom: 6px; line-height: 1; }
+    .prestige-num   { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-gold); margin-bottom: 6px; }
+    .prestige-bonus { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .prestige-sub   { font-size: 0.65rem; color: var(--text-faint); }
+
+    /* ── XP source cards ── */
+    .xp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .xp-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 14px;
+      transition: transform var(--transition);
+    }
+    .xp-card:hover { transform: translateY(-2px); }
+    .xp-card-icon  { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+    .xp-card-label { font-size: 0.8rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .xp-card-value { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* ── Points distribution bar ── */
+    .points-info {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .points-info-num {
+      font-size: 2.4rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--accent-secondary);
+      line-height: 1;
+    }
+    .points-info-text { font-size: 0.85rem; color: var(--text-muted); }
+    .points-info-text strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:12%;top:18%;animation-delay:0s;animation-duration:3.2s;"></span>
+  <span class="star" style="left:28%;top:7%;animation-delay:1.1s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:52%;top:22%;animation-delay:0.5s;animation-duration:3.7s;"></span>
+  <span class="star" style="left:74%;top:11%;animation-delay:2.0s;animation-duration:2.9s;"></span>
+  <span class="star" style="left:88%;top:35%;animation-delay:0.8s;animation-duration:4.5s;"></span>
+  <span class="star" style="left:38%;top:55%;animation-delay:1.7s;animation-duration:3.4s;"></span>
+  <span class="star" style="left:65%;top:70%;animation-delay:0.3s;animation-duration:5.0s;"></span>
+  <span class="star" style="left:5%;top:80%;animation-delay:2.4s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:91%;top:65%;animation-delay:1.3s;animation-duration:4.2s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-title">
+      <span class="hero-badge">📊 Système RPG</span>
+      <h1 id="hero-title">Monte de niveau, deviens plus fort !</h1>
+      <p>Tu gagnes de l'expérience en jouant — en combattant, en minant, en craftant. Plus tu montes de niveau, plus tu deviens puissant !</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">⬆️ <strong>Niveau max :</strong> 50</div>
+        <div class="hero-meta-item">🌟 <strong>Prestige max :</strong> 5</div>
+        <div class="hero-meta-item">📊 <strong>Stats :</strong> 6</div>
+        <div class="hero-meta-item">✨ <strong>Perks :</strong> 15</div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Système RPG</span>
+        </nav>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1 — C'EST QUOI LE RPG ?
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-intro">
+          <h2 id="section-intro">C'est quoi le RPG ?</h2>
+
+          <p>Tu gagnes de l'expérience en jouant. Plus tu montes de niveau, plus tu deviens puissant ! Chaque niveau te donne <strong>1 point de stat</strong> à dépenser où tu veux parmi 6 attributs.</p>
+
+          <div class="points-info">
+            <div class="points-info-num">49</div>
+            <div class="points-info-text">
+              <strong>Points disponibles au niveau 50</strong><br>
+              Tu peux en mettre au maximum <strong>25 dans une même stat</strong>. Distribue-les selon ton style de jeu !
+            </div>
+          </div>
+
+          <p>Pour monter de niveau, fais des activités variées : le combat, le minage et le craft rapportent tous de l'XP. La formule est <code>1000 × niveau^1.65</code> — chaque niveau demande un peu plus d'effort que le précédent.</p>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2 — COMMENT GAGNER DE L'XP
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-xp">
+          <h2 id="section-xp">Comment gagner de l'XP</h2>
+
+          <p>Toutes ces activités te rapportent de l'XP. Varie les plaisirs pour progresser plus vite !</p>
+
+          <div class="xp-grid">
+            <div class="xp-card">
+              <span class="xp-card-icon">⚔️</span>
+              <div class="xp-card-label">Kill PvP</div>
+              <div class="xp-card-value">50 – 400 XP selon le niveau de la cible</div>
+            </div>
+            <div class="xp-card">
+              <span class="xp-card-icon">🐾</span>
+              <div class="xp-card-label">Tuer des monstres</div>
+              <div class="xp-card-value">5 – 25 XP selon les PV du monstre</div>
+            </div>
+            <div class="xp-card">
+              <span class="xp-card-icon">⛏️</span>
+              <div class="xp-card-label">Minage</div>
+              <div class="xp-card-value">2 – 15 XP selon la rareté du minerai</div>
+            </div>
+            <div class="xp-card">
+              <span class="xp-card-icon">🔨</span>
+              <div class="xp-card-label">Craft Erinium</div>
+              <div class="xp-card-value">50 XP par item crafté (mod uniquement)</div>
+            </div>
+            <div class="xp-card">
+              <span class="xp-card-icon">🎯</span>
+              <div class="xp-card-label">Défis quotidiens</div>
+              <div class="xp-card-value">XP variable — pas de limite !</div>
+            </div>
+            <div class="xp-card">
+              <span class="xp-card-icon">🏰</span>
+              <div class="xp-card-label">Objectifs de faction</div>
+              <div class="xp-card-value">XP bonus collective</div>
+            </div>
+          </div>
+
+          <div class="alert alert-tip" role="note">
+            <span class="alert-icon">💡</span>
+            <div class="alert-body">
+              <strong class="alert-title">Astuce</strong>
+              <span class="alert-desc">Les défis quotidiens ne sont jamais saturés — c'est la meilleure source d'XP rapide ! Fais-les chaque jour.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 3 — LES 6 STATS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-stats">
+          <h2 id="section-stats">Les 6 Stats</h2>
+
+          <p>À chaque niveau, tu reçois <strong>1 point de stat</strong>. Tu peux le mettre dans l'une de ces 6 statistiques. Maximum <strong>25 points</strong> par stat.</p>
+
+          <div class="stat-grid">
+
+            <!-- Vigueur -->
+            <div class="stat-card stat-card-vigueur">
+              <span class="stat-emoji">❤️</span>
+              <div class="stat-name c-vigueur">Vigueur</div>
+              <div class="stat-bonus">+2% de points de vie max par point</div>
+              <div class="stat-max c-vigueur">Max 25 pts → +50% PV</div>
+              <div class="stat-tip">Indispensable pour les tanks et les joueurs qui prennent souvent des coups. Plus de vie = plus de chances de survivre.</div>
+            </div>
+
+            <!-- Force -->
+            <div class="stat-card stat-card-force">
+              <span class="stat-emoji">⚔️</span>
+              <div class="stat-name c-force">Force</div>
+              <div class="stat-bonus">+1,5% de dégâts mêlée par point</div>
+              <div class="stat-max c-force">Max 25 pts → +37,5% dégâts</div>
+              <div class="stat-tip">Pour frapper plus fort en combat rapproché. Parfait pour les builds Berserker ou Assassin.</div>
+            </div>
+
+            <!-- Résistance -->
+            <div class="stat-card stat-card-resistance">
+              <span class="stat-emoji">🛡️</span>
+              <div class="stat-name c-resistance">Résistance</div>
+              <div class="stat-bonus">-1,2% de dégâts reçus par point</div>
+              <div class="stat-max c-resistance">Max 25 pts → -30% dégâts reçus</div>
+              <div class="stat-tip">Réduit tous les dégâts que tu reçois. Combiné avec Vigueur, tu deviens très difficile à tuer.</div>
+            </div>
+
+            <!-- Agilité -->
+            <div class="stat-card stat-card-agilite">
+              <span class="stat-emoji">💨</span>
+              <div class="stat-name c-agilite">Agilité</div>
+              <div class="stat-bonus">+1,3% de vitesse de déplacement par point</div>
+              <div class="stat-max c-agilite">Max 25 pts → +32,5% vitesse</div>
+              <div class="stat-tip">Cours plus vite pour fuir ou poursuivre. Très utile pour les Assassins qui veulent surprendre leurs ennemis.</div>
+            </div>
+
+            <!-- Fortune -->
+            <div class="stat-card stat-card-fortune">
+              <span class="stat-emoji">🍀</span>
+              <div class="stat-name c-fortune">Fortune</div>
+              <div class="stat-bonus">+1,5% de loot rare / +1% d'argent par point</div>
+              <div class="stat-max c-fortune">Max 25 pts → +37,5% loot / +25% argent</div>
+              <div class="stat-tip">Gagne plus d'argent et de butin rare. Idéal si tu veux t'enrichir rapidement sur le serveur.</div>
+            </div>
+
+            <!-- Arcane -->
+            <div class="stat-card stat-card-arcane">
+              <span class="stat-emoji">🔮</span>
+              <div class="stat-name c-arcane">Arcane</div>
+              <div class="stat-bonus">+2 Mana / +1% puissance des sorts par point</div>
+              <div class="stat-max c-arcane">Max 25 pts → +50 Mana / +25% puissance</div>
+              <div class="stat-tip">Essentiel pour les Mages ! Plus d'Arcane = plus de mana, des sorts plus puissants, et une meilleure régénération (bonus au seuil de 15 pts).</div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 4 — PRESTIGE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-prestige">
+          <h2 id="section-prestige">Le Prestige</h2>
+
+          <p>Tu as atteint le niveau 50 ? Félicitations ! Tu peux faire un <strong>Prestige</strong> : tu recommences au niveau 1, mais tu gardes un bonus permanent qui rend toutes tes stats encore plus fortes. Il y a <strong>5 niveaux de Prestige</strong>.</p>
+
+          <div class="prestige-grid">
+            <div class="prestige-item">
+              <div class="prestige-stars">⭐</div>
+              <div class="prestige-num">Prestige I</div>
+              <div class="prestige-bonus">+2% stats</div>
+              <div class="prestige-sub">+20% XP gagnée</div>
+            </div>
+            <div class="prestige-item">
+              <div class="prestige-stars">⭐⭐</div>
+              <div class="prestige-num">Prestige II</div>
+              <div class="prestige-bonus">+4% stats</div>
+              <div class="prestige-sub">+40% XP gagnée</div>
+            </div>
+            <div class="prestige-item">
+              <div class="prestige-stars">⭐⭐⭐</div>
+              <div class="prestige-num">Prestige III</div>
+              <div class="prestige-bonus">+6% stats</div>
+              <div class="prestige-sub">+60% XP gagnée</div>
+            </div>
+            <div class="prestige-item">
+              <div class="prestige-stars">⭐⭐⭐⭐</div>
+              <div class="prestige-num">Prestige IV</div>
+              <div class="prestige-bonus">+8% stats</div>
+              <div class="prestige-sub">+80% XP gagnée</div>
+            </div>
+            <div class="prestige-item p-5">
+              <div class="prestige-stars">⭐⭐⭐⭐⭐</div>
+              <div class="prestige-num">Prestige V</div>
+              <div class="prestige-bonus">+10% stats</div>
+              <div class="prestige-sub">+100% XP gagnée</div>
+            </div>
+          </div>
+
+          <p>Le bonus de Prestige s'applique sur toutes tes stats en plus de leur valeur normale. Un Prestige V double également la vitesse à laquelle tu regagnes des niveaux !</p>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 5 — PERKS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-perks">
+          <h2 id="section-perks">Les Perks — capacités spéciales</h2>
+
+          <p>Aux niveaux 10, 20, 30, 40 et 50, tu débloques un <strong>Perk</strong> : une capacité spéciale unique. À chaque palier, tu dois choisir <strong>1 perk parmi 3</strong> proposés.</p>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon">✨</span>
+            <div class="alert-body">
+              <strong class="alert-title">5 paliers, 15 perks disponibles</strong>
+              <span class="alert-desc">Tu choisiras 5 perks en tout sur ta montée jusqu'au niveau 50. Chaque combinaison crée un style de jeu unique. Découvre tous les perks disponibles sur la page dédiée !</span>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:24px;">
+            <a href="perks.html" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:rgba(107,47,160,0.25);border:1px solid rgba(107,47,160,0.5);border-radius:var(--radius-md);color:var(--accent-secondary);font-weight:700;font-size:0.9rem;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.background='rgba(107,47,160,0.4)'" onmouseout="this.style.background='rgba(107,47,160,0.25)'">
+              ✨ Voir tous les Perks
+            </a>
+          </div>
+        </section>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="perks.html">Perks</a></li>
+        <li><a href="magic.html">Magie</a></li>
+        <li><a href="builds.html">Builds</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

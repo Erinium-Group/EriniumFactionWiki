@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sorts — EriniumFaction Wiki</title>
+  <meta name="description" content="Catalogue complet des 20 sorts d'EriniumFaction : Fracture, Cristallisation, Corruption et Résonance." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── School section ── */
+    .school-section {
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin: 28px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .school-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+    }
+    .school-section-fracture       { background: linear-gradient(135deg, rgba(168,47,160,0.10) 0%, rgba(14,14,26,0.40) 60%); border: 1px solid rgba(168,47,160,0.25); }
+    .school-section-cristallisation { background: linear-gradient(135deg, rgba(0,229,255,0.07) 0%, rgba(14,14,26,0.40) 60%); border: 1px solid rgba(0,229,255,0.20); }
+    .school-section-corruption     { background: linear-gradient(135deg, rgba(46,204,113,0.08) 0%, rgba(14,14,26,0.40) 60%); border: 1px solid rgba(46,204,113,0.22); }
+    .school-section-resonance      { background: linear-gradient(135deg, rgba(242,196,15,0.07) 0%, rgba(14,14,26,0.40) 60%); border: 1px solid rgba(242,196,15,0.22); }
+
+    /* ── School title ── */
+    .school-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .school-title-fracture       { color: #C84FC0; }
+    .school-title-cristallisation { color: #00E5FF; }
+    .school-title-corruption     { color: #2ECC71; }
+    .school-title-resonance      { color: #F2C40F; }
+
+    /* ── Spell grid ── */
+    .spell-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Spell card ── */
+    .spell-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .spell-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    }
+    .spell-card:hover { transform: translateY(-3px); }
+    .school-section-fracture       .spell-card { border-color: rgba(168,47,160,0.22); }
+    .school-section-cristallisation .spell-card { border-color: rgba(0,229,255,0.18); }
+    .school-section-corruption     .spell-card { border-color: rgba(46,204,113,0.18); }
+    .school-section-resonance      .spell-card { border-color: rgba(242,196,15,0.18); }
+    .school-section-fracture       .spell-card:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(168,47,160,0.25); }
+    .school-section-cristallisation .spell-card:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(0,229,255,0.18); }
+    .school-section-corruption     .spell-card:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(46,204,113,0.18); }
+    .school-section-resonance      .spell-card:hover { box-shadow: var(--shadow-md), 0 0 20px rgba(242,196,15,0.18); }
+
+    /* ── Spell header row ── */
+    .spell-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .spell-icon-img {
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      border-radius: var(--radius-sm);
+      display: block;
+      flex-shrink: 0;
+    }
+    .spell-icon-placeholder {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.05);
+    }
+    .spell-header-text { flex: 1; min-width: 0; }
+    .spell-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .spell-level {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .spell-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+
+    /* ── Spell badges ── */
+    .spell-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .spell-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 9px;
+      border-radius: 100px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-mana        { background: rgba(107,47,160,0.20); border: 1px solid rgba(107,47,160,0.40); color: var(--accent-secondary); }
+    .badge-cooldown    { background: rgba(255,215,0,0.14);  border: 1px solid rgba(255,215,0,0.32);  color: #FFD700; }
+    .badge-damage      { background: rgba(231,76,60,0.16);  border: 1px solid rgba(231,76,60,0.35);  color: #E74C3C; }
+    .badge-heal        { background: rgba(46,204,113,0.16); border: 1px solid rgba(46,204,113,0.35); color: #2ECC71; }
+    .badge-effect      { background: rgba(52,152,219,0.16); border: 1px solid rgba(52,152,219,0.35); color: #3498DB; }
+    .badge-school-fracture       { background: rgba(168,47,160,0.20); border: 1px solid rgba(168,47,160,0.40); color: #C84FC0; }
+    .badge-school-cristallisation { background: rgba(0,229,255,0.14);  border: 1px solid rgba(0,229,255,0.35);  color: #00E5FF; }
+    .badge-school-corruption     { background: rgba(46,204,113,0.15);  border: 1px solid rgba(46,204,113,0.35); color: #2ECC71; }
+    .badge-school-resonance      { background: rgba(242,196,15,0.14);  border: 1px solid rgba(242,196,15,0.32); color: #F2C40F; }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:9%;top:17%;animation-delay:0s;animation-duration:3.3s;"></span>
+  <span class="star" style="left:26%;top:8%;animation-delay:1.4s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:54%;top:21%;animation-delay:0.8s;animation-duration:3.9s;"></span>
+  <span class="star" style="left:77%;top:14%;animation-delay:2.3s;animation-duration:2.6s;"></span>
+  <span class="star" style="left:86%;top:39%;animation-delay:1.1s;animation-duration:4.8s;"></span>
+  <span class="star" style="left:39%;top:56%;animation-delay:2.0s;animation-duration:3.1s;"></span>
+  <span class="star" style="left:61%;top:73%;animation-delay:0.3s;animation-duration:5.3s;"></span>
+  <span class="star" style="left:7%;top:84%;animation-delay:2.7s;animation-duration:3.6s;"></span>
+  <span class="star" style="left:94%;top:69%;animation-delay:1.6s;animation-duration:4.0s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ──────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-title">
+      <span class="hero-badge">💫 Catalogue des Sorts</span>
+      <h1 id="hero-title">Les 20 sorts du serveur</h1>
+      <p>Chaque sort a un coût en mana, un temps de recharge et un effet unique. Choisis les bons sorts selon ton style de jeu !</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">💥 <strong>Fracture :</strong> 5 sorts offensifs</div>
+        <div class="hero-meta-item">🧊 <strong>Cristallisation :</strong> 5 sorts défensifs</div>
+        <div class="hero-meta-item">☠️ <strong>Corruption :</strong> 5 sorts de contrôle</div>
+        <div class="hero-meta-item">💛 <strong>Résonance :</strong> 5 sorts de soutien</div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <a href="magic.html">Magie</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Sorts</span>
+        </nav>
+
+        <!-- ════════════════════════════════════════════════════
+             FRACTURE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="school-fracture">
+          <div class="school-section school-section-fracture">
+            <div class="school-title school-title-fracture">
+              💥 Fracture
+              <span class="spell-badge badge-school-fracture" style="font-size:0.72rem;padding:3px 10px;">Offensif</span>
+            </div>
+
+            <div class="spell-grid">
+
+              <!-- Éclat -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/eclat.png" alt="Éclat" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">💥</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Éclat</div>
+                    <div class="spell-level">Niveau magie 1</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Lance un <strong>projectile lumineux</strong> qui inflige <strong>4 cœurs</strong> à la cible touchée. Ton premier sort offensif — rapide et fiable.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">15 Mana</span>
+                  <span class="spell-badge badge-cooldown">3 sec</span>
+                  <span class="spell-badge badge-damage">4 cœurs</span>
+                </div>
+              </div>
+
+              <!-- Salve -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/salve.png" alt="Salve" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🌟</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Salve</div>
+                    <div class="spell-level">Niveau magie 10</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Tire <strong>5 projectiles</strong> en éventail sur 30°. Chaque projectile inflige <strong>2 cœurs</strong>. Dévastateur à courte portée !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">40 Mana</span>
+                  <span class="spell-badge badge-cooldown">12 sec</span>
+                  <span class="spell-badge badge-damage">2 cœurs × 5</span>
+                </div>
+              </div>
+
+              <!-- Fracture -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/fracture.png" alt="Fracture" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">⚡</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Fracture</div>
+                    <div class="spell-level">Niveau magie 5</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Crée une <strong>fissure sur 10 blocs</strong> devant toi, puis la détonation inflige <strong>3 cœurs</strong> 0,5 seconde plus tard. Parfait pour surprendre !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">30 Mana</span>
+                  <span class="spell-badge badge-cooldown">8 sec</span>
+                  <span class="spell-badge badge-damage">3 cœurs (zone)</span>
+                </div>
+              </div>
+
+              <!-- Implosion -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/implosion.png" alt="Implosion" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🌀</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Implosion</div>
+                    <div class="spell-level">Niveau magie 18</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Une zone de 4 blocs de rayon aspire les ennemis, puis explose pour infliger <strong>5 cœurs</strong> à tout le monde dans la zone.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">60 Mana</span>
+                  <span class="spell-badge badge-cooldown">25 sec</span>
+                  <span class="spell-badge badge-damage">5 cœurs AoE</span>
+                </div>
+              </div>
+
+              <!-- Cataclysme -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/cataclysme.png" alt="Cataclysme" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">☄️</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Cataclysme</div>
+                    <div class="spell-level">Niveau magie 28</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Crée une <strong>zone de 8×8 blocs</strong> qui inflige <strong>1,5 cœur par seconde pendant 4 secondes</strong> à tous les ennemis à l'intérieur.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">90 Mana</span>
+                  <span class="spell-badge badge-cooldown">60 sec</span>
+                  <span class="spell-badge badge-damage">1,5 cœur/sec × 4 sec</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             CRISTALLISATION
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="school-cristallisation">
+          <div class="school-section school-section-cristallisation">
+            <div class="school-title school-title-cristallisation">
+              🧊 Cristallisation
+              <span class="spell-badge badge-school-cristallisation" style="font-size:0.72rem;padding:3px 10px;">Défensif</span>
+            </div>
+
+            <div class="spell-grid">
+
+              <!-- Bouclier -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/bouclier.png" alt="Bouclier" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🛡️</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Bouclier</div>
+                    <div class="spell-level">Niveau magie 1</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Absorbe <strong>4 cœurs de dégâts supplémentaires</strong> pendant 6 secondes. Comme avoir des points de vie bonus temporaires !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">20 Mana</span>
+                  <span class="spell-badge badge-cooldown">10 sec</span>
+                  <span class="spell-badge badge-effect">+4 cœurs pendant 6s</span>
+                </div>
+              </div>
+
+              <!-- Prison -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/prison.png" alt="Prison" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🔒</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Prison</div>
+                    <div class="spell-level">Niveau magie 6</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Immobilise la cible pendant <strong>2 secondes</strong>. Elle ne peut plus bouger ni fuir — parfait pour assurer un kill !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">35 Mana</span>
+                  <span class="spell-badge badge-cooldown">15 sec</span>
+                  <span class="spell-badge badge-effect">Immobilis. 2s</span>
+                </div>
+              </div>
+
+              <!-- Mur -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/mur.png" alt="Mur" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🧱</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Mur</div>
+                    <div class="spell-level">Niveau magie 12</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Érige un <strong>mur de glace 5×3 blocs</strong> à 2 blocs devant toi pendant 5 secondes. Bloque les projectiles et les ennemis !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">30 Mana</span>
+                  <span class="spell-badge badge-cooldown">18 sec</span>
+                  <span class="spell-badge badge-effect">Mur 5×3 pendant 5s</span>
+                </div>
+              </div>
+
+              <!-- Armure -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/armure.png" alt="Armure" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🪨</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Armure Cristalline</div>
+                    <div class="spell-level">Niveau magie 20</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Gagne <strong>Résistance III</strong> pendant 5 secondes — mais tu te déplaces un peu plus lentement pendant cet effet.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">50 Mana</span>
+                  <span class="spell-badge badge-cooldown">35 sec</span>
+                  <span class="spell-badge badge-effect">Résistance III · 5s</span>
+                </div>
+              </div>
+
+              <!-- Stase -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/stase.png" alt="Stase" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">❄️</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Stase</div>
+                    <div class="spell-level">Niveau magie 28</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Gèle complètement la cible pendant <strong>3 secondes</strong> — immobile, épuisée et affaiblie. Le plus puissant sort de contrôle défensif.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">80 Mana</span>
+                  <span class="spell-badge badge-cooldown">90 sec</span>
+                  <span class="spell-badge badge-effect">Gèle complet · 3s</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             CORRUPTION
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="school-corruption">
+          <div class="school-section school-section-corruption">
+            <div class="school-title school-title-corruption">
+              ☠️ Corruption
+              <span class="spell-badge badge-school-corruption" style="font-size:0.72rem;padding:3px 10px;">Contrôle</span>
+            </div>
+
+            <div class="spell-grid">
+
+              <!-- Toucher Corrompu -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/toucher.png" alt="Toucher Corrompu" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🖐️</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Toucher Corrompu</div>
+                    <div class="spell-level">Niveau magie 1</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Ton prochain coup mêlée applique <strong>Poison I pendant 4 secondes</strong> à la cible. Empoisonne sans perdre un seul mana en combat !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">10 Mana</span>
+                  <span class="spell-badge badge-cooldown">5 sec</span>
+                  <span class="spell-badge badge-effect">Poison I · 4s sur prochain coup</span>
+                </div>
+              </div>
+
+              <!-- Drain -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/drain.png" alt="Drain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🩸</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Drain</div>
+                    <div class="spell-level">Niveau magie 7</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Inflige <strong>2 cœurs</strong> à la cible et te soigne de <strong>1 cœur</strong>. Vol de vie à distance !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">25 Mana</span>
+                  <span class="spell-badge badge-cooldown">12 sec</span>
+                  <span class="spell-badge badge-damage">2 cœurs</span>
+                  <span class="spell-badge badge-heal">+1 cœur soin</span>
+                </div>
+              </div>
+
+              <!-- Brume -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/brume.png" alt="Brume" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🌫️</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Brume</div>
+                    <div class="spell-level">Niveau magie 13</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Crée un <strong>nuage de poison</strong> de 5 blocs de rayon pendant <strong>6 secondes</strong>. Tous les ennemis à l'intérieur sont empoisonnés.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">35 Mana</span>
+                  <span class="spell-badge badge-cooldown">20 sec</span>
+                  <span class="spell-badge badge-effect">Poison AoE · 6s</span>
+                </div>
+              </div>
+
+              <!-- Malédiction -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/malediction.png" alt="Malédiction" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🪄</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Malédiction</div>
+                    <div class="spell-level">Niveau magie 22</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Inflige <strong>Faiblesse I pendant 8s</strong> et <strong>Wither I pendant 4s</strong> à la cible. Sa force de frappe s'effondre immédiatement.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">45 Mana</span>
+                  <span class="spell-badge badge-cooldown">30 sec</span>
+                  <span class="spell-badge badge-effect">Faiblesse + Wither</span>
+                </div>
+              </div>
+
+              <!-- Peste -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/peste.png" alt="Peste" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🦠</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Peste</div>
+                    <div class="spell-level">Niveau magie 30</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Inflige <strong>Poison II pendant 8s</strong> à la cible, qui se <strong>propage ensuite</strong> aux ennemis proches toutes les 2 secondes.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">85 Mana</span>
+                  <span class="spell-badge badge-cooldown">75 sec</span>
+                  <span class="spell-badge badge-effect">Poison II contagieux · 8s</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             RÉSONANCE
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="school-resonance">
+          <div class="school-section school-section-resonance">
+            <div class="school-title school-title-resonance">
+              💛 Résonance
+              <span class="spell-badge badge-school-resonance" style="font-size:0.72rem;padding:3px 10px;">Soutien</span>
+            </div>
+
+            <div class="spell-grid">
+
+              <!-- Pulse -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/pulse.png" alt="Pulse" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">💚</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Pulse</div>
+                    <div class="spell-level">Niveau magie 1</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Soigne <strong>4 cœurs</strong> à toi-même ou à un allié dans un rayon de 5 blocs. Le sort de soin de base, essentiel pour tous les builds de soutien.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">20 Mana</span>
+                  <span class="spell-badge badge-cooldown">8 sec</span>
+                  <span class="spell-badge badge-heal">+4 cœurs soin</span>
+                </div>
+              </div>
+
+              <!-- Lien -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/lien.png" alt="Lien" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🔗</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Lien</div>
+                    <div class="spell-level">Niveau magie 6</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Donne <strong>Résistance I pendant 10s</strong> à un allié de faction — en échange, toi tu subis <strong>Faiblesse I pendant 10s</strong>. Un sacrifice pour protéger tes alliés.</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">25 Mana</span>
+                  <span class="spell-badge badge-cooldown">15 sec</span>
+                  <span class="spell-badge badge-effect">Résistance allié · 10s</span>
+                </div>
+              </div>
+
+              <!-- Aura -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/aura.png" alt="Aura" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">✨</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Aura</div>
+                    <div class="spell-level">Niveau magie 14</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Donne <strong>Régénération I + Vitesse I pendant 8s</strong> à tous les alliés de faction dans un rayon de 10 blocs. Un buff d'équipe puissant !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">40 Mana</span>
+                  <span class="spell-badge badge-cooldown">25 sec</span>
+                  <span class="spell-badge badge-effect">Regen + Speed AoE · 8s</span>
+                </div>
+              </div>
+
+              <!-- Téléportation -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/teleportation.png" alt="Téléportation" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">🌀</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Téléportation</div>
+                    <div class="spell-level">Niveau magie 22</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Te téléporte <strong>15 blocs en avant</strong> dans la direction où tu regardes. Parfait pour fuir ou repositionner rapidement !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">50 Mana</span>
+                  <span class="spell-badge badge-cooldown">45 sec</span>
+                  <span class="spell-badge badge-effect">+15 blocs téléport</span>
+                </div>
+              </div>
+
+              <!-- Résurrection -->
+              <div class="spell-card">
+                <div class="spell-header">
+                  <img class="spell-icon-img" src="img/spells/resurrection.png" alt="Résurrection" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <div class="spell-icon-placeholder" style="display:none;">👼</div>
+                  <div class="spell-header-text">
+                    <div class="spell-name">Résurrection Cristalline</div>
+                    <div class="spell-level">Niveau magie 30</div>
+                  </div>
+                </div>
+                <div class="spell-desc">Ressuscite un allié mort récemment (dans les 6 dernières secondes) avec <strong>30% de ses PV</strong>. Coûte tout ton mana. Le sort le plus rare du jeu !</div>
+                <div class="spell-badges">
+                  <span class="spell-badge badge-mana">100 Mana (tout)</span>
+                  <span class="spell-badge badge-cooldown">120 sec</span>
+                  <span class="spell-badge badge-heal">Résurrection alliés</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Retour vers Magie ── -->
+        <div style="text-align:center;margin-top:32px;">
+          <a href="magic.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(107,47,160,0.18);border:1px solid rgba(107,47,160,0.38);border-radius:var(--radius-md);color:var(--accent-secondary);font-weight:700;font-size:0.85rem;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.background='rgba(107,47,160,0.32)'" onmouseout="this.style.background='rgba(107,47,160,0.18)'">
+            ← Retour à la Magie
+          </a>
+        </div>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="magic.html">Magie</a></li>
+        <li><a href="rpg.html">RPG</a></li>
+        <li><a href="builds.html">Builds</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

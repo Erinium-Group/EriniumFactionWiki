@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Items &amp; Matériaux — EriniumFaction Wiki</title>
+  <meta name="description" content="Découvrez les 3 nouveaux minerais d'EriniumFaction : Valterite, Aetherite et Erinium. Outils, armures, blocs décoratifs et conseils de récolte." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Items page extras ───────────────────────────────────── */
+
+    /* ── Tier color tokens ── */
+    :root {
+      --valterite:       #4AE0E0;
+      --valterite-rgb:   74, 224, 224;
+      --valterite-dark:  rgba(74, 224, 224, 0.12);
+      --valterite-border:rgba(74, 224, 224, 0.35);
+      --aetherite:       #9B59B6;
+      --aetherite-rgb:   155, 89, 182;
+      --aetherite-dark:  rgba(155, 89, 182, 0.10);
+      --aetherite-border:rgba(155, 89, 182, 0.32);
+      --erinium:         #FFD700;
+      --erinium-rgb:     255, 215, 0;
+      --erinium-dark:    rgba(255, 215, 0, 0.12);
+      --erinium-border:  rgba(255, 215, 0, 0.35);
+    }
+
+    /* ── Pixelated item images ── */
+    .item-img {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* ── Hero custom for items ── */
+    .hero-items-bg::before {
+      background: radial-gradient(circle,
+        rgba(255, 215, 0, 0.18), transparent 70%) !important;
+    }
+
+    /* ── Section tag ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(var(--accent-primary-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.25);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--accent-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* ── Tier badge ── */
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px 3px 8px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .tier-badge.t1 {
+      background: rgba(74,224,224,0.14);
+      border: 1px solid rgba(74,224,224,0.35);
+      color: var(--valterite);
+    }
+    .tier-badge.t2 {
+      background: rgba(155,89,182,0.12);
+      border: 1px solid rgba(155,89,182,0.32);
+      color: var(--aetherite);
+    }
+    .tier-badge.t3 {
+      background: rgba(255,215,0,0.14);
+      border: 1px solid rgba(255,215,0,0.35);
+      color: var(--erinium);
+    }
+
+    /* ── Ore overview grid ── */
+    .ore-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 28px 0;
+    }
+
+    .ore-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 24px 22px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition),
+                  border-color var(--transition);
+      cursor: default;
+    }
+
+    .ore-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 12%; right: 12%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+
+    /* Tier glow on top edge */
+    .ore-card.t1::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--valterite), transparent);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .ore-card.t2::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--aetherite), transparent);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .ore-card.t3::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--erinium), transparent);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .ore-card.t1 { border-color: var(--valterite-border); background: linear-gradient(160deg, var(--valterite-dark) 0%, var(--glass-bg) 55%); }
+    .ore-card.t2 { border-color: var(--aetherite-border); background: linear-gradient(160deg, var(--aetherite-dark) 0%, var(--glass-bg) 55%); }
+    .ore-card.t3 { border-color: var(--erinium-border);   background: linear-gradient(160deg, var(--erinium-dark)   0%, var(--glass-bg) 55%); }
+
+    .ore-card.t1:hover { transform: translateY(-5px); box-shadow: var(--shadow-md), 0 0 28px rgba(74,224,224,0.20); }
+    .ore-card.t2:hover { transform: translateY(-5px); box-shadow: var(--shadow-md), 0 0 32px rgba(155,89,182,0.20); }
+    .ore-card.t3:hover { transform: translateY(-5px); box-shadow: var(--shadow-md), 0 0 28px rgba(255,215,0,0.22); }
+
+    .ore-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .ore-card-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .ore-card.t1 .ore-card-title { color: var(--valterite); text-shadow: 0 0 18px rgba(74,224,224,0.40); }
+    .ore-card.t2 .ore-card-title { color: var(--aetherite);  text-shadow: 0 0 18px rgba(155,89,182,0.40); }
+    .ore-card.t3 .ore-card-title { color: var(--erinium);   text-shadow: 0 0 18px rgba(255,215,0,0.45); }
+
+    /* Sprite row: ore → block → raw → processed */
+    .ore-sprites {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .ore-sprite-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: zoom-in;
+      transition: transform var(--transition);
+    }
+
+    .ore-sprite-item:hover {
+      transform: scale(1.12) translateY(-2px);
+    }
+
+    .ore-sprite-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+    }
+
+    .ore-card-sep {
+      display: flex;
+      align-items: center;
+      align-self: flex-end;
+      font-size: 1.1rem;
+      color: var(--text-faint);
+      margin-bottom: 18px;
+      flex-shrink: 0;
+    }
+
+    .ore-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+    }
+
+    .ore-info-item {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .ore-info-item strong {
+      color: var(--text);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .ore-equiv {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .ore-card.t1 .ore-equiv {
+      background: rgba(74,224,224,0.12);
+      border: 1px solid rgba(74,224,224,0.28);
+      color: var(--valterite);
+    }
+    .ore-card.t2 .ore-equiv {
+      background: rgba(155,89,182,0.10);
+      border: 1px solid rgba(155,89,182,0.25);
+      color: var(--aetherite);
+    }
+    .ore-card.t3 .ore-equiv {
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.28);
+      color: var(--erinium);
+    }
+
+    /* ── Tool / Armor section tier blocks ── */
+    .tier-section {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 26px 24px 22px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .tier-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 8%; right: 8%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+
+    .tier-section.t1 { border-left: 3px solid var(--valterite); }
+    .tier-section.t2 { border-left: 3px solid var(--aetherite); }
+    .tier-section.t3 { border-left: 3px solid var(--erinium); }
+
+    .tier-section.t1:hover { box-shadow: var(--shadow-md), 0 0 24px rgba(74,224,224,0.12); }
+    .tier-section.t2:hover { box-shadow: var(--shadow-md), 0 0 28px rgba(155,89,182,0.12); }
+    .tier-section.t3:hover { box-shadow: var(--shadow-md), 0 0 24px rgba(255,215,0,0.14); }
+
+    .tier-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .tier-section-name {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .tier-section.t1 .tier-section-name { color: var(--valterite); }
+    .tier-section.t2 .tier-section-name { color: var(--aetherite); }
+    .tier-section.t3 .tier-section-name { color: var(--erinium); }
+
+    .tier-section-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* ── Item icon grid ── */
+    .item-icon-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .item-icon-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      cursor: zoom-in;
+      transition: transform var(--transition);
+    }
+
+    .item-icon-cell:hover {
+      transform: scale(1.14) translateY(-3px);
+    }
+
+    .item-icon-frame {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      background: rgba(0, 0, 0, 0.30);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-icon-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+
+    .item-icon-cell:hover .item-icon-frame {
+      border-color: var(--glass-border-hover);
+    }
+
+    .tier-section.t1 .item-icon-cell:hover .item-icon-frame {
+      box-shadow: 0 0 16px rgba(74,224,224,0.30);
+      border-color: rgba(74,224,224,0.45);
+    }
+    .tier-section.t2 .item-icon-cell:hover .item-icon-frame {
+      box-shadow: 0 0 18px rgba(155,89,182,0.28);
+      border-color: rgba(155,89,182,0.42);
+    }
+    .tier-section.t3 .item-icon-cell:hover .item-icon-frame {
+      box-shadow: 0 0 16px rgba(255,215,0,0.32);
+      border-color: rgba(255,215,0,0.45);
+    }
+
+    .item-icon-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-faint);
+      text-align: center;
+      line-height: 1.3;
+      max-width: 72px;
+    }
+
+    .item-icon-emoji {
+      font-size: 1rem;
+      margin-bottom: 1px;
+    }
+
+    /* ── Armor comparison table ── */
+    .armor-table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      margin: 24px 0;
+    }
+
+    .armor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .armor-table thead tr {
+      background: rgba(var(--accent-primary-rgb), 0.10);
+    }
+
+    .armor-table th {
+      padding: 12px 16px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+      white-space: nowrap;
+    }
+
+    .armor-table td {
+      padding: 13px 16px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+
+    .armor-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .armor-table tbody tr:hover td {
+      background: var(--surface-hover);
+    }
+
+    .armor-table .set-name {
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .set-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .set-dot.t1 { background: var(--valterite); box-shadow: 0 0 8px rgba(74,224,224,0.60); }
+    .set-dot.t2 { background: var(--aetherite);  box-shadow: 0 0 8px rgba(155,89,182,0.55); }
+    .set-dot.t3 { background: var(--erinium);   box-shadow: 0 0 8px rgba(255,215,0,0.60); }
+
+    .stars {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .star-filled  { color: var(--accent-gold); }
+    .star-empty   { color: var(--text-faint); }
+
+    /* ── Block decorative grid ── */
+    .block-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .block-item {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 18px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition),
+                  border-color var(--transition);
+      cursor: zoom-in;
+    }
+
+    .block-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+    }
+
+    .block-item.t1:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: var(--shadow-md), 0 0 20px rgba(74,224,224,0.22);
+      border-color: var(--valterite-border);
+    }
+    .block-item.t2:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: var(--shadow-md), 0 0 24px rgba(155,89,182,0.22);
+      border-color: var(--aetherite-border);
+    }
+    .block-item.t3:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: var(--shadow-md), 0 0 20px rgba(255,215,0,0.25);
+      border-color: var(--erinium-border);
+    }
+
+    .block-item-name {
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* ── Obtaining tips grid ── */
+    .obtaining-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .obtaining-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition),
+                  border-color var(--transition);
+    }
+
+    .obtaining-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+
+    .obtaining-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--glass-border-hover);
+    }
+
+    .obtaining-card-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 8px rgba(var(--accent-primary-rgb), 0.40));
+    }
+
+    .obtaining-card-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: -0.01em;
+    }
+
+    .obtaining-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Depth bar ── */
+    .depth-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .depth-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .depth-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .depth-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 1s ease-out;
+    }
+    .depth-fill.t1 { background: linear-gradient(90deg, var(--valterite), rgba(74,224,224,0.55)); }
+    .depth-fill.t2 { background: linear-gradient(90deg, var(--aetherite), rgba(155,89,182,0.55)); }
+    .depth-fill.t3 { background: linear-gradient(90deg, var(--erinium), rgba(255,215,0,0.55)); }
+
+    .depth-value {
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .depth-value.t1 { color: var(--valterite); }
+    .depth-value.t2 { color: var(--aetherite); }
+    .depth-value.t3 { color: var(--erinium); }
+
+    /* ── Rarity pill ── */
+    .rarity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .rarity-pill.uncommon {
+      background: rgba(74,224,224,0.12);
+      border: 1px solid rgba(74,224,224,0.28);
+      color: var(--valterite);
+    }
+    .rarity-pill.rare {
+      background: rgba(155,89,182,0.10);
+      border: 1px solid rgba(155,89,182,0.28);
+      color: var(--aetherite);
+    }
+    .rarity-pill.epic {
+      background: rgba(255,215,0,0.14);
+      border: 1px solid rgba(255,215,0,0.35);
+      color: var(--erinium);
+    }
+
+    /* ── Ore intro overview banner ── */
+    .ore-intro-banner {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 22px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg,
+        rgba(var(--accent-primary-rgb), 0.10) 0%,
+        rgba(var(--accent-secondary-rgb), 0.06) 100%);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.22);
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .ore-intro-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      min-width: 80px;
+    }
+
+    .ore-intro-stat-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ore-intro-stat-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+    }
+
+    .ore-intro-sep {
+      width: 1px;
+      height: 40px;
+      background: var(--glass-border);
+      flex-shrink: 0;
+    }
+
+    /* ── Info block (tip) ── */
+    .info-block {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin: 20px 0;
+      transition: border-color var(--transition);
+    }
+
+    .info-block:hover {
+      border-color: var(--glass-border-hover);
+    }
+
+    .info-block .info-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .info-block .info-content {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .info-block .info-content strong {
+      color: var(--text);
+    }
+
+    /* ── Armor set preview cards ── */
+    .armor-set-preview {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .armor-preview-piece {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--transition);
+    }
+
+    .armor-preview-piece:hover {
+      border-color: var(--glass-border-hover);
+    }
+
+    .armor-preview-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ── Floating glow orb behind hero images ── */
+    .ore-card-glow {
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.12;
+      filter: blur(35px);
+    }
+    .ore-card.t1 .ore-card-glow { background: var(--valterite); }
+    .ore-card.t2 .ore-card-glow { background: var(--aetherite); }
+    .ore-card.t3 .ore-card-glow { background: var(--erinium); }
+  </style>
+</head>
+<body>
+
+<!-- ─── Floating Particles ──────────────────────────────────── -->
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:5%;top:10%;animation-delay:0s;animation-duration:4s;"></span>
+  <span class="star" style="left:18%;top:7%;animation-delay:1.1s;animation-duration:3.5s;"></span>
+  <span class="star" style="left:38%;top:18%;animation-delay:0.5s;animation-duration:4.8s;"></span>
+  <span class="star" style="left:60%;top:10%;animation-delay:2.0s;animation-duration:3.2s;"></span>
+  <span class="star" style="left:80%;top:25%;animation-delay:0.8s;animation-duration:5.1s;"></span>
+  <span class="star" style="left:28%;top:45%;animation-delay:1.7s;animation-duration:3.9s;"></span>
+  <span class="star" style="left:52%;top:60%;animation-delay:0.3s;animation-duration:4.4s;"></span>
+  <span class="star" style="left:12%;top:70%;animation-delay:2.4s;animation-duration:3.6s;"></span>
+  <span class="star" style="left:72%;top:55%;animation-delay:1.3s;animation-duration:4.7s;"></span>
+  <span class="star" style="left:90%;top:40%;animation-delay:0.1s;animation-duration:3.0s;"></span>
+  <span class="star" style="left:44%;top:82%;animation-delay:2.9s;animation-duration:5.5s;"></span>
+  <span class="star" style="left:65%;top:78%;animation-delay:0.6s;animation-duration:4.0s;"></span>
+</div>
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+<!-- ─── Page Wrapper ─────────────────────────────────────────── -->
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-items-bg" aria-labelledby="hero-title">
+      <span class="hero-badge">🎒 Référentiel des matériaux</span>
+      <h1 id="hero-title">Items &amp; Matériaux</h1>
+      <p>EriniumFaction introduit <strong>3 nouveaux paliers de matériaux</strong> exclusifs — Valterite (T1), Aetherite (T2) et Erinium (T3) — chacun avec son propre minerai, ses outils complets et son armure. L'Erinium, matériau ultime aux items lumineux, n'attend que les plus courageux dans les profondeurs.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🪨 <strong>Minerais :</strong> 3 nouveaux</div>
+        <div class="hero-meta-item">⛏️ <strong>Outils :</strong> 12 (4 par tier)</div>
+        <div class="hero-meta-item">🛡️ <strong>Armures :</strong> 12 pièces (4 par tier)</div>
+        <div class="hero-meta-item">🏗️ <strong>Blocs :</strong> 6 décoratifs</div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Items &amp; Matériaux</span>
+        </nav>
+
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 1 — LES 3 MINERAIS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-minerais">
+          <h2 id="section-minerais">Les 3 Minerais</h2>
+
+          <p>Trois nouvelles familles de matériaux ont été ajoutées au jeu, chacune formant une progression naturelle au-dessus du diamant vanilla. Ils s'obtiennent exclusivement dans l'Overworld ou le <a href="mining.html">Monde Minage</a>.</p>
+
+          <div class="ore-intro-banner" role="note" aria-label="Vue d'ensemble des matériaux">
+            <div class="ore-intro-stat">
+              <span class="ore-intro-stat-val">3</span>
+              <span class="ore-intro-stat-label">Minerais</span>
+            </div>
+            <div class="ore-intro-sep" aria-hidden="true"></div>
+            <div class="ore-intro-stat">
+              <span class="ore-intro-stat-val">Tier 1</span>
+              <span class="ore-intro-stat-label" style="color: var(--valterite);">Valterite</span>
+            </div>
+            <div class="ore-intro-sep" aria-hidden="true"></div>
+            <div class="ore-intro-stat">
+              <span class="ore-intro-stat-val">Tier 2</span>
+              <span class="ore-intro-stat-label" style="color: var(--aetherite);">Aetherite</span>
+            </div>
+            <div class="ore-intro-sep" aria-hidden="true"></div>
+            <div class="ore-intro-stat">
+              <span class="ore-intro-stat-val">Tier 3</span>
+              <span class="ore-intro-stat-label" style="color: var(--erinium);">Erinium</span>
+            </div>
+            <div class="ore-intro-sep" aria-hidden="true"></div>
+            <div class="ore-intro-stat">
+              <span class="ore-intro-stat-val">Y 5–45</span>
+              <span class="ore-intro-stat-label">Profondeur max</span>
+            </div>
+          </div>
+
+          <div class="ore-grid">
+
+            <!-- ── VALTERITE ── -->
+            <article class="ore-card t1" aria-label="Valterite — Tier 1">
+              <div class="ore-card-glow" aria-hidden="true"></div>
+              <div class="ore-card-header">
+                <div>
+                  <div style="margin-bottom:6px;">
+                    <span class="tier-badge t1">Tier 1</span>
+                  </div>
+                  <div class="ore-card-title">🟠 Valterite</div>
+                </div>
+                <span class="rarity-pill uncommon">Peu commun</span>
+              </div>
+
+              <div class="ore-sprites" role="list" aria-label="Sprites Valterite">
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/valterite_ore.png" alt="Minerai de Valterite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Minerai</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/valterite_block.png" alt="Bloc de Valterite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Bloc</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/valterite_raw.png" alt="Valterite brute" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Brut</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/valterite_ingot.png" alt="Lingot de Valterite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Lingot</span>
+                </div>
+              </div>
+
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Couleur</strong> Orange bronze chaleureux</li>
+                <li class="ore-info-item"><strong>Profondeur</strong> Couches Y 5–40 (max Y=40)</li>
+                <li class="ore-info-item"><strong>Génération</strong> 3 veines/chunk, taille 6 — le plus commun</li>
+                <li class="ore-info-item"><strong>Équivalent</strong>
+                  <span class="ore-equiv">⚖️ Entre Fer et Diamant</span>
+                </li>
+              </ul>
+              <div class="depth-info">
+                <span class="depth-label">Y 5</span>
+                <div class="depth-track">
+                  <div class="depth-fill t1 progress-bar" data-value="78" style="width:0%"></div>
+                </div>
+                <span class="depth-value t1">Y 40</span>
+              </div>
+            </article>
+
+            <!-- ── AETHERITE ── -->
+            <article class="ore-card t2" aria-label="Aetherite — Tier 2">
+              <div class="ore-card-glow" aria-hidden="true"></div>
+              <div class="ore-card-header">
+                <div>
+                  <div style="margin-bottom:6px;">
+                    <span class="tier-badge t2">Tier 2</span>
+                  </div>
+                  <div class="ore-card-title">🔵 Aetherite</div>
+                </div>
+                <span class="rarity-pill rare">Rare</span>
+              </div>
+
+              <div class="ore-sprites" role="list" aria-label="Sprites Aetherite">
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/aetherite_ore.png" alt="Minerai d'Aetherite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Minerai</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/aetherite_block.png" alt="Bloc d'Aetherite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Bloc</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/aetherite_raw.png" alt="Aetherite brut" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Brut</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Cristal</span>
+                </div>
+              </div>
+
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Couleur</strong> Bleu cyan éthéré lumineux</li>
+                <li class="ore-info-item"><strong>Profondeur</strong> Couches Y 5–25 (max Y=25)</li>
+                <li class="ore-info-item"><strong>Génération</strong> 1 veine/chunk, taille 4</li>
+                <li class="ore-info-item"><strong>Équivalent</strong>
+                  <span class="ore-equiv">⚖️ Supérieur au Diamant</span>
+                </li>
+              </ul>
+              <div class="depth-info">
+                <span class="depth-label">Y 5</span>
+                <div class="depth-track">
+                  <div class="depth-fill t2 progress-bar" data-value="50" style="width:0%"></div>
+                </div>
+                <span class="depth-value t2">Y 25</span>
+              </div>
+            </article>
+
+            <!-- ── ERINIUM ── -->
+            <article class="ore-card t3" aria-label="Erinium — Tier 3">
+              <div class="ore-card-glow" aria-hidden="true"></div>
+              <div class="ore-card-header">
+                <div>
+                  <div style="margin-bottom:6px;">
+                    <span class="tier-badge t3">Tier 3</span>
+                  </div>
+                  <div class="ore-card-title">🟣 Erinium</div>
+                </div>
+                <span class="rarity-pill epic">Épique ✦</span>
+              </div>
+
+              <div class="ore-sprites" role="list" aria-label="Sprites Erinium">
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/erinium_ore.png" alt="Minerai d'Erinium" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Minerai</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/blocks/erinium_block.png" alt="Bloc d'Erinium" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Bloc</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/erinium_raw.png" alt="Erinium brut" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Brut</span>
+                </div>
+                <span class="ore-card-sep" aria-hidden="true">→</span>
+                <div class="ore-sprite-item" role="listitem" data-lightbox>
+                  <img src="img/items/erinium_fragment.png" alt="Fragment d'Erinium" class="item-img" width="64" height="64" />
+                  <span class="ore-sprite-label">Fragment</span>
+                </div>
+              </div>
+
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Couleur</strong> Violet magenta intense — items lumineux (Glow)</li>
+                <li class="ore-info-item"><strong>Profondeur</strong> Couches Y 5–15 (max Y=15, le plus profond)</li>
+                <li class="ore-info-item"><strong>Génération</strong> 1–2 veines/chunk, taille 3 — le plus rare</li>
+                <li class="ore-info-item"><strong>Drops</strong> 1–2 fragments par bloc miné</li>
+                <li class="ore-info-item"><strong>Équivalent</strong>
+                  <span class="ore-equiv">⚖️ Meilleur du jeu</span>
+                </li>
+              </ul>
+              <div class="depth-info">
+                <span class="depth-label">Y 5</span>
+                <div class="depth-track">
+                  <div class="depth-fill t3 progress-bar" data-value="22" style="width:0%"></div>
+                </div>
+                <span class="depth-value t3">Y 15</span>
+              </div>
+            </article>
+
+          </div><!-- /ore-grid -->
+
+        </section>
+
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 2 — OUTILS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-outils">
+          <h2 id="section-outils">Outils</h2>
+
+          <p>Chaque matériau dispose d'un set d'outils complet : pioche, hache, épée et pelle. Plus le tier est élevé, plus les outils sont performants en termes de vitesse de minage, dégâts et durabilité.</p>
+
+          <!-- VALTERITE TOOLS -->
+          <div class="tier-section t1" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Valterite</span>
+              <span class="tier-section-desc">4 outils — Niveau entre Fer et Diamant</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Outils Valterite">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_pickaxe.png" alt="Pioche en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">⛏️</span>
+                <span class="item-icon-name">Pioche</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_axe.png" alt="Hache en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪓</span>
+                <span class="item-icon-name">Hache</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_sword.png" alt="Épée en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🗡️</span>
+                <span class="item-icon-name">Épée</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_shovel.png" alt="Pelle en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🔨</span>
+                <span class="item-icon-name">Pelle</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AETHERITE TOOLS -->
+          <div class="tier-section t2" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Aetherite</span>
+              <span class="tier-section-desc">4 outils — Supérieur au Diamant</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Outils Aetherite">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_pickaxe.png" alt="Pioche en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">⛏️</span>
+                <span class="item-icon-name">Pioche</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_axe.png" alt="Hache en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪓</span>
+                <span class="item-icon-name">Hache</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_sword.png" alt="Épée en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🗡️</span>
+                <span class="item-icon-name">Épée</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_shovel.png" alt="Pelle en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🔨</span>
+                <span class="item-icon-name">Pelle</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ERINIUM TOOLS -->
+          <div class="tier-section t3" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Erinium</span>
+              <span class="tier-section-desc">4 outils — Meilleur du jeu ✦ Items lumineux</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Outils Erinium">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_pickaxe.png" alt="Pioche en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">⛏️</span>
+                <span class="item-icon-name">Pioche</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_axe.png" alt="Hache en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪓</span>
+                <span class="item-icon-name">Hache</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_sword.png" alt="Épée en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🗡️</span>
+                <span class="item-icon-name">Épée</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_shovel.png" alt="Pelle en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🔨</span>
+                <span class="item-icon-name">Pelle</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="stats-outils">Statistiques détaillées des outils</h3>
+          <div class="armor-table-wrapper">
+            <table class="armor-table" aria-label="Statistiques complètes des outils par tier">
+              <thead>
+                <tr>
+                  <th>Outil / Stat</th>
+                  <th style="color:var(--valterite);">T1 Valterite</th>
+                  <th style="color:var(--aetherite);">T2 Aetherite</th>
+                  <th style="color:var(--erinium);">T3 Erinium ✦</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="4" style="background:rgba(var(--accent-primary-rgb),0.06);font-weight:700;font-size:0.78rem;color:var(--text);">Épée</td></tr>
+                <tr>
+                  <td>Dégâts bonus</td>
+                  <td style="color:var(--valterite);">+3.0</td>
+                  <td style="color:var(--aetherite);">+3.5</td>
+                  <td style="color:var(--erinium);">+4.0</td>
+                </tr>
+                <tr>
+                  <td>Vitesse d'attaque</td>
+                  <td>-2.4</td>
+                  <td>-2.3</td>
+                  <td>-2.2</td>
+                </tr>
+                <tr><td colspan="4" style="background:rgba(var(--accent-primary-rgb),0.06);font-weight:700;font-size:0.78rem;color:var(--text);">Hache</td></tr>
+                <tr>
+                  <td>Dégâts bonus</td>
+                  <td style="color:var(--valterite);">+5.0</td>
+                  <td style="color:var(--aetherite);">+5.5</td>
+                  <td style="color:var(--erinium);">+6.0</td>
+                </tr>
+                <tr>
+                  <td>Vitesse d'attaque</td>
+                  <td>-3.0</td>
+                  <td>-3.0</td>
+                  <td>-2.9</td>
+                </tr>
+                <tr><td colspan="4" style="background:rgba(var(--accent-primary-rgb),0.06);font-weight:700;font-size:0.78rem;color:var(--text);">Pioche</td></tr>
+                <tr>
+                  <td>Dégâts bonus</td>
+                  <td>+1.0</td>
+                  <td>+1.0</td>
+                  <td>+1.0</td>
+                </tr>
+                <tr>
+                  <td>Vitesse minage</td>
+                  <td style="color:var(--valterite);">8.5</td>
+                  <td style="color:var(--aetherite);">10.0</td>
+                  <td style="color:var(--erinium);">20.0</td>
+                </tr>
+                <tr><td colspan="4" style="background:rgba(var(--accent-primary-rgb),0.06);font-weight:700;font-size:0.78rem;color:var(--text);">Pelle</td></tr>
+                <tr>
+                  <td>Dégâts bonus</td>
+                  <td>+1.5</td>
+                  <td>+1.5</td>
+                  <td>+1.5</td>
+                </tr>
+                <tr><td colspan="4" style="background:rgba(var(--accent-primary-rgb),0.06);font-weight:700;font-size:0.78rem;color:var(--text);">Commun à tous les outils</td></tr>
+                <tr>
+                  <td>Durabilité</td>
+                  <td style="color:var(--valterite);">1 600</td>
+                  <td style="color:var(--aetherite);">2 200</td>
+                  <td style="color:var(--erinium);">3 100</td>
+                </tr>
+                <tr>
+                  <td>Enchantabilité</td>
+                  <td style="color:var(--valterite);">12</td>
+                  <td style="color:var(--aetherite);">14</td>
+                  <td style="color:var(--erinium);">18</td>
+                </tr>
+                <tr>
+                  <td>Niveau de récolte</td>
+                  <td>3</td>
+                  <td>3–4</td>
+                  <td>3–4</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 3 — ARMURES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-armures">
+          <h2 id="section-armures">Armures</h2>
+
+          <p>Chaque tier offre un set d'armure complet en 4 pièces. Les sets de rang supérieur offrent une bien meilleure protection face aux joueurs et aux mobs en zones dangereuses.</p>
+
+          <!-- VALTERITE ARMOR -->
+          <div class="tier-section t1" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Valterite</span>
+              <span class="tier-section-desc">Set 4 pièces — Protection solide</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Armure Valterite">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_helmet.png" alt="Casque en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪖</span>
+                <span class="item-icon-name">Casque</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_chestplate.png" alt="Plastron en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👕</span>
+                <span class="item-icon-name">Plastron</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_leggings.png" alt="Jambières en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👖</span>
+                <span class="item-icon-name">Jambières</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/valterite_boots.png" alt="Bottes en Valterite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👢</span>
+                <span class="item-icon-name">Bottes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AETHERITE ARMOR -->
+          <div class="tier-section t2" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Aetherite</span>
+              <span class="tier-section-desc">Set 4 pièces — Protection élevée</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Armure Aetherite">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_helmet.png" alt="Casque en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪖</span>
+                <span class="item-icon-name">Casque</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_chestplate.png" alt="Plastron en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👕</span>
+                <span class="item-icon-name">Plastron</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_leggings.png" alt="Jambières en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👖</span>
+                <span class="item-icon-name">Jambières</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/aetherite_boots.png" alt="Bottes en Aetherite" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👢</span>
+                <span class="item-icon-name">Bottes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ERINIUM ARMOR -->
+          <div class="tier-section t3" data-animate>
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Erinium</span>
+              <span class="tier-section-desc">Set 4 pièces — Protection maximale ✦ Effets spéciaux</span>
+            </div>
+            <div class="item-icon-grid" role="list" aria-label="Armure Erinium">
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_helmet.png" alt="Casque en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">🪖</span>
+                <span class="item-icon-name">Casque</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_chestplate.png" alt="Plastron en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👕</span>
+                <span class="item-icon-name">Plastron</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_leggings.png" alt="Jambières en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👖</span>
+                <span class="item-icon-name">Jambières</span>
+              </div>
+              <div class="item-icon-cell" role="listitem" data-lightbox>
+                <div class="item-icon-frame">
+                  <img src="img/items/erinium_boots.png" alt="Bottes en Erinium" class="item-img" width="56" height="56" />
+                </div>
+                <span class="item-icon-emoji">👢</span>
+                <span class="item-icon-name">Bottes</span>
+              </div>
+            </div>
+            <div class="info-block" role="note" style="margin-top:16px;margin-bottom:0;">
+              <span class="info-icon">✦</span>
+              <div class="info-content">
+                <strong>Effets passifs du set Erinium (items lumineux — rareté Épique) :</strong>
+                Casque → <strong>Vision Nocturne</strong> permanente &nbsp;|&nbsp;
+                Plastron → <strong>Résistance I</strong> + <strong>Force I</strong> &nbsp;|&nbsp;
+                Jambières → <strong>Saut amélioré I</strong> &nbsp;|&nbsp;
+                Bottes → <strong>Vitesse I</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparative table -->
+          <h3 id="comparatif-armures">Comparatif des sets d'armure</h3>
+          <div class="armor-table-wrapper">
+            <table class="armor-table" aria-label="Comparatif des armures par tier">
+              <thead>
+                <tr>
+                  <th>Set</th>
+                  <th>Protection totale</th>
+                  <th>Solidité</th>
+                  <th>Effets passifs</th>
+                  <th>Rareté</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;font-weight:700;color:var(--text);">
+                      <span class="set-dot t1"></span>
+                      Valterite
+                    </div>
+                  </td>
+                  <td>
+                    <div class="stars" aria-label="3 étoiles sur 5">
+                      <span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span><span class="star-empty">☆</span><span class="star-empty">☆</span>
+                    </div>
+                    <span style="font-size:0.75rem;color:var(--text-muted);">3+8+6+3 = 20 pts | Tough. 2.0</span>
+                  </td>
+                  <td>Bonne</td>
+                  <td style="color:var(--text-faint);">Aucun</td>
+                  <td><span class="rarity-pill uncommon">Peu commun</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;font-weight:700;color:var(--text);">
+                      <span class="set-dot t2"></span>
+                      Aetherite
+                    </div>
+                  </td>
+                  <td>
+                    <div class="stars" aria-label="4 étoiles sur 5">
+                      <span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span><span class="star-empty">☆</span>
+                    </div>
+                    <span style="font-size:0.75rem;color:var(--text-muted);">4+9+7+4 = 24 pts | Tough. 2.5</span>
+                  </td>
+                  <td>Très bonne</td>
+                  <td style="color:var(--text-faint);">Aucun</td>
+                  <td><span class="rarity-pill rare">Rare</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;font-weight:700;color:var(--text);">
+                      <span class="set-dot t3"></span>
+                      Erinium
+                    </div>
+                  </td>
+                  <td>
+                    <div class="stars" aria-label="5 étoiles sur 5">
+                      <span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span><span class="star-filled">★</span>
+                    </div>
+                    <span style="font-size:0.75rem;color:var(--text-muted);">5+11+9+5 = 30 pts | Tough. 3.0</span>
+                  </td>
+                  <td>Excellente</td>
+                  <td style="font-size:0.78rem;color:var(--erinium);">Vision Nuit · Résistance I · Force I · Saut I · Vitesse I</td>
+                  <td><span class="rarity-pill epic">Épique ✦</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 4 — BLOCS DÉCORATIFS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-blocs">
+          <h2 id="section-blocs">Blocs Décoratifs</h2>
+
+          <p>Six blocs décoratifs sont disponibles pour construire et personnaliser vos bases. Les blocs de stockage compressent 9 lingots/cristaux en un seul bloc, et les minerais peuvent servir de décoration dans vos constructions faction.</p>
+
+          <div class="block-gallery" role="list" aria-label="Galerie des blocs décoratifs">
+
+            <!-- Valterite -->
+            <div class="block-item t1" role="listitem" data-lightbox aria-label="Minerai de Valterite">
+              <img src="img/blocks/valterite_ore.png" alt="Minerai de Valterite" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Minerai<br>Valterite</span>
+              <span class="tier-badge t1" style="font-size:0.6rem;">Tier 1</span>
+            </div>
+            <div class="block-item t1" role="listitem" data-lightbox aria-label="Bloc de Valterite">
+              <img src="img/blocks/valterite_block.png" alt="Bloc de Valterite" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Bloc<br>Valterite</span>
+              <span class="tier-badge t1" style="font-size:0.6rem;">Tier 1</span>
+            </div>
+
+            <!-- Aetherite -->
+            <div class="block-item t2" role="listitem" data-lightbox aria-label="Minerai d'Aetherite">
+              <img src="img/blocks/aetherite_ore.png" alt="Minerai d'Aetherite" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Minerai<br>Aetherite</span>
+              <span class="tier-badge t2" style="font-size:0.6rem;">Tier 2</span>
+            </div>
+            <div class="block-item t2" role="listitem" data-lightbox aria-label="Bloc d'Aetherite">
+              <img src="img/blocks/aetherite_block.png" alt="Bloc d'Aetherite" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Bloc<br>Aetherite</span>
+              <span class="tier-badge t2" style="font-size:0.6rem;">Tier 2</span>
+            </div>
+
+            <!-- Erinium -->
+            <div class="block-item t3" role="listitem" data-lightbox aria-label="Minerai d'Erinium">
+              <img src="img/blocks/erinium_ore.png" alt="Minerai d'Erinium" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Minerai<br>Erinium</span>
+              <span class="tier-badge t3" style="font-size:0.6rem;">Tier 3</span>
+            </div>
+            <div class="block-item t3" role="listitem" data-lightbox aria-label="Bloc d'Erinium">
+              <img src="img/blocks/erinium_block.png" alt="Bloc d'Erinium" class="item-img" width="96" height="96" />
+              <span class="block-item-name">Bloc<br>Erinium</span>
+              <span class="tier-badge t3" style="font-size:0.6rem;">Tier 3</span>
+            </div>
+
+          </div>
+
+          <h3 id="props-blocs">Propriétés des blocs</h3>
+          <div class="armor-table-wrapper">
+            <table class="armor-table" aria-label="Propriétés des blocs décoratifs par tier">
+              <thead>
+                <tr>
+                  <th>Bloc</th>
+                  <th>Dureté</th>
+                  <th>Résistance aux explosions</th>
+                  <th>Niveau de récolte</th>
+                  <th>Lumière</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t1" style="display:inline-block;margin-right:6px;"></span>Minerai Valterite</td>
+                  <td>3.0</td><td>5.0</td><td>Niveau 2</td><td style="color:var(--text-faint);">Aucune</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t1" style="display:inline-block;margin-right:6px;"></span>Bloc Valterite</td>
+                  <td>5.0</td><td>10.0</td><td>Niveau 3</td><td style="color:var(--text-faint);">Aucune</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t2" style="display:inline-block;margin-right:6px;"></span>Minerai Aetherite</td>
+                  <td>4.0</td><td>8.0</td><td>Niveau 3</td><td style="color:var(--aetherite);">0.1 (légère)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t2" style="display:inline-block;margin-right:6px;"></span>Bloc Aetherite</td>
+                  <td>6.0</td><td>15.0</td><td>Niveau 3</td><td style="color:var(--aetherite);">0.1 (légère)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t3" style="display:inline-block;margin-right:6px;"></span>Minerai Erinium</td>
+                  <td>5.0</td><td>12.0</td><td>Niveau 3</td><td style="color:var(--erinium);">0.25 (lueur violette)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;"><span class="set-dot t3" style="display:inline-block;margin-right:6px;"></span>Bloc Erinium</td>
+                  <td>8.0</td><td>20.0</td><td>Niveau 4</td><td style="color:var(--erinium);">0.25 (lueur violette)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="info-block" role="note">
+            <span class="info-icon">💡</span>
+            <div class="info-content">
+              <strong>Astuce construction :</strong> Les blocs de stockage (bloc de Valterite, bloc d'Aetherite, bloc d'Erinium) sont idéaux pour afficher votre richesse dans votre base faction. Un bloc = 9 unités du matériau correspondant. Le bloc d'Erinium émet une douce lueur violette — parfait pour décorer votre salle du trône.
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION 5 — OBTENTION
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-obtention">
+          <h2 id="section-obtention">Obtention</h2>
+
+          <p>Les minerais d'EriniumFaction peuvent être trouvés dans deux environnements distincts. Chaque méthode a ses avantages — choisissez en fonction de vos priorités.</p>
+
+          <div class="obtaining-grid">
+
+            <div class="obtaining-card glass-card" data-animate>
+              <span class="obtaining-card-icon">🌍</span>
+              <div class="obtaining-card-title">Overworld</div>
+              <div class="obtaining-card-desc">
+                Les minerais sont présents dans les couches naturelles de l'Overworld. Miner ici risque d'abîmer le terrain de votre map faction, mais les gisements sont accessibles sans téléportation.
+              </div>
+            </div>
+
+            <div class="obtaining-card glass-card" data-animate>
+              <span class="obtaining-card-icon">⛏️</span>
+              <div class="obtaining-card-title">Monde Minage</div>
+              <div class="obtaining-card-desc">
+                La dimension dédiée au minage propose un <strong>multiplicateur de minerai</strong> sur les drops. Terrain régénéré chaque semaine, terrain vierge garanti, invincibilité totale. La méthode recommandée.
+              </div>
+            </div>
+
+            <div class="obtaining-card glass-card" data-animate>
+              <span class="obtaining-card-icon">⭐</span>
+              <div class="obtaining-card-title">Stat Fortune (RPG)</div>
+              <div class="obtaining-card-desc">
+                La <strong>statistique Fortune</strong> du système RPG augmente directement le nombre de drops par bloc miné. Investir dans cette stat peut multiplier votre récolte par 2 à 4 lors de longues sessions.
+              </div>
+            </div>
+
+            <div class="obtaining-card glass-card" data-animate>
+              <span class="obtaining-card-icon">🎯</span>
+              <div class="obtaining-card-title">Conseil de pro</div>
+              <div class="obtaining-card-desc">
+                Minez dans le <a href="mining.html">Monde Minage</a> pour <strong>ne pas endommager la map faction</strong>. Le terrain principal est précieux pour les constructions et les bases — préservez-le.
+              </div>
+            </div>
+
+          </div>
+
+          <h3 id="niveaux-profondeur">Niveaux de profondeur</h3>
+          <p>Les trois minerais se trouvent dans l'Overworld, mais leurs zones de prédilection diffèrent. Plus vous descendez profondément, plus vous avez de chances de trouver les matériaux rares.</p>
+
+          <div class="glass-card" style="padding: 22px 24px; margin: 20px 0;">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tier-badge t1" style="font-size:0.65rem;">Tier 1</span>
+                    <span style="font-weight:700;color:var(--valterite);font-size:0.9rem;">Valterite</span>
+                  </div>
+                  <span style="font-size:0.78rem;color:var(--text-muted);">Y 5 → Y 40 — 3 veines/chunk, taille 6</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;">
+                  <div class="progress-bar" data-value="78" style="width:0%;height:100%;background:linear-gradient(90deg,var(--valterite),rgba(74,224,224,0.45));border-radius:100px;transition:width 1.2s ease-out;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.68rem;color:var(--text-faint);">
+                  <span>Peu commun — facile à trouver</span>
+                  <span>35 couches disponibles</span>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tier-badge t2" style="font-size:0.65rem;">Tier 2</span>
+                    <span style="font-weight:700;color:var(--aetherite);font-size:0.9rem;">Aetherite</span>
+                  </div>
+                  <span style="font-size:0.78rem;color:var(--text-muted);">Y 5 → Y 25 — 1 veine/chunk, taille 4</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;">
+                  <div class="progress-bar" data-value="50" style="width:0%;height:100%;background:linear-gradient(90deg,var(--aetherite),rgba(155,89,182,0.45));border-radius:100px;transition:width 1.2s ease-out;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.68rem;color:var(--text-faint);">
+                  <span>Rare — demande de creuser</span>
+                  <span>20 couches disponibles</span>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tier-badge t3" style="font-size:0.65rem;">Tier 3</span>
+                    <span style="font-weight:700;color:var(--erinium);font-size:0.9rem;">Erinium</span>
+                  </div>
+                  <span style="font-size:0.78rem;color:var(--text-muted);">Y 5 → Y 15 — 1–2 veines/chunk, taille 3</span>
+                </div>
+                <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;">
+                  <div class="progress-bar" data-value="22" style="width:0%;height:100%;background:linear-gradient(90deg,var(--erinium),rgba(255,215,0,0.45));border-radius:100px;transition:width 1.2s ease-out;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.68rem;color:var(--text-faint);">
+                  <span>Épique — le plus rare, le plus profond</span>
+                  <span>10 couches disponibles</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="alert alert-info" role="note" style="margin-top: 0;">
+            <span class="alert-icon">🔗</span>
+            <div class="alert-body">
+              <strong class="alert-title">Lien vers le Monde Minage</strong>
+              <span class="alert-desc">Pour exploiter ces ressources au maximum sans abîmer la map faction, consultez la page <a href="mining.html">Monde Minage</a> — dimension dédiée avec invincibilité totale et reset hebdomadaire.</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — ARMES CUSTOM
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-armes">
+          <h2 id="section-armes">Armes de Combat Custom</h2>
+
+          <div class="section-tag">⚔️ Combat Extension</div>
+
+          <p>De nouvelles catégories d'armes en 3 tiers s'ajoutent aux épées classiques. Consultez la page <a href="combat.html" style="color:var(--accent-secondary);text-decoration:none;font-weight:600;">Combat &amp; PvP</a> pour les mécaniques détaillées.</p>
+
+          <!-- Arcs -->
+          <h3 id="items-arcs">Arcs</h3>
+          <div class="tier-section t1">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Arc de Valterite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Dégâts ×1.20 — Vitesse flèche ×1.10 — Durabilité 500. Utilise les flèches standard ou spéciales.</p>
+          </div>
+          <div class="tier-section t2">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Arc d'Aetherite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Dégâts ×1.35 — Vitesse flèche ×1.20 — Tir ×1.25 plus rapide — Durabilité 750.</p>
+          </div>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Arc d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Dégâts ×1.50 — Vitesse flèche ×1.30 — Tir ×1.43 très rapide — Durabilité 1200.</p>
+          </div>
+
+          <!-- Flèches -->
+          <h3 id="items-fleches">Flèches Spéciales</h3>
+          <div class="tier-section t1">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Valterite</span>
+              <span class="tier-section-name">Flèche de Valterite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Applique <strong>Lenteur I (2s)</strong> sur impact. Récupérable.</p>
+          </div>
+          <div class="tier-section t2">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Aetherite</span>
+              <span class="tier-section-name">Flèche d'Aetherite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Inflige <strong>+30% dégâts magiques</strong> (ignore armure) en plus des dégâts normaux. Récupérable.</p>
+          </div>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Erinium</span>
+              <span class="tier-section-name">Flèche d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;"><strong>×2 dégâts</strong>. Non récupérable — consommée à chaque tir.</p>
+          </div>
+          <div class="tier-section" style="border-left:3px solid var(--danger);">
+            <div class="tier-section-header">
+              <span class="tier-badge" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.32);color:var(--danger);">Explosive</span>
+              <span class="tier-section-name" style="color:var(--danger);">Flèche Explosive</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">Explosion AOE rayon 2.5 blocs à l'impact. Dégâts 4.0 max aux entités proches (décroissance avec distance). Endommage les blocs. Non récupérable.</p>
+          </div>
+
+          <!-- Dagues -->
+          <h3 id="items-dagues">Dagues</h3>
+          <div class="tier-section t1">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Dague de Valterite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">4.0 dégâts — Durabilité 300. Backstab ×1.5 dégâts dans les 120° arrière.</p>
+          </div>
+          <div class="tier-section t2">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Dague d'Aetherite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">5.0 dégâts — Durabilité 450. Backstab ×1.5 dégâts.</p>
+          </div>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Dague d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">6.0 dégâts — Durabilité 700. Backstab ×1.5 dégâts.</p>
+          </div>
+
+          <!-- Marteaux de Guerre -->
+          <h3 id="items-marteaux">Marteaux de Guerre</h3>
+          <div class="tier-section t1">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Marteau de Guerre de Valterite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">7.0 dégâts — AOE cône frontal 2.0 blocs (60% dégâts) — Cooldown 2s — Durabilité 400. Non enchantable.</p>
+          </div>
+          <div class="tier-section t2">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Marteau de Guerre d'Aetherite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">8.5 dégâts — AOE cône frontal 2.5 blocs (60% dégâts) — Cooldown 2.5s — Durabilité 600. Non enchantable.</p>
+          </div>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Marteau de Guerre d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">10.0 dégâts — AOE cône frontal 3.0 blocs (60% dégâts) — Cooldown 3s — Durabilité 1000. Non enchantable.</p>
+          </div>
+
+          <!-- Pommes Custom -->
+          <h3 id="items-pommes">Pommes Custom</h3>
+          <p style="font-size:0.875rem;color:var(--text-muted);">Cooldown partagé de <strong>30 secondes</strong> entre toutes les pommes custom.</p>
+          <div class="tier-section t1">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1</span>
+              <span class="tier-section-name">Pomme de Valterite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;"><strong>Régénération II</strong> pendant 10 secondes.</p>
+          </div>
+          <div class="tier-section t2">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2</span>
+              <span class="tier-section-name">Pomme d'Aetherite</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;"><strong>Absorption IV</strong> pendant 30 secondes.</p>
+          </div>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3</span>
+              <span class="tier-section-name">Pomme d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;"><strong>Régénération III + Résistance II + Absorption IV</strong> — 20 secondes chacun.</p>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — ACCESSOIRES (BAUBLES)
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-accessoires">
+          <h2 id="section-accessoires">Accessoires — Anneaux &amp; Amulettes</h2>
+
+          <div class="section-tag">💍 Système Baubles</div>
+
+          <p>Les accessoires s'équipent dans les slots <strong>Baubles</strong> (mod requis). Chaque pièce apporte des bonus RPG passifs. Porter un anneau <em>et</em> une amulette du même tier active un <strong>bonus de set</strong> supplémentaire.</p>
+
+          <!-- Anneaux -->
+          <h3 id="items-anneaux">Anneaux</h3>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des anneaux">
+              <thead>
+                <tr>
+                  <th>Anneau</th>
+                  <th>Bonus RPG passifs</th>
+                  <th>Slot</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#4AE0E0;">Anneau de Valterite</strong></td>
+                  <td>+2 Vigueur, +1 Résistance</td>
+                  <td>Anneau (Baubles)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#9B59B6;">Anneau d'Aetherite</strong></td>
+                  <td>+2 Force, +1 Agilité</td>
+                  <td>Anneau (Baubles)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#FFD700;">Anneau d'Erinium</strong></td>
+                  <td>+3 Fortune, +2 Arcane</td>
+                  <td>Anneau (Baubles)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Amulettes -->
+          <h3 id="items-amulettes">Amulettes</h3>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Stats des amulettes">
+              <thead>
+                <tr>
+                  <th>Amulette</th>
+                  <th>Effet passif</th>
+                  <th>Slot</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#4AE0E0;">Amulette de Valterite</strong></td>
+                  <td>Régénère <strong>0.5 PV toutes les 5s</strong> si pas de dégâts reçus depuis 5s</td>
+                  <td>Amulette (Baubles)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#9B59B6;">Amulette d'Aetherite</strong></td>
+                  <td><strong>+5% vitesse de déplacement</strong> permanente (AttributeModifier)</td>
+                  <td>Amulette (Baubles)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#FFD700;">Amulette d'Erinium</strong></td>
+                  <td><strong>+1 à toutes les stats RPG</strong> (Force, Vigueur, Agilité, Résistance, Fortune, Arcane)</td>
+                  <td>Amulette (Baubles)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Set Bonus Accessoires -->
+          <h3 id="items-set-accessoires">Bonus de Set Accessoire</h3>
+          <p>Porter l'anneau <strong>et</strong> l'amulette du même tier simultanément active un bonus supplémentaire.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Bonus de set accessoires">
+              <thead>
+                <tr>
+                  <th>Set</th>
+                  <th>Bonus de Set</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#4AE0E0;">Valterite (anneau + amulette)</strong></td>
+                  <td>+10% PV maximum</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#9B59B6;">Aetherite (anneau + amulette)</strong></td>
+                  <td>+8% multiplicateur de dégâts infligés</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#FFD700;">Erinium (anneau + amulette)</strong></td>
+                  <td>+15% gain d'XP</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Recettes Accessoires -->
+          <h3 id="items-recettes-accessoires">Recettes de Craft</h3>
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Recettes accessoires">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Recette (grille 3×3)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Anneau (tous tiers)</td>
+                  <td>Motif diamant : lingot au Nord/Est/Ouest/Sud, gemme taillée au centre</td>
+                </tr>
+                <tr>
+                  <td>Amulette (tous tiers)</td>
+                  <td>Rangée du haut : 3 lingots — Rang 2 : gemme taillée au centre — Rang 3 : ficelle au centre</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:0.82rem;color:var(--text-muted);">Les lingots correspondent au matériau du tier : lingot de Valterite / cristal d'Aetherite / fragment d'Erinium.</p>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — GEMMES & SOCKETS
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-gemmes">
+          <h2 id="section-gemmes">Gemmes &amp; Système de Sockets</h2>
+
+          <div class="section-tag">💎 Socketing</div>
+
+          <p>18 gemmes (6 types × 3 qualités) peuvent être insérées dans les <strong>sockets</strong> d'armes et d'armures pour amplifier vos stats RPG et activer des effets de combat passifs.</p>
+
+          <!-- Types de gemmes -->
+          <h3 id="items-types-gemmes">Les 6 Types de Gemmes</h3>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Types de gemmes">
+              <thead>
+                <tr>
+                  <th>Gemme</th>
+                  <th>Stat RPG liée</th>
+                  <th>Effet de combat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color:#E74C3C;">Rubis</strong></td>
+                  <td>Force</td>
+                  <td>Lifesteal sur arme — base 2% par gemme taillée (diminishing returns au-delà de 4)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#3498DB;">Saphir</strong></td>
+                  <td>Vigueur</td>
+                  <td>+PV max — base +2 PV par gemme taillée (sur armure)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#2ECC71;">Émeraude</strong></td>
+                  <td>Fortune</td>
+                  <td>+Drop rare (effet passif drop)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#9B59B6;">Améthyste</strong></td>
+                  <td>Arcane</td>
+                  <td>+Régénération de mana</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:#F1C40F;">Topaze</strong></td>
+                  <td>Agilité</td>
+                  <td>+Vitesse — base +3% par gemme taillée (cap à +15%, sur armure)</td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--text-muted);">Onyx</strong></td>
+                  <td>Résistance</td>
+                  <td>-Dégâts reçus — base -2% par gemme taillée (cap à -20%, sur armure)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Qualités des gemmes -->
+          <h3 id="items-qualites-gemmes">Qualités des Gemmes</h3>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Qualités des gemmes">
+              <thead>
+                <tr>
+                  <th>Qualité</th>
+                  <th>Suffixe</th>
+                  <th>Bonus stat RPG</th>
+                  <th>Multiplicateur combat</th>
+                  <th>Recette</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Brute</strong></td>
+                  <td><em>brute</em></td>
+                  <td>+1 stat</td>
+                  <td>×0.5 (moitié)</td>
+                  <td>Droppée dans les mines</td>
+                </tr>
+                <tr>
+                  <td><strong>Taillée</strong></td>
+                  <td><em>taillée</em></td>
+                  <td>+2 stats</td>
+                  <td>×1.0 (référence)</td>
+                  <td>1 gemme brute + 1 silex → gemme taillée</td>
+                </tr>
+                <tr>
+                  <td><strong>Parfaite</strong></td>
+                  <td><em>parfaite</em></td>
+                  <td>+4 stats</td>
+                  <td>×2.0 (double)</td>
+                  <td>4 gemmes taillées en carré 2×2 → 1 parfaite</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Comment socket -->
+          <h3 id="items-comment-socket">Comment Insérer une Gemme</h3>
+
+          <div class="pvp18-list" aria-label="Étapes du socketing">
+            <div class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">1️⃣</span>
+              <div>
+                <strong>Ouvrir l'interface de socketing</strong>
+                Clic droit sur une arme ou une armure qui possède des sockets libres pour ouvrir l'interface de socketing.
+              </div>
+            </div>
+            <div class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">2️⃣</span>
+              <div>
+                <strong>Choisir le socket et la gemme</strong>
+                Glissez la gemme désirée dans l'emplacement socket de votre choix. La gemme est consommée lors de l'insertion.
+              </div>
+            </div>
+            <div class="pvp18-item">
+              <span class="pvp18-item-icon" aria-hidden="true">3️⃣</span>
+              <div>
+                <strong>Extraire une gemme</strong>
+                Pour retirer une gemme sans la détruire, utilisez un <strong>Extracteur d'Erinium</strong>. Sans extracteur, la gemme est détruite lors du retrait.
+              </div>
+            </div>
+          </div>
+
+          <!-- Extracteur -->
+          <h3 id="items-extracteur">Extracteur d'Erinium</h3>
+          <div class="tier-section t3">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Spécial</span>
+              <span class="tier-section-name">Extracteur d'Erinium</span>
+            </div>
+            <p style="font-size:0.84rem;color:var(--text-muted);margin:0;">
+              Outil permettant de récupérer une gemme depuis un socket sans la détruire. Consommé à l'usage (1 extracteur par extraction).
+            </p>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-top:8px;">
+              <strong>Recette :</strong> Motif diamant de fragments d'Erinium + 1 diamant au centre (grille 3×3).
+            </p>
+          </div>
+
+          <div class="alert alert-info" role="note" style="margin-top:16px;">
+            <span class="alert-icon" aria-hidden="true">💎</span>
+            <div class="alert-body">
+              <strong class="alert-title">Caps des effets de combat</strong>
+              <span class="alert-desc">Vitesse (Topaze) : maximum <strong>+15%</strong> même avec de nombreuses gemmes. Réduction dégâts (Onyx) : maximum <strong>-20%</strong>. Lifesteal (Rubis) : pas de cap fixe mais diminishing returns à partir de la 5e gemme (50% de la valeur).</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════
+             SECTION — RECOMMANDATIONS DE GEMMES
+        ════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-gem-recommendations">
+          <h2 id="section-gem-recommendations">Recommandations de Gemmes</h2>
+
+          <p>Voici des combinaisons optimisées par tier et par style de jeu, basées sur les valeurs exactes du code. Chaque socket est précieux — investissez dans des gemmes <strong>Parfaites</strong> dès que possible.</p>
+
+          <div class="alert alert-info" role="note">
+            <span class="alert-icon" aria-hidden="true">📊</span>
+            <div class="alert-body">
+              <strong class="alert-title">Rappel des valeurs de base (gemme Taillée = référence ×1.0)</strong>
+              <span class="alert-desc">
+                <strong style="color:#E74C3C;">Rubis :</strong> 2% lifesteal par gemme taillée (1% brute, 4% parfaite) — uniquement dans l'arme en main.
+                <strong style="color:#3498DB;margin-left:8px;">Saphir :</strong> +2 PV max par gemme taillée (1 brute, 4 parfaite).
+                <strong style="color:#F1C40F;margin-left:8px;">Topaze :</strong> +3% vitesse par gemme taillée (1.5% brute, 6% parfaite) — cap +15%.
+                <strong style="color:#2C3E50;margin-left:8px;">Onyx :</strong> 2% réduction dégâts par gemme taillée (1% brute, 4% parfaite) — cap -20%.
+                <strong style="color:#9B59B6;margin-left:8px;">Améthyste :</strong> +1 rég. mana/tick (stat Arcane) par gemme taillée.
+                <strong style="color:#2ECC71;margin-left:8px;">Émeraude :</strong> +1.5% loot rare par gemme taillée (stat Fortune).
+              </span>
+            </div>
+          </div>
+
+          <!-- ─── ARMES ──────────────────────────────────────── -->
+          <h3 id="gem-rec-armes">Armes (Épées, Dagues, Marteaux)</h3>
+
+          <!-- Valterite — 1 socket arme -->
+          <div class="tier-section t1" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1 — 1 socket</span>
+              <span class="tier-section-name">Valterite</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes arme Valterite">
+                <thead>
+                  <tr><th>Objectif</th><th>Socket 1</th><th>Effet calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>PvP Sustain</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+4% lifesteal par coup</td>
+                  </tr>
+                  <tr>
+                    <td><strong>DPS Pur</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+4% lifesteal — seul choix offensif viable à 1 socket</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tank (Marteau)</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+4% lifesteal — compense la lenteur AOE du marteau</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Aetherite — 2 sockets arme -->
+          <div class="tier-section t2" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2 — 2 sockets</span>
+              <span class="tier-section-name">Aetherite</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes arme Aetherite">
+                <thead>
+                  <tr><th>Objectif</th><th>Socket 1</th><th>Socket 2</th><th>Total calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>PvP Sustain</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+8% lifesteal total</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hybride (Dague)</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#9B59B6;font-weight:700;">Améthyste Parfaite</span></td>
+                    <td>+4% lifesteal + +4 pts Arcane (rég. mana)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mage (Marteau)</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+8% lifesteal — sustain pendant le cooldown AOE</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Erinium — 3 sockets arme -->
+          <div class="tier-section t3" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3 — 3 sockets</span>
+              <span class="tier-section-name">Erinium</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes arme Erinium">
+                <thead>
+                  <tr><th>Objectif</th><th>Socket 1</th><th>Socket 2</th><th>Socket 3</th><th>Total calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>PvP Sustain (Épée)</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+12% lifesteal (3×4%)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>DPS Max (Dague)</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+12% lifesteal — sustain maximal en jitter click</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Marteau AOE</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td>+12% lifesteal — se soigne sur chaque cible dans l'AOE</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mage Hybride</strong></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#E74C3C;font-weight:700;">Rubis Parfait</span></td>
+                    <td><span style="color:#9B59B6;font-weight:700;">Améthyste Parfaite</span></td>
+                    <td>+8% lifesteal + +4 pts Arcane</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-faint);margin:10px 0 0;font-style:italic;">Note : à partir du 5e Rubis total, chaque gemme supplémentaire ne compte que pour 50% de sa valeur (diminishing returns). Avec 3 Rubis Parfaits en arme Erinium, vous êtes sous ce seuil — rentabilité maximale garantie.</p>
+          </div>
+
+          <!-- ─── ARMURES ────────────────────────────────────── -->
+          <h3 id="gem-rec-armures">Armures (Casque, Plastron, Jambières, Bottes)</h3>
+          <p>Les gemmes d'armure comptent pour la <strong>réduction de dégâts (Onyx)</strong>, les <strong>PV max (Saphir)</strong> et la <strong>vitesse (Topaze)</strong>. L'armure complète donne accès à 4×N sockets (N = sockets par pièce selon le tier).</p>
+
+          <!-- Valterite armure — 1 socket × 4 pièces = 4 sockets total -->
+          <div class="tier-section t1" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t1">Tier 1 — 4 sockets total (1/pièce)</span>
+              <span class="tier-section-name">Armure Valterite</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes armure Valterite">
+                <thead>
+                  <tr><th>Build</th><th>Casque</th><th>Plastron</th><th>Jambières</th><th>Bottes</th><th>Total calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Full Tank</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td>4×4% = -16% dégâts reçus</td>
+                  </tr>
+                  <tr>
+                    <td><strong>HP Max</strong></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                    <td>4×4 = +16 PV max (+8 cœurs)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mobilité</strong></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                    <td>4×6% = +24% vitesse — mais cap à +15% appliqué</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Équilibre</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                    <td>-8% dégâts + +4 PV + +6% vitesse</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Aetherite armure — 2 sockets × 4 pièces = 8 sockets total -->
+          <div class="tier-section t2" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t2">Tier 2 — 8 sockets total (2/pièce)</span>
+              <span class="tier-section-name">Armure Aetherite</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes armure Aetherite">
+                <thead>
+                  <tr><th>Build</th><th>Casque (×2)</th><th>Plastron (×2)</th><th>Jambières (×2)</th><th>Bottes (×2)</th><th>Total calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Full Tank</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx Parfait</span></td>
+                    <td>8×4% = 32% → <strong>cap -20%</strong> dégâts reçus</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tank + Vitesse</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx</span> + <span style="color:#F1C40F;font-weight:700;">Topaze</span> Parfaits</td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">Onyx</span> + <span style="color:#F1C40F;font-weight:700;">Topaze</span> Parfaits</td>
+                    <td><span style="color:#F1C40F;font-weight:700;">2× Topaze Parfaite</span></td>
+                    <td>-16% dégâts + +18% vitesse → cap +15%</td>
+                  </tr>
+                  <tr>
+                    <td><strong>HP + Tank</strong></td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir</span> + <span style="color:#7F8C8D;font-weight:700;">Onyx</span> Parfaits</td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir</span> + <span style="color:#7F8C8D;font-weight:700;">Onyx</span> Parfaits</td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir</span> + <span style="color:#7F8C8D;font-weight:700;">Onyx</span> Parfaits</td>
+                    <td><span style="color:#3498DB;font-weight:700;">Saphir</span> + <span style="color:#7F8C8D;font-weight:700;">Onyx</span> Parfaits</td>
+                    <td>-16% dégâts + +16 PV max</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Erinium armure — 3 sockets × 4 pièces = 12 sockets total -->
+          <div class="tier-section t3" style="margin-bottom:20px;">
+            <div class="tier-section-header">
+              <span class="tier-badge t3">Tier 3 — 12 sockets total (3/pièce)</span>
+              <span class="tier-section-name">Armure Erinium</span>
+            </div>
+            <div class="table-wrapper" style="margin:0;">
+              <table class="data-table" aria-label="Gemmes armure Erinium">
+                <thead>
+                  <tr><th>Build</th><th>Casque (×3)</th><th>Plastron (×3)</th><th>Jambières (×3)</th><th>Bottes (×3)</th><th>Total calculé</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Full Tank Absolu</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">3× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">3× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">3× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">3× Onyx Parfait</span></td>
+                    <td>12×4% = 48% → <strong>cap -20%</strong> dégâts reçus</td>
+                  </tr>
+                  <tr>
+                    <td><strong>HP Maximal</strong></td>
+                    <td><span style="color:#3498DB;font-weight:700;">3× Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">3× Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">3× Saphir Parfait</span></td>
+                    <td><span style="color:#3498DB;font-weight:700;">3× Saphir Parfait</span></td>
+                    <td>12×4 = <strong>+48 PV max</strong> (+24 cœurs)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Full Vitesse</strong></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">3× Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">3× Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">3× Topaze Parfaite</span></td>
+                    <td><span style="color:#F1C40F;font-weight:700;">3× Topaze Parfaite</span></td>
+                    <td>12×6% = 72% → <strong>cap +15%</strong> vitesse (3 Topazes Parfaites suffisent)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Équilibre Optimal</strong></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx</span> + <span style="color:#3498DB;font-weight:700;">1× Saphir</span> Parfaits</td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">3× Onyx Parfait</span></td>
+                    <td><span style="color:#7F8C8D;font-weight:700;">2× Onyx</span> + <span style="color:#3498DB;font-weight:700;">1× Saphir</span> Parfaits</td>
+                    <td><span style="color:#F1C40F;font-weight:700;">2× Topaze</span> + <span style="color:#7F8C8D;font-weight:700;">1× Onyx</span> Parfaits</td>
+                    <td>-20% dégâts (cap) + +8 PV + +12% vitesse</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ─── ACCESSOIRES ────────────────────────────────── -->
+          <h3 id="gem-rec-accessoires">Accessoires (Anneaux &amp; Amulettes)</h3>
+          <p>Les accessoires (baubles) sont inclus dans le calcul global des gemmes. Leurs sockets s'ajoutent aux totaux d'armure et d'arme. Les gemmes d'Onyx et de Topaze placées dans les accessoires contribuent aux réductions et bonus de vitesse.</p>
+
+          <div class="table-wrapper">
+            <table class="data-table" aria-label="Recommandations gemmes accessoires">
+              <thead>
+                <tr><th>Style</th><th>Gemme recommandée</th><th>Effet</th><th>Justification</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Support / Mana</strong></td>
+                  <td><span style="color:#9B59B6;font-weight:700;">Améthyste Parfaite</span></td>
+                  <td>+4 pts Arcane (rég. mana accrue)</td>
+                  <td>Idéal pour les mages — allonge la durée des combos de sorts</td>
+                </tr>
+                <tr>
+                  <td><strong>Combat PvP</strong></td>
+                  <td><span style="color:#7F8C8D;font-weight:700;">Onyx Parfait</span></td>
+                  <td>+4% réduction dégâts</td>
+                  <td>Complète les slots d'armure pour atteindre le cap -20% plus facilement</td>
+                </tr>
+                <tr>
+                  <td><strong>Mobilité</strong></td>
+                  <td><span style="color:#F1C40F;font-weight:700;">Topaze Parfaite</span></td>
+                  <td>+6% vitesse</td>
+                  <td>Si le cap vitesse n'est pas encore atteint en armure seule</td>
+                </tr>
+                <tr>
+                  <td><strong>HP Supplémentaires</strong></td>
+                  <td><span style="color:#3498DB;font-weight:700;">Saphir Parfait</span></td>
+                  <td>+4 PV max</td>
+                  <td>Complément utile si la build manque de PV sans allouer trop de points en Vigueur</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ─── RÉSUMÉ PAR TIER ────────────────────────────── -->
+          <h3 id="gem-rec-resume">Récapitulatif par Tier</h3>
+
+          <div class="ore-grid">
+            <div class="ore-card t1">
+              <div class="ore-card-header">
+                <div>
+                  <div class="ore-card-title">Valterite</div>
+                  <div style="font-size:0.75rem;color:var(--text-faint);margin-top:2px;">5 sockets total (1 arme + 4 armure)</div>
+                </div>
+                <span class="tier-badge t1">Tier 1</span>
+              </div>
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Arme :</strong> 1× Rubis Parfait → +4% lifesteal</li>
+                <li class="ore-info-item"><strong>Armure :</strong> 4× Onyx Parfait → -16% dégâts reçus</li>
+                <li class="ore-info-item"><strong>Ou Armure HP :</strong> 4× Saphir Parfait → +16 PV max</li>
+                <li class="ore-info-item"><strong>Combo recommandé :</strong> Rubis arme + Onyx armure</li>
+              </ul>
+            </div>
+
+            <div class="ore-card t2">
+              <div class="ore-card-header">
+                <div>
+                  <div class="ore-card-title">Aetherite</div>
+                  <div style="font-size:0.75rem;color:var(--text-faint);margin-top:2px;">10 sockets total (2 arme + 8 armure)</div>
+                </div>
+                <span class="tier-badge t2">Tier 2</span>
+              </div>
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Arme :</strong> 2× Rubis Parfait → +8% lifesteal</li>
+                <li class="ore-info-item"><strong>Armure Tank :</strong> 8× Onyx Parfait → cap -20% atteint !</li>
+                <li class="ore-info-item"><strong>Armure Équilibre :</strong> 4× Onyx + 4× Saphir → -16% + +16 PV</li>
+                <li class="ore-info-item"><strong>Vitesse :</strong> 3× Topaze Parfaite en armure → cap +15%</li>
+              </ul>
+            </div>
+
+            <div class="ore-card t3">
+              <div class="ore-card-header">
+                <div>
+                  <div class="ore-card-title">Erinium</div>
+                  <div style="font-size:0.75rem;color:var(--text-faint);margin-top:2px;">15 sockets total (3 arme + 12 armure)</div>
+                </div>
+                <span class="tier-badge t3">Tier 3</span>
+              </div>
+              <ul class="ore-info-list">
+                <li class="ore-info-item"><strong>Arme :</strong> 3× Rubis Parfait → +12% lifesteal</li>
+                <li class="ore-info-item"><strong>Armure Tank :</strong> 12× Onyx Parfait → cap -20% (largement)</li>
+                <li class="ore-info-item"><strong>Armure HP :</strong> 12× Saphir Parfait → +48 PV max (+24 cœurs !)</li>
+                <li class="ore-info-item"><strong>Vitesse :</strong> 3× Topaze Parfaite suffit pour le cap +15%</li>
+                <li class="ore-info-item"><strong>Combo ultime :</strong> 3× Rubis arme + 5× Onyx + 4× Saphir + 3× Topaze en armure → cap -20% + +16 PV + +12% vitesse</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="alert alert-warn" role="note" style="margin-top:8px;">
+            <span class="alert-icon" aria-hidden="true">⚠️</span>
+            <div class="alert-body">
+              <strong class="alert-title">Caps à retenir</strong>
+              <span class="alert-desc">
+                <strong>Réduction dégâts (Onyx) :</strong> cap à -20% — inutile d'en mettre plus. En armure Aetherite full Onyx (8 sockets), vous atteignez déjà 32% → cap appliqué. En Erinium, 5 sockets Onyx Parfaits suffisent pour le cap.<br>
+                <strong>Vitesse (Topaze) :</strong> cap à +15% — 3 Topazes Parfaites (3×6% = +18%) atteignent le cap en armure Erinium. 2 Topazes Parfaites en armure Aetherite restent sous le cap (+12%).<br>
+                <strong>Lifesteal (Rubis) :</strong> pas de cap strict mais diminishing returns à partir de la 5e gemme Rubis (toutes équipées confondues). Restez à 3–4 Rubis Parfaits maximum pour un retour optimal.
+              </span>
+            </div>
+          </div>
+
+        </section>
+
+      </div><!-- /content-body -->
+
+      <!-- ─── Table of Contents (auto-generated) ─────────────── -->
+      <aside class="toc" aria-label="Table des matières" data-toc>
+        <p class="toc-title">Sur cette page</p>
+      </aside>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /page-wrapper -->
+
+<!-- ─── Footer ────────────────────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <span class="footer-brand">EriniumFaction Wiki</span>
+  <ul class="footer-links" aria-label="Liens du footer">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="mining.html">Monde Minage</a></li>
+    <li><a href="commands.html">Commandes</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 EriniumGroup — Tous droits réservés</span>
+</footer>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

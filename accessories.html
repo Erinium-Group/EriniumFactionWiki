@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les Accessoires — EriniumFaction Wiki</title>
+  <meta name="description" content="Bagues et amulettes d'EriniumFaction : stats, effets passifs, bonus de set et comment les équiper dans les slots Baubles." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    /* ── Accessory type section ── */
+    .acc-type-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 40px 0 20px;
+    }
+    .acc-type-icon { font-size: 2rem; line-height: 1; }
+    .acc-type-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .acc-type-desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Accessory tier card ── */
+    .acc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .acc-card {
+      position: relative;
+      padding: 20px 20px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .acc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .acc-card:hover { transform: translateY(-3px); }
+
+    .acc-t1 { border-left: 3px solid var(--valterite); }
+    .acc-t2 { border-left: 3px solid var(--aetherite); }
+    .acc-t3 { border-left: 3px solid var(--erinium); animation: glow-pulse 3s ease infinite; }
+
+    .acc-t1:hover { border-color: var(--valterite-border); box-shadow: 0 4px 20px rgba(74,224,224,0.18); }
+    .acc-t2:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 20px rgba(155,89,182,0.15); }
+    .acc-t3:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 20px rgba(255,215,0,0.22); }
+
+    .acc-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .acc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      border: 2px solid;
+    }
+    .acc-t1 .acc-icon { background: rgba(74,224,224,0.14); border-color: var(--valterite-border); }
+    .acc-t2 .acc-icon { background: rgba(155,89,182,0.12);  border-color: var(--aetherite-border); }
+    .acc-t3 .acc-icon { background: rgba(255,215,0,0.14); border-color: var(--erinium-border); box-shadow: 0 0 16px rgba(255,215,0,0.35); }
+
+    .acc-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .acc-t1 .acc-name { color: var(--valterite); }
+    .acc-t2 .acc-name { color: var(--aetherite); }
+    .acc-t3 .acc-name { background: linear-gradient(135deg, #D4A017, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+
+    .acc-tier-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    .acc-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .acc-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+    .acc-stat-key {
+      color: var(--text-faint);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .acc-stat-val { color: var(--text); font-weight: 600; }
+
+    .acc-passive {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.80rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .acc-t1 .acc-passive { background: rgba(74,224,224,0.08); border: 1px solid rgba(74,224,224,0.22); }
+    .acc-t2 .acc-passive { background: rgba(155,89,182,0.07);  border: 1px solid rgba(155,89,182,0.20); }
+    .acc-t3 .acc-passive { background: rgba(255,215,0,0.09); border: 1px solid rgba(255,215,0,0.25); }
+    .acc-t1 .acc-passive strong { color: var(--valterite); }
+    .acc-t2 .acc-passive strong { color: var(--aetherite); }
+    .acc-t3 .acc-passive strong { color: var(--erinium); }
+
+    /* ── Set bonus cards ── */
+    .set-bonus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0 40px;
+    }
+
+    .set-bonus-card {
+      position: relative;
+      padding: 20px 20px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .set-bonus-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .set-bonus-card:hover { transform: translateY(-2px); }
+
+    .sb-t1 { background: linear-gradient(135deg, rgba(74,224,224,0.11) 0%, var(--glass-bg) 65%); border-color: var(--valterite-border); }
+    .sb-t2 { background: linear-gradient(135deg, rgba(155,89,182,0.09) 0%, var(--glass-bg) 65%);  border-color: var(--aetherite-border); }
+    .sb-t3 { background: linear-gradient(135deg, rgba(255,215,0,0.12) 0%, rgba(212,160,23,0.06) 65%, var(--glass-bg) 100%); border-color: var(--erinium-border); animation: glow-pulse 4s ease infinite; }
+
+    .sb-t1:hover { box-shadow: 0 4px 20px rgba(74,224,224,0.18); }
+    .sb-t2:hover { box-shadow: 0 4px 20px rgba(155,89,182,0.15); }
+    .sb-t3:hover { box-shadow: 0 4px 20px rgba(255,215,0,0.25); }
+
+    .sb-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .sb-icon { font-size: 1.6rem; }
+    .sb-name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .sb-t1 .sb-name { color: var(--valterite); }
+    .sb-t2 .sb-name { color: var(--aetherite); }
+    .sb-t3 .sb-name { background: linear-gradient(135deg, #D4A017, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+
+    .sb-condition {
+      font-size: 0.75rem;
+      color: var(--text-faint);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+    }
+    .sb-bonus {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .sb-t1 .sb-bonus strong { color: var(--valterite); }
+    .sb-t2 .sb-bonus strong { color: var(--aetherite); }
+    .sb-t3 .sb-bonus strong { background: linear-gradient(135deg, #D4A017, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+
+    /* ── Equip explainer ── */
+    .equip-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .equip-step {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+    }
+    .equip-step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(107,47,160,0.35), rgba(0,229,255,0.20));
+      border: 1px solid rgba(107,47,160,0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--accent-secondary);
+      flex-shrink: 0;
+    }
+    .equip-step-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .equip-step-text strong { color: var(--text); }
+
+    /* ── Table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px;
+      font-size: 0.83rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .cval  { color: var(--valterite) !important; }
+    .caeth { color: var(--aetherite) !important; }
+    .cerin { color: var(--erinium)   !important; }
+  </style>
+</head>
+<body>
+  <div class="floating-particles">
+    <div class="star" style="top:10%;left:22%;animation-delay:0s"></div>
+    <div class="star" style="top:38%;left:78%;animation-delay:1.2s"></div>
+    <div class="star" style="top:65%;left:48%;animation-delay:0.6s"></div>
+    <div class="star" style="top:82%;left:12%;animation-delay:2s"></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+  <div class="main">
+    <div class="hero" style="background:linear-gradient(135deg,rgba(74,224,224,0.10) 0%,rgba(155,89,182,0.07) 60%,transparent 100%);">
+      <div class="hero-badge">💍 Accessoires</div>
+      <h1>Les Accessoires</h1>
+      <p>Les bagues et amulettes sont des accessoires équipés dans les slots Baubles. Ils donnent des stats RPG, des effets passifs et des bonus de set puissants !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">💍 <strong>3 bagues</strong></span>
+        <span class="hero-meta-item">📿 <strong>3 amulettes</strong></span>
+        <span class="hero-meta-item">✨ <strong>Bonus de set bague + amulette</strong></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Accessoires</span>
+      </div>
+
+      <!-- ══════════ COMMENT ÉQUIPER ══════════ -->
+      <h2 style="margin-top:32px;">Comment équiper un accessoire ?</h2>
+      <p>Les accessoires ne vont pas dans ton inventaire normal. Ils ont des emplacements dédiés dans l'interface <strong>Baubles</strong> :</p>
+
+      <div class="equip-steps">
+        <div class="equip-step">
+          <div class="equip-step-num">1</div>
+          <div class="equip-step-text">Appuie sur <strong>B</strong> (ou la touche configurée) pour ouvrir ton interface Baubles.</div>
+        </div>
+        <div class="equip-step">
+          <div class="equip-step-num">2</div>
+          <div class="equip-step-text">Tu vois des emplacements spéciaux : <strong>anneau</strong> (bagues), <strong>amulette</strong>, et d'autres slots.</div>
+        </div>
+        <div class="equip-step">
+          <div class="equip-step-num">3</div>
+          <div class="equip-step-text">Glisse ta bague dans un slot anneau et ton amulette dans le slot amulette. Les effets sont <strong>immédiatement actifs</strong>.</div>
+        </div>
+      </div>
+
+      <div class="glass-card glass-card-accent accent-cyan" style="margin-bottom:32px;">
+        <p style="margin:0;font-size:0.88rem;">
+          <strong>Sockets :</strong> Tous les accessoires ont <strong>1 socket</strong>. Tu peux donc y mettre une gemme en plus ! Porte ta bague à l'Enclume de Diamant pour la sertir (voir <a href="gems.html">Gemmes</a>).
+        </p>
+      </div>
+
+      <!-- ══════════ BAGUES ══════════ -->
+      <div class="acc-type-header">
+        <div class="acc-type-icon">💍</div>
+        <div>
+          <div class="acc-type-name">Les Bagues</div>
+          <div class="acc-type-desc">Les bagues donnent des stats RPG directement. Elles n'ont pas d'effet passif actif par tick.</div>
+        </div>
+      </div>
+
+      <div class="acc-grid">
+        <div class="acc-card acc-t1">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/ring_valterite.png" alt="Bague de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Bague de Valterite</div>
+              <div class="acc-tier-label">Tier 1 · Anneau · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Vigueur</span>
+              <span class="acc-stat-val">+2</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Résistance</span>
+              <span class="acc-stat-val">+1</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive">Stats RPG passives : booste tes points de vie et ta réduction de dégâts via le système RPG.</div>
+        </div>
+
+        <div class="acc-card acc-t2">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/ring_aetherite.png" alt="Bague d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Bague d'Aetherite</div>
+              <div class="acc-tier-label">Tier 2 · Anneau · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Force</span>
+              <span class="acc-stat-val">+2</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Agilité</span>
+              <span class="acc-stat-val">+1</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive">Stats RPG passives : augmente tes dégâts et ta vitesse de déplacement via le système RPG.</div>
+        </div>
+
+        <div class="acc-card acc-t3">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/ring_erinium.png" alt="Bague d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Bague d'Erinium</div>
+              <div class="acc-tier-label">Tier 3 · Anneau · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Fortune</span>
+              <span class="acc-stat-val">+3</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Arcane</span>
+              <span class="acc-stat-val">+2</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive">Idéale pour les mages et les joueurs qui veulent plus de drops rares. <strong>Tier ultime.</strong></div>
+        </div>
+      </div>
+
+      <!-- ══════════ AMULETTES ══════════ -->
+      <div class="acc-type-header">
+        <div class="acc-type-icon">📿</div>
+        <div>
+          <div class="acc-type-name">Les Amulettes</div>
+          <div class="acc-type-desc">Les amulettes ont des effets passifs actifs — elles font quelque chose de spécial en permanence !</div>
+        </div>
+      </div>
+
+      <div class="acc-grid">
+        <div class="acc-card acc-t1">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/amulet_valterite.png" alt="Amulette de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Amulette de Valterite</div>
+              <div class="acc-tier-label">Tier 1 · Amulette · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Type</span>
+              <span class="acc-stat-val">Régénération hors combat</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive"><strong>Regen passive :</strong> Régénère <strong>0.5 PV</strong> toutes les 5 secondes, mais seulement si tu n'as pas reçu de dégâts depuis au moins 5 secondes. Très utile entre les combats !</div>
+        </div>
+
+        <div class="acc-card acc-t2">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/amulet_aetherite.png" alt="Amulette d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Amulette d'Aetherite</div>
+              <div class="acc-tier-label">Tier 2 · Amulette · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Type</span>
+              <span class="acc-stat-val">Vitesse permanente</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Bonus</span>
+              <span class="acc-stat-val" style="color:var(--aetherite);">+5% vitesse</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive"><strong>Vitesse passive :</strong> Donne <strong>+5% de vitesse de déplacement</strong> en permanence dès que l'amulette est équipée. Retiré instantanément si tu la déséquipes.</div>
+        </div>
+
+        <div class="acc-card acc-t3">
+          <div class="acc-card-header">
+            <div class="acc-icon"><img src="img/items/amulet_erinium.png" alt="Amulette d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" /></div>
+            <div>
+              <div class="acc-name">Amulette d'Erinium</div>
+              <div class="acc-tier-label">Tier 3 · Amulette · 1 socket</div>
+            </div>
+          </div>
+          <div class="acc-stats">
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Type</span>
+              <span class="acc-stat-val">+1 à toutes les stats</span>
+            </div>
+            <div class="acc-stat-row">
+              <span class="acc-stat-key">Sockets</span>
+              <span class="acc-stat-val">1 ◈</span>
+            </div>
+          </div>
+          <div class="acc-passive"><strong>Stats universelles :</strong> Donne <strong>+1 point dans chaque stat RPG</strong> (Force, Vigueur, Résistance, Agilité, Fortune, Arcane). L'accessoire le plus polyvalent du jeu.</div>
+        </div>
+      </div>
+
+      <!-- ══════════ BONUS DE SET ══════════ -->
+      <h2>Bonus de Set — Bague + Amulette</h2>
+      <p>Si tu portes la <strong>bague et l'amulette du même tier en même temps</strong>, tu débloques un bonus de set puissant en plus des effets individuels !</p>
+
+      <div class="set-bonus-grid">
+        <div class="set-bonus-card sb-t1">
+          <div class="sb-header">
+            <div class="sb-icon">🟠</div>
+            <div class="sb-name">Set Valterite</div>
+          </div>
+          <div class="sb-condition">Bague + Amulette de Valterite</div>
+          <div class="sb-bonus">Bonus de set : <strong>+10% de PV maximum</strong> en plus. Si tu as 20 PV de base, tu passerai à 22 PV !</div>
+        </div>
+
+        <div class="set-bonus-card sb-t2">
+          <div class="sb-header">
+            <div class="sb-icon">🔷</div>
+            <div class="sb-name">Set Aetherite</div>
+          </div>
+          <div class="sb-condition">Bague + Amulette d'Aetherite</div>
+          <div class="sb-bonus">Bonus de set : <strong>+8% de dégâts infligés</strong> sur toutes tes attaques. Tes coups font 8% de plus en permanence !</div>
+        </div>
+
+        <div class="set-bonus-card sb-t3">
+          <div class="sb-header">
+            <div class="sb-icon">💜</div>
+            <div class="sb-name">Set Erinium</div>
+          </div>
+          <div class="sb-condition">Bague + Amulette d'Erinium</div>
+          <div class="sb-bonus">Bonus de set : <strong>+15% de gain d'XP</strong>. Monter en niveaux RPG et en stats devient beaucoup plus rapide !</div>
+        </div>
+      </div>
+
+      <!-- ══════════ TABLEAU RÉCAP ══════════ -->
+      <h2>Récapitulatif</h2>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Accessoire</th>
+            <th>Type</th>
+            <th>Stats / Effet</th>
+            <th>Socket</th>
+            <th>Bonus de set</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cval">Bague Valterite</td>
+            <td>Anneau</td>
+            <td>+2 Vigueur, +1 Résistance</td>
+            <td>1 ◈</td>
+            <td rowspan="2" style="vertical-align:middle;color:var(--valterite);">+10% PV max</td>
+          </tr>
+          <tr>
+            <td class="cval">Amulette Valterite</td>
+            <td>Amulette</td>
+            <td>+0.5 PV regen / 5s hors combat</td>
+            <td>1 ◈</td>
+          </tr>
+          <tr>
+            <td class="caeth">Bague Aetherite</td>
+            <td>Anneau</td>
+            <td>+2 Force, +1 Agilité</td>
+            <td>1 ◈</td>
+            <td rowspan="2" style="vertical-align:middle;color:var(--aetherite);">+8% dégâts</td>
+          </tr>
+          <tr>
+            <td class="caeth">Amulette Aetherite</td>
+            <td>Amulette</td>
+            <td>+5% vitesse permanente</td>
+            <td>1 ◈</td>
+          </tr>
+          <tr>
+            <td class="cerin">Bague Erinium</td>
+            <td>Anneau</td>
+            <td>+3 Fortune, +2 Arcane</td>
+            <td>1 ◈</td>
+            <td rowspan="2" style="vertical-align:middle;color:var(--erinium);">+15% XP</td>
+          </tr>
+          <tr>
+            <td class="cerin">Amulette Erinium</td>
+            <td>Amulette</td>
+            <td>+1 à toutes les stats RPG</td>
+            <td>1 ◈</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="glass-card glass-card-accent accent-gold" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Build optimal :</strong> Porte la bague et l'amulette du même tier que ton armure pour maximiser les synergies. Le set Aetherite (bague + amulette + armure complète) donne <strong>+8% dégâts du set bague/amulette</strong> et <strong>+8% dégâts supplémentaires du set armure</strong>, soit +16% total ! Et n'oublie pas les gemmes dans les sockets.
+        </p>
+      </div>
+
+    </div>
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+  
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

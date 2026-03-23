@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Guide des Premiers Pas sur EriniumFaction — tout ce qu'un nouveau joueur doit savoir pour bien démarrer.">
+  <title>Premiers Pas — EriniumFaction Wiki</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Sidebar ────────────────────────────────────────────────── */
+    .wiki-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-right: 1px solid var(--glass-border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: var(--header-height);
+      padding: 0 20px;
+      border-bottom: 1px solid var(--glass-border);
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .sidebar-brand-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sidebar-brand-sub {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .nav-group { padding: 10px 0 4px; }
+    .nav-group-label {
+      padding: 0 16px 5px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .nav-links { list-style: none; padding: 0; }
+    .nav-links li a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 16px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.855rem;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+      transition: color var(--transition);
+      white-space: nowrap;
+    }
+    .nav-links li a::before {
+      content: '';
+      position: absolute;
+      inset: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(107,47,160,0);
+      transition: background var(--transition);
+      z-index: -1;
+    }
+    .nav-links li a:hover { color: var(--text); }
+    .nav-links li a:hover::before { background: rgba(107,47,160,0.12); }
+    .nav-links li a.active {
+      color: var(--accent-secondary);
+      font-weight: 600;
+    }
+    .nav-links li a.active::before { background: rgba(107,47,160,0.18); }
+    .nav-links li a.active::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 60%;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary));
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar-footer-note {
+      margin-top: auto;
+      padding: 14px 16px;
+      border-top: 1px solid var(--glass-border);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Header ────────────────────────────────────────────────── */
+    .site-header {
+      position: fixed;
+      top: 0; left: var(--sidebar-width); right: 0;
+      height: var(--header-height);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px;
+      background: var(--surface);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-sm);
+      transition: left var(--transition), background var(--transition);
+    }
+    .header-hamburger {
+      display: none;
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .header-hamburger:hover {
+      background: rgba(107,47,160,0.15);
+      border-color: rgba(107,47,160,0.35);
+      color: var(--text);
+    }
+    .header-search-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .header-search {
+      width: 100%;
+      max-width: 320px;
+      height: 36px;
+      padding: 0 16px 0 36px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.83rem;
+      outline: none;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .header-search::placeholder { color: var(--text-faint); }
+    .header-search:focus {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(0,229,255,0.45);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.12);
+    }
+    .header-search-wrap::before {
+      content: '🔍';
+      position: absolute;
+      left: 11px;
+      font-size: 0.72rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .header-theme-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--text-muted);
+      transition: background var(--transition), border-color var(--transition),
+                  color var(--transition), transform var(--transition);
+      flex-shrink: 0;
+    }
+    .header-theme-btn:hover {
+      background: rgba(107,47,160,0.15);
+      border-color: rgba(107,47,160,0.35);
+      color: var(--text);
+      transform: rotate(15deg);
+    }
+
+    /* ── Main layout ───────────────────────────────────────────── */
+    .main-wrap {
+      margin-left: var(--sidebar-width);
+      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+      display: flex;
+      flex-direction: column;
+    }
+    .page-content {
+      flex: 1;
+      padding: 48px 60px 64px;
+      max-width: 1000px;
+      animation: fade-in-up 0.5s ease both;
+    }
+
+    /* ── Page hero ─────────────────────────────────────────────── */
+    .page-hero {
+      position: relative;
+      padding: 56px 60px 48px;
+      background:
+        radial-gradient(ellipse 70% 80% at 0% 50%, rgba(46,204,113,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 100% 0%, rgba(107,47,160,0.10) 0%, transparent 70%);
+      border-bottom: 1px solid var(--glass-border);
+      overflow: hidden;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(46,204,113,0.12), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .page-hero-inner { position: relative; z-index: 1; max-width: 640px; }
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 14px;
+      border-radius: 100px;
+      background: rgba(46,204,113,0.14);
+      border: 1px solid rgba(46,204,113,0.32);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .page-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    /* ── Section ───────────────────────────────────────────────── */
+    .section {
+      margin-bottom: 56px;
+    }
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.65;
+    }
+
+    /* ── Steps ─────────────────────────────────────────────────── */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .step-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .step-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .step-item:hover {
+      transform: translateX(4px);
+      border-color: var(--glass-border-hover);
+      box-shadow: var(--shadow-md);
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(107,47,160,0.35), rgba(0,229,255,0.20));
+      border: 1px solid rgba(107,47,160,0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--accent-secondary);
+      box-shadow: 0 0 16px rgba(107,47,160,0.22);
+    }
+    .step-body { flex: 1; }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .step-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .step-images {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .step-images img {
+      width: 40px; height: 40px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+      transition: transform var(--transition);
+    }
+    .step-images img:hover { transform: scale(1.25); }
+    .step-cmd {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.80rem;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(0,229,255,0.09);
+      border: 1px solid rgba(0,229,255,0.22);
+      color: var(--accent-secondary);
+    }
+    .step-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-secondary);
+      text-decoration: none;
+      border: none;
+      transition: gap var(--transition), color var(--transition);
+      margin-top: 4px;
+    }
+    .step-link:hover { gap: 9px; color: #fff; border: none; }
+
+    /* ── Material tier cards ───────────────────────────────────── */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+    .tier-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 26px 22px 22px;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .tier-card:hover { transform: translateY(-4px); }
+
+    /* Tier 1 — Valterite (cyan/teal) */
+    .tier-valterite::before { background: linear-gradient(90deg, #4AE0E0, rgba(74,224,224,0.4)); }
+    .tier-valterite { border-color: rgba(74,224,224,0.20); }
+    .tier-valterite:hover { border-color: rgba(74,224,224,0.42); box-shadow: var(--shadow-lg), 0 0 28px rgba(74,224,224,0.16); }
+
+    /* Tier 2 — Aetherite (purple/violet) */
+    .tier-aetherite::before { background: linear-gradient(90deg, #9B59B6, rgba(155,89,182,0.4)); }
+    .tier-aetherite { border-color: rgba(155,89,182,0.20); }
+    .tier-aetherite:hover { border-color: rgba(155,89,182,0.42); box-shadow: var(--shadow-lg), 0 0 28px rgba(155,89,182,0.16); }
+
+    /* Tier 3 — Erinium (gold/yellow, glows) */
+    .tier-erinium::before { background: linear-gradient(90deg, #D4A017, #FFD700); }
+    .tier-erinium { border-color: rgba(255,215,0,0.25); animation: glow-pulse 3s ease-in-out infinite; }
+    .tier-erinium:hover { border-color: rgba(255,215,0,0.55); box-shadow: var(--shadow-lg), 0 0 36px rgba(255,215,0,0.30); }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .badge-starter { background: rgba(74,224,224,0.15); border: 1px solid rgba(74,224,224,0.35); color: #4AE0E0; }
+    .badge-mid     { background: rgba(155,89,182,0.15); border: 1px solid rgba(155,89,182,0.35); color: #9B59B6; }
+    .badge-expert  {
+      background: rgba(255,215,0,0.18);
+      border: 1px solid rgba(255,215,0,0.45);
+      color: #FFD700;
+    }
+
+    .tier-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .tier-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .tier-items {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .tier-items img {
+      width: 36px; height: 36px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+      transition: transform var(--transition);
+    }
+    .tier-items img:hover { transform: scale(1.3) rotate(-5deg); }
+    .tier-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .tier-stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.80rem;
+    }
+    .tier-stat-key { color: var(--text-faint); font-weight: 600; }
+    .tier-stat-val { color: var(--text-muted); font-weight: 500; }
+
+    /* ── Commands table ────────────────────────────────────────── */
+    .cmd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cmd-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform var(--transition), border-color var(--transition);
+    }
+    .cmd-item:hover {
+      transform: translateX(4px);
+      border-color: rgba(0,229,255,0.28);
+    }
+    .cmd-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.18);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+    }
+    .cmd-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      padding-top: 4px;
+    }
+
+    /* ── Info callout box ──────────────────────────────────────── */
+    .callout {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.20);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; }
+    .callout-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; }
+    .callout-text strong { color: var(--text); }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    .site-footer {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border-top: 1px solid var(--glass-border);
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      font-weight: 700;
+      font-size: 0.88rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+    .footer-links { display: flex; gap: 18px; }
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      text-decoration: none;
+      border: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--accent-secondary); border: none; }
+
+    /* ── Sidebar overlay ───────────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 85;
+      backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.is-visible { display: block; }
+
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .wiki-sidebar { transform: translateX(-100%); z-index: 95; }
+      .wiki-sidebar.is-open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+      .main-wrap { margin-left: 0; }
+      .site-header { left: 0; padding-left: 12px; }
+      .header-hamburger { display: flex; }
+      .page-hero { padding: 40px 24px 36px; }
+      .page-content { padding: 32px 24px 48px; }
+      .site-footer { padding: 22px 24px; flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .tiers-grid { grid-template-columns: 1fr; }
+      .step-item { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="floating-particles"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONTENU PRINCIPAL
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="main-wrap">
+
+    <!-- ─── PAGE HERO ──────────────────────────────────────────── -->
+    <section class="page-hero">
+      <div class="page-hero-inner">
+        <div class="page-eyebrow">🌟 Débutant</div>
+        <h1 class="page-title">Tes Premiers Pas</h1>
+        <p class="page-subtitle">
+          Tu viens d'arriver sur EriniumFaction ? Parfait !
+          Ce guide t'explique tout ce qu'il faut faire pour bien commencer l'aventure.
+        </p>
+      </div>
+    </section>
+
+    <div class="page-content">
+
+      <!-- ─── C'EST QUOI ? ───────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">Bienvenue</p>
+        <h2 class="section-title">C'est quoi EriniumFaction ?</h2>
+
+        <div class="callout">
+          <span class="callout-icon">💡</span>
+          <p class="callout-text">
+            <strong>EriniumFaction</strong> est un serveur Minecraft PvP où tu rejoins une <strong>faction</strong> (un clan),
+            tu mines des <strong>ressources uniques</strong>, tu améliores ton personnage grâce au <strong>système RPG</strong>,
+            et tu apprends des <strong>sorts de magie</strong> pour écraser tes ennemis.
+            Tout se joue entre de vrais joueurs en même temps !
+          </p>
+        </div>
+      </section>
+
+      <!-- ─── ÉTAPES ─────────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">Par où commencer</p>
+        <h2 class="section-title">Tes 6 premières étapes</h2>
+        <p class="section-desc">Suis ces étapes dans l'ordre pour prendre un bon départ !</p>
+
+        <div class="steps-list">
+
+          <!-- Étape 1 -->
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Crée ou rejoins une faction</div>
+              <p class="step-text">
+                Sans faction, tu n'as pas accès à toutes les fonctionnalités. Rejoins un ami ou crée la tienne !
+                La commande pour créer : <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em;">/f create NomDeTaFaction</code>.
+                Pour rejoindre : <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em;">/f join NomDeLaFaction</code>.
+              </p>
+              <a href="factions.html" class="step-link">Tout savoir sur les Factions <span>→</span></a>
+            </div>
+          </div>
+
+          <!-- Étape 2 -->
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Mine des ressources</div>
+              <p class="step-text">
+                Va dans le <strong>Monde Minage</strong> avec <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em;">/mine</code>.
+                Tu y trouveras les 3 minerais spéciaux du serveur :
+              </p>
+              <div class="step-images">
+                <img src="img/blocks/valterite_ore.png" alt="Minerai Valterite" title="Valterite (débutant)" style="image-rendering: pixelated;">
+                <img src="img/blocks/aetherite_ore.png" alt="Minerai Aetherite" title="Aetherite (intermédiaire)" style="image-rendering: pixelated;">
+                <img src="img/blocks/erinium_ore.png" alt="Minerai Erinium" title="Erinium (expert)" style="image-rendering: pixelated;">
+              </div>
+              <a href="mining.html" class="step-link">Guide du Minage <span>→</span></a>
+            </div>
+          </div>
+
+          <!-- Étape 3 -->
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Fabrique ton équipement</div>
+              <p class="step-text">
+                Avec tes minerais, fabrique une épée et une armure <strong>Valterite</strong> pour commencer.
+                C'est le matériau de départ — plus solide que le fer de base.
+              </p>
+              <div class="step-images">
+                <img src="img/items/valterite_sword.png" alt="Épée Valterite" title="Épée Valterite" style="image-rendering: pixelated;">
+                <img src="img/items/valterite_helmet.png" alt="Casque Valterite" title="Casque Valterite" style="image-rendering: pixelated;">
+                <img src="img/items/valterite_chestplate.png" alt="Plastron Valterite" title="Plastron Valterite" style="image-rendering: pixelated;">
+                <img src="img/items/valterite_leggings.png" alt="Jambières Valterite" title="Jambières Valterite" style="image-rendering: pixelated;">
+                <img src="img/items/valterite_boots.png" alt="Bottes Valterite" title="Bottes Valterite" style="image-rendering: pixelated;">
+              </div>
+              <a href="materials.html" class="step-link">Voir tous les Matériaux <span>→</span></a>
+            </div>
+          </div>
+
+          <!-- Étape 4 -->
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Améliore tes stats RPG</div>
+              <p class="step-text">
+                En jouant tu gagnes de l'XP. Ça monte ton niveau (jusqu'à 50 !) et tu peux
+                distribuer des points dans tes stats : Force, Agilité, Défense...
+              </p>
+              <span class="step-cmd">📈 /rpg stats</span>
+              <br>
+              <a href="rpg.html" class="step-link" style="margin-top:8px; display:inline-flex;">Tout sur le Système RPG <span>→</span></a>
+            </div>
+          </div>
+
+          <!-- Étape 5 -->
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Apprends tes premiers sorts</div>
+              <p class="step-text">
+                Il y a 4 écoles de magie. Choisis la tienne et apprends des sorts dévastateurs !
+                Commence par regarder les sorts disponibles :
+              </p>
+              <div class="step-images">
+                <img src="img/spells/eclat.png" alt="Sort Eclat" title="Éclat (Sacré)" style="image-rendering: pixelated;">
+                <img src="img/spells/pulse.png" alt="Sort Pulse" title="Pulse (Feu)" style="image-rendering: pixelated;">
+                <img src="img/spells/stase.png" alt="Sort Stase" title="Stase (Glace)" style="image-rendering: pixelated;">
+                <img src="img/spells/drain.png" alt="Sort Drain" title="Drain (Ombre)" style="image-rendering: pixelated;">
+              </div>
+              <span class="step-cmd">🔮 /magic list</span>
+              <br>
+              <a href="magic.html" class="step-link" style="margin-top:8px; display:inline-flex;">Guide de la Magie <span>→</span></a>
+            </div>
+          </div>
+
+          <!-- Étape 6 -->
+          <div class="step-item">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <div class="step-title">Sertis des gemmes dans ton équipement</div>
+              <p class="step-text">
+                Les gemmes se glissent dans les sockets de tes armes et armures pour leur donner
+                des effets bonus. Il y a 18 gemmes différentes à collecter !
+              </p>
+              <span class="step-cmd">💎 /gem list</span>
+              <br>
+              <a href="gems.html" class="step-link" style="margin-top:8px; display:inline-flex;">Guide des Gemmes <span>→</span></a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── MATÉRIAUX ──────────────────────────────────────────── -->
+      <section class="section">
+        <p class="section-label">Ressources du serveur</p>
+        <h2 class="section-title">Les 3 matériaux du serveur</h2>
+        <p class="section-desc">
+          Il n'y a pas de diamant ni de netherite ici. À la place, 3 matériaux exclusifs
+          te permettent de progresser du débutant à l'expert.
+        </p>
+
+        <div class="tiers-grid">
+
+          <!-- Valterite -->
+          <div class="tier-card tier-valterite">
+            <span class="tier-badge badge-starter">🔵 Débutant</span>
+            <div class="tier-name">Valterite</div>
+            <p class="tier-desc">Le premier minerai. Commence par là quand tu arrives sur le serveur.</p>
+            <div class="tier-items">
+              <img src="img/blocks/valterite_ore.png" alt="Minerai Valterite" title="Minerai brut" style="image-rendering: pixelated;">
+              <img src="img/items/valterite_raw.png" alt="Valterite brut" title="Valterite brut" style="image-rendering: pixelated;">
+              <img src="img/items/valterite_ingot.png" alt="Lingot Valterite" title="Lingot Valterite" style="image-rendering: pixelated;">
+              <img src="img/items/valterite_sword.png" alt="Épée Valterite" title="Épée Valterite" style="image-rendering: pixelated;">
+            </div>
+            <div class="tier-stats">
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Niveau requis</span>
+                <span class="tier-stat-val">1+</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Où miner</span>
+                <span class="tier-stat-val">Monde Minage</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aetherite -->
+          <div class="tier-card tier-aetherite">
+            <span class="tier-badge badge-mid">🟣 Intermédiaire</span>
+            <div class="tier-name">Aetherite</div>
+            <p class="tier-desc">Plus rare et plus puissant. Pour les joueurs qui ont bien progressé.</p>
+            <div class="tier-items">
+              <img src="img/blocks/aetherite_ore.png" alt="Minerai Aetherite" title="Minerai brut" style="image-rendering: pixelated;">
+              <img src="img/items/aetherite_raw.png" alt="Aetherite brut" title="Aetherite brut" style="image-rendering: pixelated;">
+              <img src="img/items/aetherite_crystal.png" alt="Cristal Aetherite" title="Cristal Aetherite" style="image-rendering: pixelated;">
+              <img src="img/items/aetherite_sword.png" alt="Épée Aetherite" title="Épée Aetherite" style="image-rendering: pixelated;">
+            </div>
+            <div class="tier-stats">
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Niveau requis</span>
+                <span class="tier-stat-val">20+</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Où miner</span>
+                <span class="tier-stat-val">Monde Minage (profond)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Erinium -->
+          <div class="tier-card tier-erinium">
+            <span class="tier-badge badge-expert">✨ Expert</span>
+            <div class="tier-name">Erinium</div>
+            <p class="tier-desc">Le meilleur matériau du serveur. Les armes brillent dans le noir !</p>
+            <div class="tier-items">
+              <img src="img/blocks/erinium_ore.png" alt="Minerai Erinium" title="Minerai brut" style="image-rendering: pixelated;">
+              <img src="img/items/erinium_raw.png" alt="Erinium brut" title="Erinium brut" style="image-rendering: pixelated;">
+              <img src="img/items/erinium_fragment.png" alt="Fragment Erinium" title="Fragment Erinium" style="image-rendering: pixelated;">
+              <img src="img/items/erinium_sword.png" alt="Épée Erinium" title="Épée Erinium" style="image-rendering: pixelated;">
+            </div>
+            <div class="tier-stats">
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Niveau requis</span>
+                <span class="tier-stat-val">40+</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-key">Où miner</span>
+                <span class="tier-stat-val">Monde Minage (rare)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── COMMANDES UTILES ───────────────────────────────────── -->
+      <section class="section" style="margin-bottom:0;">
+        <p class="section-label">Aide rapide</p>
+        <h2 class="section-title">Commandes essentielles</h2>
+        <p class="section-desc">Les 6 commandes les plus utiles pour bien démarrer.</p>
+
+        <div class="cmd-list">
+          <div class="cmd-item">
+            <span class="cmd-code">/f create &lt;nom&gt;</span>
+            <span class="cmd-desc">Crée ta propre faction avec le nom de ton choix.</span>
+          </div>
+          <div class="cmd-item">
+            <span class="cmd-code">/f join &lt;faction&gt;</span>
+            <span class="cmd-desc">Rejoins une faction existante (il faut une invitation).</span>
+          </div>
+          <div class="cmd-item">
+            <span class="cmd-code">/home</span>
+            <span class="cmd-desc">Te téléporte à ton point de retour (à définir avec /sethome).</span>
+          </div>
+          <div class="cmd-item">
+            <span class="cmd-code">/tpa &lt;joueur&gt;</span>
+            <span class="cmd-desc">Envoie une demande de téléportation à un autre joueur.</span>
+          </div>
+          <div class="cmd-item">
+            <span class="cmd-code">/rpg stats</span>
+            <span class="cmd-desc">Ouvre ton menu RPG pour voir ton niveau et tes statistiques.</span>
+          </div>
+          <div class="cmd-item">
+            <span class="cmd-code">/mine</span>
+            <span class="cmd-desc">Te téléporte dans le monde de minage pour récolter des ressources.</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <a href="commands.html" class="step-link" style="font-size:0.9rem;">Voir toutes les commandes <span>→</span></a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ─── FOOTER ──────────────────────────────────────────────── -->
+    <footer class="site-footer">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <span class="footer-copy">EriniumGroup &copy; 2026 &nbsp;·&nbsp; Minecraft 1.12.2 Forge Mod</span>
+      <div class="footer-links">
+        <a href="index.html">Accueil</a>
+        <a href="factions.html">Factions</a>
+        <a href="commands.html">Commandes</a>
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

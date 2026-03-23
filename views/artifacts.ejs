@@ -1,0 +1,689 @@
+<%- include('partials/head', { pageTitle: 'Artefacts — EriniumFaction Wiki' }) %>
+<style>
+  /* ── Rarity color tokens ── */
+  :root {
+    --rare:       #3498DB; --rare-rgb:       52,152,219;
+    --epic:       #9B59B6; --epic-rgb:       155,89,182;
+    --legendary:  #F1C40F; --legendary-rgb:  241,196,15;
+  }
+
+  /* ── Rarity cards (intro) ── */
+  .rarity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 20px 0 32px;
+  }
+  .rarity-card {
+    position: relative;
+    padding: 20px 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .rarity-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+  }
+  .rarity-card:hover { transform: translateY(-3px); }
+
+  .rc-rare      { border-color: rgba(var(--rare-rgb),0.45);      border-top: 3px solid var(--rare); }
+  .rc-epic      { border-color: rgba(var(--epic-rgb),0.45);      border-top: 3px solid var(--epic); }
+  .rc-legendary { border-color: rgba(var(--legendary-rgb),0.50); border-top: 3px solid var(--legendary); animation: glow-pulse 3s ease infinite; }
+
+  .rc-rare:hover      { box-shadow: 0 4px 24px rgba(var(--rare-rgb),0.22); }
+  .rc-epic:hover      { box-shadow: 0 4px 24px rgba(var(--epic-rgb),0.22); }
+  .rc-legendary:hover { box-shadow: 0 4px 24px rgba(var(--legendary-rgb),0.28); }
+
+  .rarity-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .rc-rare      .rarity-name { color: var(--rare); }
+  .rc-epic      .rarity-name { color: var(--epic); }
+  .rc-legendary .rarity-name { color: var(--legendary); }
+
+  .rarity-stat {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 3px 0;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+  .rarity-stat strong { color: var(--text); }
+
+  /* ── Artifact cards grid ── */
+  .artifacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .artifact-card {
+    position: relative;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 18px 18px 16px;
+    overflow: hidden;
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  }
+  .artifact-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+  }
+  .artifact-card:hover { transform: translateY(-3px); }
+
+  .ac-rare      { border-color: rgba(var(--rare-rgb),0.38);      border-left: 3px solid var(--rare); }
+  .ac-epic      { border-color: rgba(var(--epic-rgb),0.38);      border-left: 3px solid var(--epic); }
+  .ac-legendary { border-color: rgba(var(--legendary-rgb),0.45); border-left: 3px solid var(--legendary); }
+
+  .ac-rare:hover      { box-shadow: 0 4px 24px rgba(var(--rare-rgb),0.20); }
+  .ac-epic:hover      { box-shadow: 0 4px 24px rgba(var(--epic-rgb),0.22); }
+  .ac-legendary:hover { box-shadow: 0 4px 24px rgba(var(--legendary-rgb),0.25); }
+
+  .artifact-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .artifact-img {
+    width: 52px;
+    height: 52px;
+    image-rendering: pixelated;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.25);
+    padding: 4px;
+  }
+  .artifact-title-block { flex: 1; min-width: 0; }
+  .artifact-name {
+    font-size: 0.97rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .ac-rare      .artifact-name { color: var(--rare); }
+  .ac-epic      .artifact-name { color: var(--epic); }
+  .ac-legendary .artifact-name { color: var(--legendary); }
+
+  .artifact-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .badge-rare      { background: rgba(var(--rare-rgb),0.18);      border: 1px solid rgba(var(--rare-rgb),0.40);      color: var(--rare); }
+  .badge-epic      { background: rgba(var(--epic-rgb),0.18);      border: 1px solid rgba(var(--epic-rgb),0.40);      color: var(--epic); }
+  .badge-legendary { background: rgba(var(--legendary-rgb),0.15); border: 1px solid rgba(var(--legendary-rgb),0.40); color: var(--legendary); }
+  .badge-actif     { background: rgba(0,229,255,0.12);            border: 1px solid rgba(0,229,255,0.30);            color: var(--accent-secondary); }
+  .badge-passif    { background: rgba(46,204,113,0.12);           border: 1px solid rgba(46,204,113,0.30);           color: #2ECC71; }
+
+  .artifact-effect {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .artifact-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .artifact-meta-item {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .artifact-meta-item strong { color: var(--text-muted); }
+
+  /* ── Drop table ── */
+  .drop-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 0.85rem;
+  }
+  .drop-table th, .drop-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .drop-table th {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    background: var(--glass-bg);
+  }
+  .drop-table td { color: var(--text-muted); }
+  .drop-table td:first-child { font-weight: 700; }
+  .drop-table tr:last-child td { border-bottom: none; }
+
+  /* ── Drop rate bar ── */
+  .drop-bar-wrap { display: flex; align-items: center; gap: 10px; }
+  .drop-bar      { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; max-width: 140px; }
+  .drop-bar-fill { height: 100%; border-radius: 3px; }
+  .drop-pct      { font-size: 0.8rem; font-weight: 700; min-width: 36px; }
+  .fill-rare      { background: var(--rare); }
+  .fill-epic      { background: var(--epic); }
+  .fill-legendary { background: var(--legendary); }
+
+  /* ── Controls ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0 28px;
+  }
+  .control-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition);
+  }
+  .control-card:hover { border-color: rgba(107,47,160,0.35); }
+  .control-key {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(107,47,160,0.35), rgba(0,229,255,0.20));
+    border: 1px solid rgba(107,47,160,0.50);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 900;
+    color: var(--accent-secondary);
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(107,47,160,0.25);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .control-label { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .control-desc  { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* ── PvP drop zones ── */
+  .zone-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0 24px;
+  }
+  .zone-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.84rem;
+  }
+  .zone-drop   { background: rgba(231,76,60,0.10);  border: 1px solid rgba(231,76,60,0.28);  }
+  .zone-nodrop { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.25); }
+  .zone-icon   { font-size: 1.2rem; flex-shrink: 0; }
+  .zone-text   { color: var(--text-muted); }
+  .zone-drop   .zone-text strong { color: #E74C3C; }
+  .zone-nodrop .zone-text strong { color: #2ECC71; }
+
+  /* ── Durability info box ── */
+  .dur-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0 24px;
+  }
+  .dur-card {
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    font-size: 0.83rem;
+  }
+  .dur-card-name { font-weight: 800; margin-bottom: 8px; font-size: 0.88rem; }
+  .rc-rare      .dur-card-name { color: var(--rare); }
+  .rc-epic      .dur-card-name { color: var(--epic); }
+  .rc-legendary .dur-card-name { color: var(--legendary); }
+  .dur-line { color: var(--text-muted); margin: 3px 0; }
+  .dur-line strong { color: var(--text); }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(var(--legendary-rgb),0.15); }
+    50%       { box-shadow: 0 0 22px rgba(var(--legendary-rgb),0.35); }
+  }
+</style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:8%;top:12%;animation-delay:0s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:22%;top:7%;animation-delay:1.4s;animation-duration:4.2s;"></span>
+  <span class="star" style="left:55%;top:18%;animation-delay:0.8s;animation-duration:3.5s;"></span>
+  <span class="star" style="left:75%;top:10%;animation-delay:2.0s;animation-duration:4.8s;"></span>
+  <span class="star" style="left:88%;top:35%;animation-delay:0.5s;animation-duration:3.2s;"></span>
+  <span class="star" style="left:38%;top:65%;animation-delay:1.9s;animation-duration:5.0s;"></span>
+  <span class="star" style="left:65%;top:75%;animation-delay:0.3s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:5%;top:80%;animation-delay:2.7s;animation-duration:3.6s;"></span>
+</div>
+
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero" style="background:linear-gradient(135deg,rgba(241,196,15,0.10) 0%,rgba(155,89,182,0.08) 50%,transparent 100%);" aria-labelledby="hero-title">
+      <span class="hero-badge">🏺 Artefacts</span>
+      <h1 id="hero-title">Les Artefacts</h1>
+      <p>Les objets les plus rares et puissants du jeu ! Chacun a un pouvoir unique qui peut changer l'issue d'un combat.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">🏺 <strong>8 artefacts</strong> uniques</div>
+        <div class="hero-meta-item">💀 <strong>Drop du Wither</strong> seulement</div>
+        <div class="hero-meta-item">⚡ <strong>1 seul</strong> équipé à la fois</div>
+        <div class="hero-meta-item">🏆 <strong>3 raretés</strong></div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Artefacts</span>
+        </nav>
+
+        <!-- ══ C'EST QUOI ══ -->
+        <section aria-labelledby="section-intro">
+          <h2 id="section-intro">C'est quoi un artefact ?</h2>
+          <p>Les artefacts sont des objets ultra-rares qui tombent uniquement du <strong>Wither</strong>. Tu ne peux en équiper <strong>qu'un seul à la fois</strong>. Il y a deux types : les artefacts <strong>Actifs</strong> que tu déclenches avec la touche <kbd style="font-family:monospace;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);">H</kbd>, et les artefacts <strong>Passifs</strong> qui fonctionnent tout seuls en permanence. Attention — les artefacts ont une durabilité et deviennent <strong>inertes</strong> s'ils arrivent à 0 !</p>
+        </section>
+
+        <!-- ══ LES 3 RARETÉS ══ -->
+        <section aria-labelledby="section-rarities">
+          <h2 id="section-rarities">Les 3 raretés</h2>
+          <p>Plus un artefact est rare, plus il est puissant — et plus il est difficile à obtenir.</p>
+
+          <div class="rarity-grid">
+            <div class="rarity-card rc-rare">
+              <div class="rarity-name">Rare</div>
+              <div class="rarity-stat"><strong>3 artefacts</strong> disponibles</div>
+              <div class="rarity-stat">Durabilité max : <strong>200</strong></div>
+              <div class="rarity-stat">Drop Wither : <strong>40%</strong></div>
+              <div class="rarity-stat" style="margin-top:6px;font-size:0.75rem;color:var(--text-faint);">Puissants mais accessibles. Bon point de départ !</div>
+            </div>
+            <div class="rarity-card rc-epic">
+              <div class="rarity-name">Épique</div>
+              <div class="rarity-stat"><strong>3 artefacts</strong> disponibles</div>
+              <div class="rarity-stat">Durabilité max : <strong>150</strong></div>
+              <div class="rarity-stat">Drop Wither : <strong>15%</strong></div>
+              <div class="rarity-stat" style="margin-top:6px;font-size:0.75rem;color:var(--text-faint);">Effets plus forts et plus spéciaux.</div>
+            </div>
+            <div class="rarity-card rc-legendary">
+              <div class="rarity-name">Légendaire</div>
+              <div class="rarity-stat"><strong>2 artefacts</strong> disponibles</div>
+              <div class="rarity-stat">Durabilité max : <strong>100</strong></div>
+              <div class="rarity-stat">Drop Wither : <strong>3%</strong></div>
+              <div class="rarity-stat" style="margin-top:6px;font-size:0.75rem;color:var(--text-faint);">Extrêmement rares. Changent une bataille à eux seuls.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ LES 8 ARTEFACTS ══ -->
+        <section aria-labelledby="section-list">
+          <h2 id="section-list">Les 8 artefacts</h2>
+          <p>Voici tous les artefacts du jeu, avec leurs effets et informations importantes :</p>
+
+          <div class="artifacts-grid">
+
+            <!-- ── Oeil d'Erinium (Rare / Actif) ── -->
+            <div class="artifact-card ac-rare">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/oeil_erinium.png" alt="Oeil d'Erinium" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Oeil d'Erinium</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-rare">Rare</span>
+                    <span class="badge badge-actif">Actif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Révèle tous les joueurs dans un rayon de <strong>100 blocs</strong> pendant 10 secondes — tu vois leurs silhouettes à travers les murs (effet Glowing) !</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">⏱ CD : <strong>5 min</strong></span>
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>200</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−5/activation</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Coeur Cristallin (Rare / Passif) ── -->
+            <div class="artifact-card ac-rare">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/coeur_cristallin.png" alt="Coeur Cristallin" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Coeur Cristallin</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-rare">Rare</span>
+                    <span class="badge badge-passif">Passif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Régénère <strong>0,5 coeur toutes les 3 secondes</strong> quand tu n'es pas en combat. Tu dois rester 5 secondes sans recevoir de dégâts pour activer la régénération.</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>200</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−1/min</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Griffes du Néant (Rare / Passif) ── -->
+            <div class="artifact-card ac-rare">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/griffes_neant.png" alt="Griffes du Néant" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Griffes du Néant</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-rare">Rare</span>
+                    <span class="badge badge-passif">Passif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Chaque coup infligé réduit les soins de la cible de <strong>5% par stack</strong> (maximum 40%, soit 8 stacks). Les stacks disparaissent après 6 secondes sans être touché.</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>200</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−1/min</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Lame Fantôme (Épique / Actif) ── -->
+            <div class="artifact-card ac-epic">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/lame_fantome.png" alt="Lame Fantôme" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Lame Fantôme</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-epic">Épique</span>
+                    <span class="badge badge-actif">Actif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Ton prochain coup dans les <strong>6 secondes</strong> suivantes ignore totalement l'armure de la cible — même le meilleur équipement ne protège pas !</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">⏱ CD : <strong>3 min</strong></span>
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>150</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−8/activation</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Bouclier de Résonance (Épique / Actif) ── -->
+            <div class="artifact-card ac-epic">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/bouclier_resonance.png" alt="Bouclier de Résonance" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Bouclier de Résonance</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-epic">Épique</span>
+                    <span class="badge badge-actif">Actif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Pendant <strong>3 secondes</strong>, renvoie <strong>50% des dégâts</strong> reçus directement à l'attaquant — parfait pour punir les joueurs qui rushent !</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">⏱ CD : <strong>4 min</strong></span>
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>150</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−8/activation</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Prisme d'Erinium (Épique / Actif) ── -->
+            <div class="artifact-card ac-epic">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/prisme_erinium.png" alt="Prisme d'Erinium" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Prisme d'Erinium</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-epic">Épique</span>
+                    <span class="badge badge-actif">Actif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Crée une zone de <strong>6 blocs</strong> de rayon pendant <strong>8 secondes</strong> qui réduit tous les dégâts reçus par les joueurs à l'intérieur de <strong>40%</strong>.</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">⏱ CD : <strong>6 min</strong></span>
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>150</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−8/activation</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Fragment du Noyau (Légendaire / Passif) ── -->
+            <div class="artifact-card ac-legendary">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/fragment_noyau.png" alt="Fragment du Noyau" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Fragment du Noyau</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-legendary">Légendaire</span>
+                    <span class="badge badge-passif">Passif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Donne <strong>+20% de dégâts</strong> quand il y a au moins <strong>2 ennemis dans un rayon de 10 blocs</strong> — plus tu es entouré, plus tu frappes fort !</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>100</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−1/min</strong></span>
+              </div>
+            </div>
+
+            <!-- ── Ancre Dimensionnelle (Légendaire / Actif) ── -->
+            <div class="artifact-card ac-legendary">
+              <div class="artifact-header">
+                <img class="artifact-img" src="/img/items/ancre_dimensionnelle.png" alt="Ancre Dimensionnelle" />
+                <div class="artifact-title-block">
+                  <div class="artifact-name">Ancre Dimensionnelle</div>
+                  <div class="artifact-badges">
+                    <span class="badge badge-legendary">Légendaire</span>
+                    <span class="badge badge-actif">Actif</span>
+                  </div>
+                </div>
+              </div>
+              <p class="artifact-effect">Téléporte jusqu'à <strong>10 membres de ta faction</strong> dans un rayon de 30 blocs directement sur toi. Le ciel doit être dégagé au-dessus de toi !</p>
+              <div class="artifact-meta">
+                <span class="artifact-meta-item">⏱ CD : <strong>15 min</strong></span>
+                <span class="artifact-meta-item">🛡 Durabilité : <strong>100</strong></span>
+                <span class="artifact-meta-item">⚡ Coût : <strong>−10/activation</strong></span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══ COMMENT OBTENIR ══ -->
+        <section aria-labelledby="section-obtain">
+          <h2 id="section-obtain">Comment obtenir un artefact ?</h2>
+          <p>Il n'y a qu'une seule façon d'obtenir un artefact : <strong>tuer le Wither !</strong> Et seulement <strong>un artefact peut tomber</strong> par kill — la rareté est tirée au sort.</p>
+
+          <table class="drop-table">
+            <thead>
+              <tr>
+                <th>Rareté</th>
+                <th>Chance de drop</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--rare);font-weight:800;">Rare</td>
+                <td>
+                  <div class="drop-bar-wrap">
+                    <div class="drop-bar"><div class="drop-bar-fill fill-rare" style="width:100%;"></div></div>
+                    <span class="drop-pct" style="color:var(--rare);">40%</span>
+                  </div>
+                </td>
+                <td style="font-size:0.78rem;color:var(--text-faint);">Meilleure chance — commence par là !</td>
+              </tr>
+              <tr>
+                <td style="color:var(--epic);font-weight:800;">Épique</td>
+                <td>
+                  <div class="drop-bar-wrap">
+                    <div class="drop-bar"><div class="drop-bar-fill fill-epic" style="width:37.5%;"></div></div>
+                    <span class="drop-pct" style="color:var(--epic);">15%</span>
+                  </div>
+                </td>
+                <td style="font-size:0.78rem;color:var(--text-faint);">Moins fréquent mais ça arrive.</td>
+              </tr>
+              <tr>
+                <td style="color:var(--legendary);font-weight:800;">Légendaire</td>
+                <td>
+                  <div class="drop-bar-wrap">
+                    <div class="drop-bar"><div class="drop-bar-fill fill-legendary" style="width:7.5%;"></div></div>
+                    <span class="drop-pct" style="color:var(--legendary);">3%</span>
+                  </div>
+                </td>
+                <td style="font-size:0.78rem;color:var(--text-faint);">Extrêmement rare. Chance unique !</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="alert alert-tip" role="note">
+            <span class="alert-icon">💡</span>
+            <div class="alert-body">
+              <strong class="alert-title">Astuce !</strong>
+              <span class="alert-desc">Si le Wither ne drop pas d'artefact (45% de chance), il ne drop rien d'autre non plus. Organise des raids en faction pour tuer le Wither plus souvent !</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ DROP AU PVP ══ -->
+        <section aria-labelledby="section-pvpdrop">
+          <h2 id="section-pvpdrop">Drop au PvP — attention !</h2>
+          <p>Si tu meurs avec un artefact équipé, il peut tomber au sol et être ramassé par ton adversaire !</p>
+
+          <div class="zone-list">
+            <div class="zone-item zone-drop">
+              <span class="zone-icon">💀</span>
+              <div class="zone-text"><strong>DROP (100%)</strong> — Si tu meurs tué par un joueur ennemi en territoire neutre ou ennemi.</div>
+            </div>
+            <div class="zone-item zone-nodrop">
+              <span class="zone-icon">🛡</span>
+              <div class="zone-text"><strong>Pas de drop</strong> — En territoire propre, en zone sécurisée (spawn, safezone).</div>
+            </div>
+            <div class="zone-item zone-nodrop">
+              <span class="zone-icon">🐺</span>
+              <div class="zone-text"><strong>Pas de drop</strong> — Si tu meurs tué par un monstre (PvE), ou dans le monde de minage.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ CONTRÔLES ══ -->
+        <section aria-labelledby="section-controls">
+          <h2 id="section-controls">Contrôles</h2>
+          <p>Deux touches suffisent pour tout gérer :</p>
+
+          <div class="controls-grid">
+            <div class="control-card">
+              <div class="control-key">G</div>
+              <div>
+                <div class="control-label">Ouvrir le GUI Artefacts</div>
+                <div class="control-desc">Voir et équiper tes artefacts.</div>
+              </div>
+            </div>
+            <div class="control-card">
+              <div class="control-key">H</div>
+              <div>
+                <div class="control-label">Activer l'artefact</div>
+                <div class="control-desc">Déclenche l'effet d'un artefact Actif en combat.</div>
+              </div>
+            </div>
+            <div class="control-card">
+              <div class="control-key" style="font-size:0.75rem;width:auto;padding:0 10px;">INV</div>
+              <div>
+                <div class="control-label">Bouton dans l'inventaire</div>
+                <div class="control-desc">Un bouton dans ton inventaire de survie permet aussi d'ouvrir le GUI.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ DURABILITÉ ══ -->
+        <section aria-labelledby="section-durability">
+          <h2 id="section-durability">Durabilité</h2>
+          <p>Chaque artefact a une durabilité qui diminue avec l'usage. Quand elle atteint <strong>0</strong>, l'artefact devient <strong>Inerte</strong> : il ne donne plus aucun effet mais reste dans ton inventaire. Tu peux le réparer !</p>
+
+          <div class="dur-grid">
+            <div class="dur-card rarity-card rc-rare" style="animation:none;">
+              <div class="dur-card-name">Rare (200 max)</div>
+              <div class="dur-line">Activation active : <strong>−5</strong></div>
+              <div class="dur-line">Passif : <strong>−1 par minute</strong></div>
+            </div>
+            <div class="dur-card rarity-card rc-epic" style="animation:none;">
+              <div class="dur-card-name">Épique (150 max)</div>
+              <div class="dur-line">Activation active : <strong>−8</strong></div>
+              <div class="dur-line">Passif : <strong>−1 par minute</strong></div>
+            </div>
+            <div class="dur-card rarity-card rc-legendary" style="animation:none;">
+              <div class="dur-card-name">Légendaire (100 max)</div>
+              <div class="dur-line">Activation active : <strong>−10</strong></div>
+              <div class="dur-line">Passif : <strong>−1 par minute</strong></div>
+            </div>
+          </div>
+
+          <div class="alert" style="background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.25);border-radius:var(--radius-md);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;" role="note">
+            <span style="font-size:1.3rem;">🔧</span>
+            <div>
+              <strong style="color:#3498DB;">Artefact Inerte</strong>
+              <p style="font-size:0.84rem;color:var(--text-muted);margin-top:4px;">Un artefact à 0 de durabilité devient Inerte (plus aucun effet) mais ne disparaît pas. Tu peux le réparer pour qu'il redevienne actif. Demande comment faire à un admin ou cherche dans le <a href="/economy" style="color:var(--accent-secondary);">système économique</a> !</p>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /.content-body -->
+
+      <!-- ─── TOC ───────────────────────────────────────────── -->
+      <aside class="toc" aria-label="Table des matières">
+        <p class="toc-title">Sur cette page</p>
+        <div data-toc></div>
+      </aside>
+
+    </div><!-- /.content -->
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="footer" role="contentinfo">
+      <span class="footer-brand">EriniumFaction Wiki</span>
+      <ul class="footer-links" aria-label="Liens du pied de page">
+        <li><a href="/">Accueil</a></li>
+        <li><a href="/builds">Builds</a></li>
+        <li><a href="/gems">Gemmes</a></li>
+        <li><a href="/factions">Factions</a></li>
+      </ul>
+      <span style="font-size:0.75rem;color:var(--text-faint);">© 2026 EriniumGroup — Tous droits réservés</span>
+    </footer>
+
+  </main>
+</div><!-- /.page-wrapper -->
+
+<%- include('partials/footer') %>

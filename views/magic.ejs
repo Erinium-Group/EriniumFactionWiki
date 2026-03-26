@@ -353,8 +353,94 @@
             </div>
           </div>
 
-          <h3 id="magic-xp">Progression en magie</h3>
-          <p>Tu montes en niveau de magie en lançant des sorts — chaque sort réussi te rapporte de l'XP magique. Tuer des joueurs avec des sorts rapporte <strong>150 XP magique</strong>, tuer des monstres rapporte jusqu'à <strong>60 XP</strong>.</p>
+          <h3 id="magic-xp">Comment monter en niveau de magie ?</h3>
+
+          <p>Tu gagnes de l'<strong>XP magique</strong> en utilisant ta magie. Plus tu lances de sorts, plus tu montes en niveau. Il y a <strong>3 facons</strong> de gagner de l'XP :</p>
+
+          <div style="display:flex;flex-direction:column;gap:12px;margin:16px 0;">
+
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);border-left:3px solid var(--accent-primary);">
+              <span style="font-size:1.3rem;">🔮</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:4px;">Lancer un sort</strong>
+                <span style="color:var(--text-muted);font-size:0.88rem;">
+                  Chaque sort lance avec succes te donne de l'XP. Plus le sort coute de mana, plus il donne d'XP.<br>
+                  <strong>Formule :</strong> 20 + (cout en mana du sort / 2) XP par cast
+                </span>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);border-left:3px solid #E74C3C;">
+              <span style="font-size:1.3rem;">⚔️</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:4px;">Tuer un joueur avec un sort</strong>
+                <span style="color:var(--text-muted);font-size:0.88rem;">
+                  Tu recois <strong>150 XP magique</strong> a chaque kill PvP realise avec un sort. C'est la source la plus rentable !
+                </span>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);border-left:3px solid #2ECC71;">
+              <span style="font-size:1.3rem;">🐉</span>
+              <div>
+                <strong style="color:var(--text);display:block;margin-bottom:4px;">Tuer un monstre avec un sort</strong>
+                <span style="color:var(--text-muted);font-size:0.88rem;">
+                  L'XP depend de la vie du monstre : plus il a de PV, plus tu gagnes. Maximum <strong>60 XP</strong> par kill.<br>
+                  <strong>Formule :</strong> min(20 + vie max du monstre x 0.5, 60)
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <h3 style="margin-top:28px;">Combien d'XP pour monter de niveau ?</h3>
+
+          <p>L'XP necessaire augmente a chaque niveau. Voici quelques exemples :</p>
+
+          <div style="overflow-x:auto;margin:14px 0;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--glass-border);">
+                  <th style="text-align:left;padding:10px 14px;color:var(--text-faint);font-weight:600;">Niveau</th>
+                  <th style="text-align:right;padding:10px 14px;color:var(--text-faint);font-weight:600;">XP requise</th>
+                  <th style="text-align:right;padding:10px 14px;color:var(--text-faint);font-weight:600;">~ Sorts a lancer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--glass-border);">
+                  <td style="padding:8px 14px;color:var(--text);">1 → 2</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--accent-secondary);">100</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--text-muted);">~3-4</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--glass-border);">
+                  <td style="padding:8px 14px;color:var(--text);">5 → 6</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--accent-secondary);">1 623</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--text-muted);">~50</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--glass-border);">
+                  <td style="padding:8px 14px;color:var(--text);">10 → 11</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--accent-secondary);">6 310</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--text-muted);">~200</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--glass-border);">
+                  <td style="padding:8px 14px;color:var(--text);">25 → 26</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--accent-secondary);">33 598</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--text-muted);">~1 100</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--glass-border);">
+                  <td style="padding:8px 14px;color:var(--text);">49 → 50</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--accent-secondary);">116 348</td>
+                  <td style="padding:8px 14px;text-align:right;color:var(--text-muted);">~3 800</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background:rgba(107,47,160,0.10);border:1px solid rgba(107,47,160,0.30);border-radius:var(--radius-md);padding:14px 18px;margin-top:14px;">
+            <span style="font-size:0.88rem;color:var(--text-muted);">
+              💡 <strong style="color:var(--text);">Astuce :</strong> Les sorts chers en mana donnent plus d'XP ! Un sort qui coute 80 mana te donne 60 XP par cast, alors qu'un sort a 20 mana n'en donne que 30. Utilise tes sorts les plus puissants pour progresser plus vite.
+            </span>
+          </div>
         </section>
 
         <!-- ════════════════════════════════════════════════════

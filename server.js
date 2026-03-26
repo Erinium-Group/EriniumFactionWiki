@@ -45,6 +45,7 @@ const pages = [
   { route: '/commands',       template: 'commands',       title: 'Commandes — EriniumFaction Wiki' },
   { route: '/combat',         template: 'combat',         title: 'Combat — EriniumFaction Wiki' },
   { route: '/items',          template: 'items',          title: 'Items — EriniumFaction Wiki' },
+  { route: '/anvils',         template: 'anvils',         title: 'Enclumes Moddees — EriniumFaction Wiki' },
 ];
 
 pages.forEach(function(p) {

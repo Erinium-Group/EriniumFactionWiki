@@ -45,9 +45,11 @@
       border-radius: var(--radius-lg);
       padding: 20px 18px;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       transition: transform var(--transition), box-shadow var(--transition);
       cursor: default;
+      display: flex;
+      flex-direction: column;
     }
     .perk-card::before {
       content: '';

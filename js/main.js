@@ -878,11 +878,29 @@ function clamp(value, min, max) {
 
 (function initTOC() {
   window._initTOC = function() {
-    const tocContainer = document.querySelector('[data-toc]');
-    if (!tocContainer) return;
+    // Auto-inject TOC container if not present
+    var tocContainer = document.querySelector('[data-toc]');
+    if (!tocContainer) {
+      var mainEl = document.querySelector('.main') || document.querySelector('.main-wrap') || document.querySelector('main');
+      if (!mainEl) return;
 
-    // Look for headings in main, or fall back to .content-body, or the whole document
-    var scope = document.querySelector('main') || document.querySelector('.content-body') || document;
+      // Look for headings first — only inject if there are enough
+      var scope = mainEl;
+      var testHeadings = scope.querySelectorAll('h2, h3');
+      if (testHeadings.length < 3) return;
+
+      // Create and inject the TOC sidebar
+      tocContainer = document.createElement('aside');
+      tocContainer.setAttribute('data-toc', '');
+      tocContainer.className = 'toc';
+      var tocTitle = document.createElement('div');
+      tocTitle.className = 'toc-title';
+      tocTitle.textContent = 'Sur cette page';
+      tocContainer.appendChild(tocTitle);
+      mainEl.appendChild(tocContainer);
+    }
+
+    var scope = document.querySelector('.main') || document.querySelector('.main-wrap') || document.querySelector('main') || document;
     const headings = Array.from(scope.querySelectorAll('h2, h3'));
     if (headings.length < 2) {
       tocContainer.style.display = 'none';

@@ -232,6 +232,18 @@
     .stat-bubble-value { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
     .stat-bubble-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); }
 
+    /* ── Enchantment tier badges (reused from enchantments page) ── */
+    .ench-badge {
+      display: inline-block;
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 7px; border-radius: 100px;
+    }
+    .badge-maxlvl        { background: rgba(255,215,0,0.12);   border: 1px solid rgba(255,215,0,0.35);   color: #FFD700; }
+    .badge-tier-vanilla  { background: rgba(160,160,176,0.14); border: 1px solid rgba(160,160,176,0.35); color: #A0A0B0; }
+    .badge-tier-valterite{ background: rgba(74,224,224,0.12);  border: 1px solid rgba(74,224,224,0.35);  color: #4AE0E0; }
+    .badge-tier-aetherite{ background: rgba(155,89,182,0.14);  border: 1px solid rgba(155,89,182,0.38);  color: #9B59B6; }
+    .badge-tier-erinium  { background: rgba(255,215,0,0.12);   border: 1px solid rgba(255,215,0,0.38);   color: #FFD700; }
+
     /* ── Playstyle block ── */
     .playstyle-block {
       border-radius: var(--radius-lg); padding: 16px 20px; margin-top: 18px;
@@ -437,6 +449,23 @@
                 </div>
               </div>
             </div>
+
+            <div class="build-block" style="margin-top:16px;border-left:3px solid var(--berserker);">
+              <div class="build-block-title">📖 Enchantements recommandés</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">⚔️ Arme</div>
+                  <div class="build-block-line"><span class="ench-badge badge-maxlvl" style="font-size:0.65rem;">Siphon III</span> <span style="font-size:0.78rem;color:var(--text-faint);">+12% vol de vie</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Faille III</span> <span style="font-size:0.78rem;color:var(--text-faint);">Perce l'armure coup par coup</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Volatilité III</span> <span style="font-size:0.78rem;color:var(--text-faint);">+50% dégâts tous les 4 coups</span></div>
+                </div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">🛡️ Armure</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Vitalité III</span> <span style="font-size:0.78rem;color:var(--text-faint);">+6 PV supplémentaires</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Représailles II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Renvoie 18% des dégâts</span></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -535,6 +564,23 @@
                     <div style="font-size:0.84rem;font-weight:800;color:#3498DB;">Coeur Cristallin</div>
                     <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Régénère des PV hors combat — tes 78 PV se rechargent vite entre les fights.</div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-top:16px;border-left:3px solid var(--tank);">
+              <div class="build-block-title">📖 Enchantements recommandés</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">⚔️ Arme</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Ancrage II</span> <span style="font-size:0.78rem;color:var(--text-faint);">−35% knockback reçu</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Hémorragie III</span> <span style="font-size:0.78rem;color:var(--text-faint);">Saignement continu sur l'ennemi</span></div>
+                </div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">🛡️ Armure</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Fortification III</span> <span style="font-size:0.78rem;color:var(--text-faint);">−22% dégâts immobile</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Résilience II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Réduction d'urgence sous 25% PV</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Carapace III</span> <span style="font-size:0.78rem;color:var(--text-faint);">−35% dégâts explosion</span></div>
                 </div>
               </div>
             </div>
@@ -639,6 +685,22 @@
                 </div>
               </div>
             </div>
+
+            <div class="build-block" style="margin-top:16px;border-left:3px solid var(--assassin);">
+              <div class="build-block-title">📖 Enchantements recommandés</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">⚔️ Arme</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Fracture III</span> <span style="font-size:0.78rem;color:var(--text-faint);">AoE sur crit, 4 blocs</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Onde de Choc II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Repousse les ennemis au sprint</span></div>
+                </div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">🛡️ Armure</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Dispersion II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Aveugle l'attaquant en mêlée</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Écho Défensif I</span> <span style="font-size:0.78rem;color:var(--text-faint);">Onde sur 3 coups en 2s</span></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -740,6 +802,22 @@
                 </div>
               </div>
             </div>
+
+            <div class="build-block" style="margin-top:16px;border-left:3px solid var(--mage);">
+              <div class="build-block-title">📖 Enchantements recommandés</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">⚔️ Arme</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Résonance II</span> <span style="font-size:0.78rem;color:var(--text-faint);">+12% dégâts alliés sur cible marquée</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Voracité II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Kill = nourriture restaurée</span></div>
+                </div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">🛡️ Armure</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Régén Cristalline III</span> <span style="font-size:0.78rem;color:var(--text-faint);">Regen en territoire faction</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Déflexion III</span> <span style="font-size:0.78rem;color:var(--text-faint);">22% esquive projectiles</span></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -838,6 +916,23 @@
                     <div style="font-size:0.84rem;font-weight:800;color:#9B59B6;">Bouclier de Résonance</div>
                     <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Reflète 50% des dégâts — protège-toi des rusheurs qui veulent t'éliminer en priorité.</div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="build-block" style="margin-top:16px;border-left:3px solid var(--paladin);">
+              <div class="build-block-title">📖 Enchantements recommandés</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">⚔️ Arme</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Cristallisation I</span> <span style="font-size:0.78rem;color:var(--text-faint);">Bouclier 4 cœurs après 3 kills</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Ancrage II</span> <span style="font-size:0.78rem;color:var(--text-faint);">−35% knockback reçu</span></div>
+                </div>
+                <div>
+                  <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);margin-bottom:6px;">🛡️ Armure</div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-valterite" style="font-size:0.65rem;">Fortification III</span> <span style="font-size:0.78rem;color:var(--text-faint);">−22% dégâts immobile</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-aetherite" style="font-size:0.65rem;">Vitalité III</span> <span style="font-size:0.78rem;color:var(--text-faint);">+6 PV max</span></div>
+                  <div class="build-block-line"><span class="ench-badge badge-tier-erinium" style="font-size:0.65rem;">Absorption Impact II</span> <span style="font-size:0.78rem;color:var(--text-faint);">Annule le knockback</span></div>
                 </div>
               </div>
             </div>

@@ -1,0 +1,1726 @@
+<%- include('partials/head', { pageTitle: 'Enchantements — EriniumFaction Wiki' }) %>
+<style>
+  /* ── Tier color tokens ── */
+  :root {
+    --tier-vanilla:   #A0A0B0; --tier-vanilla-rgb:   160,160,176;
+    --tier-valterite: #4AE0E0; --tier-valterite-rgb: 74,224,224;
+    --tier-aetherite: #9B59B6; --tier-aetherite-rgb: 155,89,182;
+    --tier-erinium:   #FFD700; --tier-erinium-rgb:   255,215,0;
+  }
+
+  /* ── Hero ── */
+  .hero-ench {
+    background: linear-gradient(135deg,
+      rgba(74,224,224,0.10) 0%,
+      rgba(155,89,182,0.08) 40%,
+      rgba(255,215,0,0.07) 80%,
+      transparent 100%);
+  }
+
+  /* ── Section dividers ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 36px 0 20px;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: var(--glass-border); }
+  .section-divider-text {
+    font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--text-faint); white-space: nowrap;
+  }
+
+  /* ── How it works steps ── */
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .how-step {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 18px 16px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    gap: 10px;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .how-step:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(107,47,160,0.15); }
+  .how-step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(107,47,160,0.35), rgba(74,224,224,0.20));
+    border: 1px solid rgba(107,47,160,0.40);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 900; color: var(--accent-secondary);
+    flex-shrink: 0;
+  }
+  .how-step-title { font-size: 0.88rem; font-weight: 800; color: var(--text); }
+  .how-step-desc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── Tier cards (4 bookshelf tiers) ── */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .tier-card {
+    position: relative;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: 22px 20px 18px;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .tier-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 8%; right: 8%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  }
+  .tier-card:hover { transform: translateY(-4px); }
+
+  .tier-vanilla   { border-top: 3px solid var(--tier-vanilla);   background: linear-gradient(160deg, rgba(var(--tier-vanilla-rgb),0.07) 0%, var(--glass-bg) 55%); }
+  .tier-valterite { border-top: 3px solid var(--tier-valterite); background: linear-gradient(160deg, rgba(var(--tier-valterite-rgb),0.08) 0%, var(--glass-bg) 55%); }
+  .tier-aetherite { border-top: 3px solid var(--tier-aetherite); background: linear-gradient(160deg, rgba(var(--tier-aetherite-rgb),0.09) 0%, var(--glass-bg) 55%); }
+  .tier-erinium   { border-top: 3px solid var(--tier-erinium);   background: linear-gradient(160deg, rgba(var(--tier-erinium-rgb),0.08) 0%, var(--glass-bg) 55%); animation: glow-pulse 4s ease infinite; }
+
+  .tier-vanilla:hover   { box-shadow: 0 6px 24px rgba(var(--tier-vanilla-rgb),0.20);   }
+  .tier-valterite:hover { box-shadow: 0 6px 24px rgba(var(--tier-valterite-rgb),0.22); }
+  .tier-aetherite:hover { box-shadow: 0 6px 24px rgba(var(--tier-aetherite-rgb),0.25); }
+  .tier-erinium:hover   { box-shadow: 0 6px 24px rgba(var(--tier-erinium-rgb),0.28);   }
+
+  .tier-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+  }
+  .tier-bookshelf-img {
+    width: 48px; height: 48px; image-rendering: pixelated;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    flex-shrink: 0;
+  }
+  .tier-name {
+    font-size: 1.1rem; font-weight: 900; letter-spacing: -0.02em;
+  }
+  .tier-vanilla   .tier-name { color: var(--tier-vanilla);   }
+  .tier-valterite .tier-name { color: var(--tier-valterite); }
+  .tier-aetherite .tier-name { color: var(--tier-aetherite); }
+  .tier-erinium   .tier-name { color: var(--tier-erinium);   }
+
+  .tier-subtitle { font-size: 0.72rem; color: var(--text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
+
+  .tier-stat-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-bottom: 1px solid var(--glass-border);
+    font-size: 0.82rem;
+  }
+  .tier-stat-row:last-child { border-bottom: none; }
+  .tier-stat-label { color: var(--text-faint); font-weight: 600; }
+  .tier-stat-value { font-weight: 800; }
+  .tier-vanilla   .tier-stat-value { color: var(--tier-vanilla);   }
+  .tier-valterite .tier-stat-value { color: var(--tier-valterite); }
+  .tier-aetherite .tier-stat-value { color: var(--tier-aetherite); }
+  .tier-erinium   .tier-stat-value { color: var(--tier-erinium);   }
+
+  /* XP cost pills */
+  .xp-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+  .xp-pill {
+    font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 100px;
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.10);
+    color: var(--text-muted);
+  }
+  .tier-vanilla   .xp-pill { border-color: rgba(var(--tier-vanilla-rgb),0.30);   color: var(--tier-vanilla);   }
+  .tier-valterite .xp-pill { border-color: rgba(var(--tier-valterite-rgb),0.30); color: var(--tier-valterite); }
+  .tier-aetherite .xp-pill { border-color: rgba(var(--tier-aetherite-rgb),0.30); color: var(--tier-aetherite); }
+  .tier-erinium   .xp-pill { border-color: rgba(var(--tier-erinium-rgb),0.30);   color: var(--tier-erinium);   }
+
+  /* ── Vanilla boosted table ── */
+  .boosted-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.84rem;
+  }
+  .boosted-table th, .boosted-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .boosted-table th {
+    font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--text-faint); background: var(--glass-bg);
+  }
+  .boosted-table td { color: var(--text-muted); }
+  .boosted-table td:first-child { font-weight: 700; color: var(--text); }
+  .old-max { color: var(--text-faint); text-decoration: line-through; font-size: 0.78em; }
+  .new-max { color: var(--tier-erinium); font-weight: 900; }
+  .roman-badge {
+    display: inline-block;
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 0.72em; font-weight: 800;
+    background: rgba(255,215,0,0.12);
+    border: 1px solid rgba(255,215,0,0.30);
+    color: var(--tier-erinium);
+    margin-left: 2px;
+  }
+
+  /* ── Enchantment cards grid ── */
+  .ench-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .ench-card {
+    position: relative;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 16px 16px 14px;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .ench-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 8%; right: 8%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  }
+  .ench-card:hover { transform: translateY(-3px); }
+
+  /* Category colors */
+  .ench-weapon  { border-left: 3px solid #E74C3C; }
+  .ench-weapon:hover  { box-shadow: 0 4px 20px rgba(231,76,60,0.18);  border-color: rgba(231,76,60,0.45); border-left-color: #E74C3C; }
+  .ench-armor   { border-left: 3px solid #3498DB; }
+  .ench-armor:hover   { box-shadow: 0 4px 20px rgba(52,152,219,0.18); border-color: rgba(52,152,219,0.45); border-left-color: #3498DB; }
+  .ench-bow     { border-left: 3px solid #2ECC71; }
+  .ench-bow:hover     { box-shadow: 0 4px 20px rgba(46,204,113,0.18); border-color: rgba(46,204,113,0.42); border-left-color: #2ECC71; }
+  .ench-tool    { border-left: 3px solid #F39C12; }
+  .ench-tool:hover    { box-shadow: 0 4px 20px rgba(243,156,18,0.18); border-color: rgba(243,156,18,0.42); border-left-color: #F39C12; }
+
+  .ench-card-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 8px; margin-bottom: 10px;
+  }
+  .ench-name { font-size: 0.96rem; font-weight: 800; color: var(--text); }
+  .ench-weapon  .ench-name { color: #E74C3C; }
+  .ench-armor   .ench-name { color: #5DADE2; }
+  .ench-bow     .ench-name { color: #2ECC71; }
+  .ench-tool    .ench-name { color: #F39C12; }
+
+  .ench-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 3px; }
+  .ench-badge {
+    font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 7px; border-radius: 100px;
+  }
+  .badge-maxlvl {
+    background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.35); color: var(--tier-erinium);
+  }
+  .badge-tier-vanilla   { background: rgba(160,160,176,0.14); border: 1px solid rgba(160,160,176,0.35); color: var(--tier-vanilla); }
+  .badge-tier-valterite { background: rgba(74,224,224,0.12);  border: 1px solid rgba(74,224,224,0.35);  color: var(--tier-valterite); }
+  .badge-tier-aetherite { background: rgba(155,89,182,0.14);  border: 1px solid rgba(155,89,182,0.38);  color: var(--tier-aetherite); }
+  .badge-tier-erinium   { background: rgba(255,215,0,0.12);   border: 1px solid rgba(255,215,0,0.38);   color: var(--tier-erinium); }
+
+  .ench-effect {
+    font-size: 0.80rem; color: var(--text-muted); line-height: 1.55;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 9px; margin-top: 4px;
+  }
+  .ench-effect strong { color: var(--text); }
+
+  /* ── Anvil tip block ── */
+  .anvil-tip {
+    display: flex; align-items: flex-start; gap: 16px;
+    background: rgba(255,215,0,0.05);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin: 20px 0;
+  }
+  .anvil-tip-icon { font-size: 2rem; flex-shrink: 0; }
+  .anvil-tip-body { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+  .anvil-tip-body strong { color: var(--tier-erinium); }
+</style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+<div class="floating-particles" aria-hidden="true">
+  <span class="star" style="left:8%;top:12%;animation-delay:0s;animation-duration:3.8s;"></span>
+  <span class="star" style="left:22%;top:6%;animation-delay:1.3s;animation-duration:4.2s;"></span>
+  <span class="star" style="left:55%;top:18%;animation-delay:0.7s;animation-duration:3.5s;"></span>
+  <span class="star" style="left:75%;top:10%;animation-delay:2.0s;animation-duration:4.8s;"></span>
+  <span class="star" style="left:88%;top:28%;animation-delay:0.9s;animation-duration:3.2s;"></span>
+  <span class="star" style="left:42%;top:62%;animation-delay:1.6s;animation-duration:4.0s;"></span>
+  <span class="star" style="left:65%;top:74%;animation-delay:0.3s;animation-duration:5.0s;"></span>
+  <span class="star" style="left:5%;top:80%;animation-delay:2.4s;animation-duration:3.7s;"></span>
+  <span class="star" style="left:92%;top:60%;animation-delay:1.1s;animation-duration:4.4s;"></span>
+</div>
+
+<div class="page-wrapper">
+  <main class="main" id="main-content">
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="hero hero-ench" aria-labelledby="hero-title">
+      <span class="hero-badge">📖 Enchantements</span>
+      <h1 id="hero-title">Les Enchantements</h1>
+      <p>Rends tes armes, armures et outils encore plus puissants grâce aux enchantements ! Il y a 4 tiers de bibliothèques, des enchantements vanilla boostés, et 40 enchantements custom rien que pour toi.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">📚 <strong>4 tiers</strong> de bibliothèques</div>
+        <div class="hero-meta-item">⬆️ <strong>11 vanilla</strong> boostés</div>
+        <div class="hero-meta-item">✨ <strong>40 enchantements</strong> custom</div>
+        <div class="hero-meta-item">🏆 <strong>Niveau 90</strong> maximum</div>
+      </div>
+    </section>
+
+    <!-- ─── Content ───────────────────────────────────────────── -->
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a>
+          <span class="breadcrumb-sep" aria-hidden="true">›</span>
+          <span class="breadcrumb-current">Enchantements</span>
+        </nav>
+
+        <!-- ══════════════════════════════════════════════════════
+             COMMENT ÇA MARCHE
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-how">
+          <h2 id="section-how">Comment ça marche ?</h2>
+          <p>Pour enchanter, tu utilises une <strong>table d'enchantement</strong> entourée de <strong>16 bibliothèques</strong>. Les bibliothèques doivent toutes être du <strong>même type</strong> — on ne peut pas mélanger ! Dispose-les en carré autour de la table (bordure 5×5, même hauteur).</p>
+
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="how-step-num">1</div>
+              <div class="how-step-title">Place la table</div>
+              <div class="how-step-desc">Pose ta table d'enchantement au milieu d'un espace 5×5.</div>
+            </div>
+            <div class="how-step">
+              <div class="how-step-num">2</div>
+              <div class="how-step-title">Entoure-la de 16 bibliothèques</div>
+              <div class="how-step-desc">Toutes les cases du bord (16 blocs), toutes du <strong>même type</strong>. Pas de mélange !</div>
+            </div>
+            <div class="how-step">
+              <div class="how-step-num">3</div>
+              <div class="how-step-title">Choisis ton slot</div>
+              <div class="how-step-desc">3 slots disponibles — plus c'est à droite, plus c'est puissant (et plus ça coûte d'XP).</div>
+            </div>
+            <div class="how-step">
+              <div class="how-step-num">4</div>
+              <div class="how-step-title">Paie avec du Lapis</div>
+              <div class="how-step-desc">Chaque slot coûte 1, 2 ou 3 Lapis-Lazuli en plus de l'XP.</div>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:8px;">
+            <p style="margin:0;font-size:0.88rem;">
+              💡 <strong>Astuce :</strong> Si tu mélanges différents types de bibliothèques, la table prend seulement les bibliothèques <em>Vanilla</em> en compte. Mets toujours le même type pour profiter du meilleur tier !
+            </p>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             RECETTES DES BIBLIOTHÈQUES
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-craft">
+          <h2 id="section-craft">Comment fabriquer les bibliothèques ?</h2>
+          <p>Chaque bibliothèque custom se fabrique dans une <strong>table de craft 3×3</strong>. Les ingrédients changent selon le tier — plus c'est puissant, plus c'est rare !</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:24px 0;">
+
+            <!-- ── Bibliothèque de Valterite ── -->
+            <div style="background:var(--glass-bg);border:1px solid rgba(74,224,224,0.30);border-top:3px solid #4AE0E0;border-radius:var(--radius-xl);padding:20px;">
+              <div style="font-size:1rem;font-weight:900;color:#4AE0E0;margin-bottom:4px;">Bibliothèque de Valterite</div>
+              <div style="font-size:0.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:16px;">Tier 2 · Cyan</div>
+
+              <!-- Grille de craft 3x3 -->
+              <div style="display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:3px;margin:0 auto 16px;width:fit-content;">
+                <!-- Rangée 1 : V V V -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <!-- Rangée 2 : B B B -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.25);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.25);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.25);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <!-- Rangée 3 : V V V -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(74,224,224,0.45);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                  <img src="/img/items/valterite_ingot.png" alt="Lingot de Valterite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+              </div>
+
+              <!-- Légende -->
+              <div style="font-size:0.74rem;color:var(--text-faint);line-height:1.8;margin-bottom:14px;">
+                <span style="color:#4AE0E0;font-weight:700;">V</span> = Lingot de Valterite &nbsp;·&nbsp; <span style="color:var(--text-muted);font-weight:700;">📖</span> = Livre
+              </div>
+
+              <!-- Résultat -->
+              <div style="display:flex;align-items:center;gap:10px;background:rgba(74,224,224,0.06);border:1px solid rgba(74,224,224,0.20);border-radius:8px;padding:10px 12px;">
+                <img src="/img/blocks/valterite_bookshelf_side.png" alt="Bibliothèque Valterite" style="width:36px;height:36px;image-rendering:pixelated;" />
+                <div>
+                  <div style="font-size:0.82rem;font-weight:800;color:#4AE0E0;">× 1 Bibliothèque de Valterite</div>
+                  <div style="font-size:0.70rem;color:var(--text-faint);">Résultat du craft</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Bibliothèque d'Aetherite ── -->
+            <div style="background:var(--glass-bg);border:1px solid rgba(155,89,182,0.30);border-top:3px solid #9B59B6;border-radius:var(--radius-xl);padding:20px;">
+              <div style="font-size:1rem;font-weight:900;color:#9B59B6;margin-bottom:4px;">Bibliothèque d'Aetherite</div>
+              <div style="font-size:0.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:16px;">Tier 3 · Violet</div>
+
+              <div style="display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:3px;margin:0 auto 16px;width:fit-content;">
+                <!-- Rangée 1 : A A A -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <!-- Rangée 2 : B D B -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">💎</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <!-- Rangée 3 : A A A -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(155,89,182,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/aetherite_crystal.png" alt="Cristal d'Aetherite" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+              </div>
+
+              <div style="font-size:0.74rem;color:var(--text-faint);line-height:1.8;margin-bottom:14px;">
+                <span style="color:#9B59B6;font-weight:700;">A</span> = Cristal d'Aetherite &nbsp;·&nbsp; <span style="color:var(--text-muted);font-weight:700;">📖</span> = Livre &nbsp;·&nbsp; <span style="color:#5DADE2;font-weight:700;">💎</span> = Diamant
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.20);border-radius:8px;padding:10px 12px;">
+                <img src="/img/blocks/aetherite_bookshelf_side.png" alt="Bibliothèque Aetherite" style="width:36px;height:36px;image-rendering:pixelated;" />
+                <div>
+                  <div style="font-size:0.82rem;font-weight:800;color:#9B59B6;">× 1 Bibliothèque d'Aetherite</div>
+                  <div style="font-size:0.70rem;color:var(--text-faint);">Résultat du craft</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Bibliothèque d'Erinium ── -->
+            <div style="background:var(--glass-bg);border:1px solid rgba(255,215,0,0.30);border-top:3px solid #FFD700;border-radius:var(--radius-xl);padding:20px;">
+              <div style="font-size:1rem;font-weight:900;color:#FFD700;margin-bottom:4px;">Bibliothèque d'Erinium</div>
+              <div style="font-size:0.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:16px;">Tier 4 · Or · Le plus rare</div>
+
+              <div style="display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:3px;margin:0 auto 16px;width:fit-content;">
+                <!-- Rangée 1 : E E E -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <!-- Rangée 2 : B N B -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">⭐</div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">📖</div>
+                <!-- Rangée 3 : E E E -->
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+                <div style="width:48px;height:48px;background:#0d1117;border:1px solid rgba(255,215,0,0.50);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                  <img src="/img/items/erinium_fragment.png" alt="Fragment d'Erinium" style="width:32px;height:32px;image-rendering:pixelated;" />
+                </div>
+              </div>
+
+              <div style="font-size:0.74rem;color:var(--text-faint);line-height:1.8;margin-bottom:14px;">
+                <span style="color:#FFD700;font-weight:700;">E</span> = Fragment d'Erinium &nbsp;·&nbsp; <span style="color:var(--text-muted);font-weight:700;">📖</span> = Livre &nbsp;·&nbsp; <span style="color:#FFD700;font-weight:700;">⭐</span> = Étoile du Nether
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.20);border-radius:8px;padding:10px 12px;">
+                <img src="/img/blocks/erinium_bookshelf_side.png" alt="Bibliothèque Erinium" style="width:36px;height:36px;image-rendering:pixelated;" />
+                <div>
+                  <div style="font-size:0.82rem;font-weight:800;color:#FFD700;">× 1 Bibliothèque d'Erinium</div>
+                  <div style="font-size:0.70rem;color:var(--text-faint);">Résultat du craft</div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /recipe grid -->
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             PLACEMENT DES BIBLIOTHÈQUES
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-placement">
+          <h2 id="section-placement">Comment placer les bibliothèques ?</h2>
+          <p>Les bibliothèques doivent être placées en <strong>carré de 5×5</strong> autour de la table d'enchantement. Il doit y avoir <strong>exactement 1 bloc d'air</strong> entre la table et chaque bibliothèque. Le contour doit être <strong>complet (16/16)</strong>, sinon la table ne fonctionne pas au bon tier !</p>
+
+          <!-- Règles en bullet points -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0 24px;">
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+              <span style="font-size:1.1rem;">🏗️</span><br/><strong style="color:var(--text);">Place la table au centre</strong><br/>La table d'enchantement doit être au milieu du carré 5×5.
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+              <span style="font-size:1.1rem;">💨</span><br/><strong style="color:var(--text);">Laisse 1 bloc d'air</strong><br/>Les 8 cases autour de la table doivent être vides — pas de bloc entre la table et les bibliothèques !
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+              <span style="font-size:1.1rem;">📚</span><br/><strong style="color:var(--text);">16 bibliothèques sur le contour</strong><br/>Toutes les 16 cases du bord extérieur doivent être occupées par une bibliothèque.
+            </div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+              <span style="font-size:1.1rem;">⚠️</span><br/><strong style="color:var(--text);">Même type obligatoire</strong><br/>Toutes les bibliothèques doivent être du même tier. Pas de mélange !
+            </div>
+          </div>
+
+          <!-- Diagrammes de placement side by side -->
+          <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:16px;">Voici à quoi doit ressembler le placement vu de dessus, pour chaque tier :</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin:0 0 24px;">
+
+            <!-- Diagramme Vanilla -->
+            <div style="text-align:center;">
+              <div style="font-size:0.80rem;font-weight:800;color:#A0A0B0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Vanilla</div>
+              <div style="display:grid;grid-template-columns:repeat(5,40px);grid-template-rows:repeat(5,40px);gap:2px;margin:0 auto;width:fit-content;">
+                <!-- Rangée 1 : B B B B B -->
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <!-- Rangée 2 : B . . . B -->
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <!-- Rangée 3 : B . T . B -->
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(107,47,160,0.40);border:1px solid rgba(107,47,160,0.80);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;" title="Table d'enchantement">✨</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <!-- Rangée 4 : B . . . B -->
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <!-- Rangée 5 : B B B B B -->
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+                <div style="width:40px;height:40px;background:rgba(160,160,176,0.18);border:1px solid rgba(160,160,176,0.40);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#A0A0B0;">📚</div>
+              </div>
+              <div style="font-size:0.70rem;color:var(--text-faint);margin-top:8px;">Niv. max : <strong style="color:#A0A0B0;">30</strong></div>
+            </div>
+
+            <!-- Diagramme Valterite -->
+            <div style="text-align:center;">
+              <div style="font-size:0.80rem;font-weight:800;color:#4AE0E0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Valterite</div>
+              <div style="display:grid;grid-template-columns:repeat(5,40px);grid-template-rows:repeat(5,40px);gap:2px;margin:0 auto;width:fit-content;">
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(107,47,160,0.40);border:1px solid rgba(107,47,160,0.80);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;">✨</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/valterite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+              </div>
+              <div style="font-size:0.70rem;color:var(--text-faint);margin-top:8px;">Niv. max : <strong style="color:#4AE0E0;">50</strong></div>
+            </div>
+
+            <!-- Diagramme Aetherite -->
+            <div style="text-align:center;">
+              <div style="font-size:0.80rem;font-weight:800;color:#9B59B6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Aetherite</div>
+              <div style="display:grid;grid-template-columns:repeat(5,40px);grid-template-rows:repeat(5,40px);gap:2px;margin:0 auto;width:fit-content;">
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(107,47,160,0.40);border:1px solid rgba(107,47,160,0.80);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;">✨</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(155,89,182,0.18);border:1px solid rgba(155,89,182,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/aetherite_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+              </div>
+              <div style="font-size:0.70rem;color:var(--text-faint);margin-top:8px;">Niv. max : <strong style="color:#9B59B6;">70</strong></div>
+            </div>
+
+            <!-- Diagramme Erinium -->
+            <div style="text-align:center;">
+              <div style="font-size:0.80rem;font-weight:800;color:#FFD700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Erinium</div>
+              <div style="display:grid;grid-template-columns:repeat(5,40px);grid-template-rows:repeat(5,40px);gap:2px;margin:0 auto;width:fit-content;">
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(107,47,160,0.40);border:1px solid rgba(107,47,160,0.80);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;">✨</div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:4px;"></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+                <div style="width:40px;height:40px;background:rgba(255,215,0,0.18);border:1px solid rgba(255,215,0,0.55);border-radius:4px;display:flex;align-items:center;justify-content:center;"><img src="/img/blocks/erinium_bookshelf_side.png" style="width:28px;height:28px;image-rendering:pixelated;" alt=""/></div>
+              </div>
+              <div style="font-size:0.70rem;color:var(--text-faint);margin-top:8px;">Niv. max : <strong style="color:#FFD700;">90</strong></div>
+            </div>
+
+          </div><!-- /placement diagrams -->
+
+          <!-- Légende des diagrammes -->
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:0.78rem;color:var(--text-faint);background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:12px 18px;">
+            <span><span style="display:inline-block;width:16px;height:16px;background:rgba(107,47,160,0.40);border:1px solid rgba(107,47,160,0.80);border-radius:3px;vertical-align:middle;margin-right:5px;">✨</span> Table d'enchantement</span>
+            <span><span style="display:inline-block;width:16px;height:16px;background:rgba(74,224,224,0.18);border:1px solid rgba(74,224,224,0.50);border-radius:3px;vertical-align:middle;margin-right:5px;"></span> Bibliothèque (ton tier)</span>
+            <span><span style="display:inline-block;width:16px;height:16px;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.05);border-radius:3px;vertical-align:middle;margin-right:5px;"></span> Bloc d'air obligatoire</span>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-violet" style="margin-top:16px;margin-bottom:8px;">
+            <p style="margin:0;font-size:0.88rem;">
+              ⚠️ <strong>Attention :</strong> Si une case du contour est vide ou occupée par un autre bloc, la table ne comptera que les bibliothèques valides — tu n'auras pas le bon tier ! Toujours vérifier que les <strong>16/16 cases sont occupées</strong>.
+            </p>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             LES 4 TIERS
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-tiers">
+          <h2 id="section-tiers">Les 4 tiers de bibliothèques</h2>
+          <p>Plus la bibliothèque est rare, plus le niveau d'enchantement maximum est élevé et plus tu obtiens d'enchantements par slot !</p>
+
+          <div class="tier-grid">
+
+            <!-- VANILLA -->
+            <div class="tier-card tier-vanilla">
+              <div class="tier-header">
+                <img class="tier-bookshelf-img" src="/img/blocks/valterite_bookshelf_side.png" alt="Bibliothèque Vanilla" style="opacity:0.5;filter:grayscale(1);" />
+                <div>
+                  <div class="tier-name">Vanilla</div>
+                  <div class="tier-subtitle">La bibliothèque de base</div>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Niveau max</span>
+                <span class="tier-stat-value">30</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Enchants min/slot</span>
+                <span class="tier-stat-value">1 / 2 / 3</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût XP</span>
+                <div class="xp-pills">
+                  <span class="xp-pill">10 niv</span>
+                  <span class="xp-pill">20 niv</span>
+                  <span class="xp-pill">30 niv</span>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût Lapis</span>
+                <span class="tier-stat-value">1 / 2 / 3</span>
+              </div>
+            </div>
+
+            <!-- VALTERITE -->
+            <div class="tier-card tier-valterite">
+              <div class="tier-header">
+                <img class="tier-bookshelf-img" src="/img/blocks/valterite_bookshelf_side.png" alt="Bibliothèque Valterite" />
+                <div>
+                  <div class="tier-name">Valterite</div>
+                  <div class="tier-subtitle">Bibliothèque en Valterite</div>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Niveau max</span>
+                <span class="tier-stat-value">50</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Enchants min/slot</span>
+                <span class="tier-stat-value">3 / 4 / 5</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût XP</span>
+                <div class="xp-pills">
+                  <span class="xp-pill">30 niv</span>
+                  <span class="xp-pill">40 niv</span>
+                  <span class="xp-pill">50 niv</span>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût Lapis</span>
+                <span class="tier-stat-value">1 / 2 / 3</span>
+              </div>
+            </div>
+
+            <!-- AETHERITE -->
+            <div class="tier-card tier-aetherite">
+              <div class="tier-header">
+                <img class="tier-bookshelf-img" src="/img/blocks/aetherite_bookshelf_side.png" alt="Bibliothèque Aetherite" />
+                <div>
+                  <div class="tier-name">Aetherite</div>
+                  <div class="tier-subtitle">Bibliothèque en Aetherite</div>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Niveau max</span>
+                <span class="tier-stat-value">70</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Enchants min/slot</span>
+                <span class="tier-stat-value">5 / 6 / 7</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût XP</span>
+                <div class="xp-pills">
+                  <span class="xp-pill">50 niv</span>
+                  <span class="xp-pill">60 niv</span>
+                  <span class="xp-pill">70 niv</span>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût Lapis</span>
+                <span class="tier-stat-value">1 / 2 / 3</span>
+              </div>
+            </div>
+
+            <!-- ERINIUM -->
+            <div class="tier-card tier-erinium">
+              <div class="tier-header">
+                <img class="tier-bookshelf-img" src="/img/blocks/erinium_bookshelf_side.png" alt="Bibliothèque Erinium" />
+                <div>
+                  <div class="tier-name">Erinium</div>
+                  <div class="tier-subtitle">Le tier ultime ✨</div>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Niveau max</span>
+                <span class="tier-stat-value">90</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Enchants min/slot</span>
+                <span class="tier-stat-value">7 / 8 / 9</span>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût XP</span>
+                <div class="xp-pills">
+                  <span class="xp-pill">70 niv</span>
+                  <span class="xp-pill">80 niv</span>
+                  <span class="xp-pill">90 niv</span>
+                </div>
+              </div>
+              <div class="tier-stat-row">
+                <span class="tier-stat-label">Coût Lapis</span>
+                <span class="tier-stat-value">1 / 2 / 3</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             VANILLA BOOSTÉS
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-vanilla-boosted">
+          <h2 id="section-vanilla-boosted">Enchantements Vanilla boostés</h2>
+          <p>Grâce à l'enclume et à des livres d'enchantement spéciaux, tu peux dépasser les limites normales de Minecraft ! Voici les enchantements dont le niveau maximum a été augmenté :</p>
+
+          <table class="boosted-table">
+            <thead>
+              <tr>
+                <th>Enchantement</th>
+                <th>Max Vanilla</th>
+                <th>Nouveau Max</th>
+                <th>Compatible avec</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tranchant (Sharpness)</td>
+                <td><span class="old-max">V</span></td>
+                <td><span class="new-max">VII <span class="roman-badge">+2</span></span></td>
+                <td>Épée, Hache</td>
+              </tr>
+              <tr>
+                <td>Protection</td>
+                <td><span class="old-max">IV</span></td>
+                <td><span class="new-max">VI <span class="roman-badge">+2</span></span></td>
+                <td>Armure</td>
+              </tr>
+              <tr>
+                <td>Puissance (Arc)</td>
+                <td><span class="old-max">V</span></td>
+                <td><span class="new-max">VII <span class="roman-badge">+2</span></span></td>
+                <td>Arc</td>
+              </tr>
+              <tr>
+                <td>Efficacité</td>
+                <td><span class="old-max">V</span></td>
+                <td><span class="new-max">VII <span class="roman-badge">+2</span></span></td>
+                <td>Outils</td>
+              </tr>
+              <tr>
+                <td>Solidité (Unbreaking)</td>
+                <td><span class="old-max">III</span></td>
+                <td><span class="new-max">V <span class="roman-badge">+2</span></span></td>
+                <td>Tout</td>
+              </tr>
+              <tr>
+                <td>Butin (Looting)</td>
+                <td><span class="old-max">III</span></td>
+                <td><span class="new-max">V <span class="roman-badge">+2</span></span></td>
+                <td>Épée</td>
+              </tr>
+              <tr>
+                <td>Fortune</td>
+                <td><span class="old-max">III</span></td>
+                <td><span class="new-max">V <span class="roman-badge">+2</span></span></td>
+                <td>Outils</td>
+              </tr>
+              <tr>
+                <td>Aspect Ardent (Fire Aspect)</td>
+                <td><span class="old-max">II</span></td>
+                <td><span class="new-max">IV <span class="roman-badge">+2</span></span></td>
+                <td>Épée</td>
+              </tr>
+              <tr>
+                <td>Recul (Knockback)</td>
+                <td><span class="old-max">II</span></td>
+                <td><span class="new-max">IV <span class="roman-badge">+2</span></span></td>
+                <td>Épée</td>
+              </tr>
+              <tr>
+                <td>Épines (Thorns)</td>
+                <td><span class="old-max">III</span></td>
+                <td><span class="new-max">V <span class="roman-badge">+2</span></span></td>
+                <td>Armure</td>
+              </tr>
+              <tr>
+                <td>Chute Amortie (Feather Falling)</td>
+                <td><span class="old-max">IV</span></td>
+                <td><span class="new-max">VI <span class="roman-badge">+2</span></span></td>
+                <td>Bottes</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="anvil-tip">
+            <span class="anvil-tip-icon">⚒️</span>
+            <div class="anvil-tip-body">
+              <strong>Via l'Enclume :</strong> Les niveaux au-delà du maximum vanilla ne peuvent pas être obtenus directement à la table d'enchantement — il faut combiner des <strong>livres d'enchantement</strong> à l'enclume. Par exemple, combine deux livres Tranchant V pour obtenir un livre Tranchant VI, puis à nouveau pour avoir Tranchant VII !
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             ENCHANTEMENTS D'ARMES
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-weapon-ench">
+          <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-divider-text">⚔️ Enchantements d'Armes</div>
+            <div class="section-divider-line"></div>
+          </div>
+          <h2 id="section-weapon-ench">Enchantements d'Armes</h2>
+          <p>Ces enchantements se posent sur les <strong>épées et haches</strong>. Disponibles à partir du niveau 35 minimum.</p>
+
+          <div class="ench-grid">
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Fracture</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💥</span>
+              </div>
+              <div class="ench-effect">
+                Quand tu fais un <strong>coup critique</strong>, une explosion de dégâts touche tous les ennemis proches. Portée : 2/3/4 blocs. Dégâts AoE : 20/30/40% des dégâts de base.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Siphon</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🩸</span>
+              </div>
+              <div class="ench-effect">
+                Vol de vie à chaque frappe — tu récupères <strong>5/8/12%</strong> des dégâts infligés en points de vie. Idéal pour survivre longtemps en mêlée.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Ancrage</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">⚓</span>
+              </div>
+              <div class="ench-effect">
+                Tu es difficile à faire reculer. <strong>−20/−35%</strong> de knockback reçu. En échange, tes propres coups envoient l'ennemi <strong>+15/+25%</strong> plus loin.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Faille</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔓</span>
+              </div>
+              <div class="ench-effect">
+                Chaque coup perce <strong>+3/5/7%</strong> d'armure de la cible (effets cumulatifs, max <strong>15/25/35%</strong> total). Plus tu frappes, plus tu ignores la protection !
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Résonance</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔔</span>
+              </div>
+              <div class="ench-effect">
+                Tu <strong>marques</strong> l'ennemi frappé. Pendant <strong>3/5 secondes</strong>, tes alliés proches infligent <strong>+8/12%</strong> de dégâts à cette cible. Parfait en groupe !
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Volatilité</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 55+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">⚡</span>
+              </div>
+              <div class="ench-effect">
+                Tous les <strong>6e/5e/4e coups</strong>, ta frappe est boostée à <strong>+30/40/50%</strong> de dégâts supplémentaires. Rythme ton attaque pour maximiser les coups chargés !
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Cristallisation</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max I</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 70+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💎</span>
+              </div>
+              <div class="ench-effect">
+                Après <strong>3 kills</strong>, tu obtiens un <strong>bouclier d'absorption de 4 cœurs</strong> (8 PV). Le compteur se remet à zéro à chaque activation.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Hémorragie</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🩹</span>
+              </div>
+              <div class="ench-effect">
+                Tes coups <strong>font saigner</strong> l'ennemi : il subit des dégâts de poison (DoT) pendant plusieurs secondes après chaque frappe. Niveau plus élevé = saignement plus long et plus fort.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Onde de Choc</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 60+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💨</span>
+              </div>
+              <div class="ench-effect">
+                Quand tu <strong>sprintes et frappes</strong>, tu envoies une onde dans un cône devant toi qui repousse les ennemis proches. Parfait pour briser les groupes ou se dégager.
+              </div>
+            </div>
+
+            <div class="ench-card ench-weapon">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Voracité</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🍖</span>
+              </div>
+              <div class="ench-effect">
+                Chaque kill restaure de la <strong>nourriture</strong>. Tu n'as plus à t'inquiéter de la faim pendant les longues batailles — tue et mange !
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             ENCHANTEMENTS D'ARMURE
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-armor-ench">
+          <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-divider-text">🛡️ Enchantements d'Armure</div>
+            <div class="section-divider-line"></div>
+          </div>
+          <h2 id="section-armor-ench">Enchantements d'Armure</h2>
+          <p>Ces enchantements se posent sur les <strong>pièces d'armure</strong>. Disponibles à partir du niveau 35 minimum.</p>
+
+          <div class="ench-grid">
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Fortification</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🏰</span>
+              </div>
+              <div class="ench-effect">
+                Quand tu restes <strong>immobile</strong>, tu reçois <strong>−8/15/22%</strong> de dégâts. Parfait pour tenir une position et encaisser les attaquants.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Déflexion</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔄</span>
+              </div>
+              <div class="ench-effect">
+                <strong>8/15/22% de chance</strong> d'esquiver automatiquement les <strong>projectiles</strong> (flèches, boules de feu…). Très utile contre les archers ennemis.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Résilience</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">❤️‍🔥</span>
+              </div>
+              <div class="ench-effect">
+                Quand tu passes sous <strong>25% de PV</strong>, une réduction d'urgence s'active automatiquement. Tu prends beaucoup moins de dégâts dans les moments critiques — la survie de secours ultime.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Dispersion</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🌫️</span>
+              </div>
+              <div class="ench-effect">
+                Quand un ennemi te frappe en mêlée, il a une <strong>chance d'être aveuglé</strong> pendant quelques secondes. Il ne voit plus rien — parfait pour retourner la situation !
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Écho Défensif</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max I</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 55+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💫</span>
+              </div>
+              <div class="ench-effect">
+                Si tu reçois <strong>3 coups en moins de 2 secondes</strong>, une onde de knockback radiale repousse tous les ennemis autour de toi. Se déclenche automatiquement — parfait contre les rusheurs.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Régén Cristalline</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🌿</span>
+              </div>
+              <div class="ench-effect">
+                Régénération passive de PV quand tu es dans le <strong>territoire de ta faction</strong>. La base et ses alentours deviennent une zone de soin naturel.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Carapace</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🐢</span>
+              </div>
+              <div class="ench-effect">
+                Réduit les <strong>dégâts d'explosion</strong> de <strong>−15/25/35%</strong>. Indispensable pour survivre aux flèches explosives ennemies et aux pièges.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Absorption Impact</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 60+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🧲</span>
+              </div>
+              <div class="ench-effect">
+                <strong>Chance d'annuler complètement</strong> le knockback d'un coup. Tu restes en place même sous les frappes les plus violentes — crucial contre les Berserkers.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Vitalité</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">❤️</span>
+              </div>
+              <div class="ench-effect">
+                Augmente ton <strong>maximum de PV</strong> de <strong>+2/4/6</strong> (1/2/3 cœurs supplémentaires). Simple, efficace, sur n'importe quelle pièce d'armure.
+              </div>
+            </div>
+
+            <div class="ench-card ench-armor">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Représailles</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 70+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">⚡</span>
+              </div>
+              <div class="ench-effect">
+                Renvoie <strong>10/18%</strong> des dégâts reçus à l'attaquant. Plus ton ennemi te tape fort, plus il se blesse lui-même !
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             ENCHANTEMENTS D'ARC
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-bow-ench">
+          <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-divider-text">🏹 Enchantements d'Arc</div>
+            <div class="section-divider-line"></div>
+          </div>
+          <h2 id="section-bow-ench">Enchantements d'Arc</h2>
+          <p>Ces enchantements se posent sur les <strong>arcs</strong>. Disponibles à partir du niveau 35 minimum.</p>
+
+          <div class="ench-grid">
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Flèche Traçante</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">✨</span>
+              </div>
+              <div class="ench-effect">
+                La cible touchée est <strong>marquée (Glowing)</strong> pendant <strong>3/6 secondes</strong>. Tu la vois à travers les murs — plus question de perdre un ennemi en fuite !
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Tir Perforant</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🎯</span>
+              </div>
+              <div class="ench-effect">
+                Ta flèche <strong>traverse</strong> <strong>1/2/3 entités</strong> d'affilée avant de s'arrêter. Un seul tir peut blesser plusieurs ennemis alignés — dévastateur en groupe !
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Flèche Explosive</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 60+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💥</span>
+              </div>
+              <div class="ench-effect">
+                Tes flèches <strong>explosent</strong> à l'impact, infligeant des dégâts en zone. Efficace contre les groupes d'ennemis serrés. Niveau II = explosion plus grande et plus forte.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Tir Rapide</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">⚡</span>
+              </div>
+              <div class="ench-effect">
+                Accélère la <strong>vitesse de charge</strong> de l'arc. Tu peux tirer plus vite — idéal pour le PvP 1.8 où la rapidité fait toute la différence.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Flèche Givrante</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">❄️</span>
+              </div>
+              <div class="ench-effect">
+                Les ennemis touchés subissent un effet de <strong>Lenteur</strong>. Ils courent moins vite — parfait pour les empêcher de s'échapper ou de t'approcher.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Volée</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 70+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🪃</span>
+              </div>
+              <div class="ench-effect">
+                Un seul tir lance <strong>1/2 flèches supplémentaires</strong> en éventail autour de la flèche principale. Couvre une large zone — difficile à esquiver pour les ennemis !
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Précision</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔭</span>
+              </div>
+              <div class="ench-effect">
+                Réduit la <strong>gravité des flèches</strong>. Elles volent plus droites et plus loin. Les tirs longue distance deviennent beaucoup plus précis.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Flèche Vampirique</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 55+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🧛</span>
+              </div>
+              <div class="ench-effect">
+                Chaque flèche qui touche te <strong>soigne de 15/25%</strong> des dégâts infligés. Vol de vie à distance — tu te régénères sans jamais t'approcher.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Recul Arc</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💨</span>
+              </div>
+              <div class="ench-effect">
+                Tes flèches envoient l'ennemi en arrière avec <strong>+50/100%</strong> de knockback. Parfait pour contrôler les distances et empêcher les mêlées de t'atteindre.
+              </div>
+            </div>
+
+            <div class="ench-card ench-bow">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Homing</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max I</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 80+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🎯</span>
+              </div>
+              <div class="ench-effect">
+                La flèche <strong>se dirige automatiquement</strong> vers l'entité la plus proche de sa trajectoire. Même les joueurs qui courent ont du mal à l'esquiver !
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             ENCHANTEMENTS D'OUTILS
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-tool-ench">
+          <div class="section-divider">
+            <div class="section-divider-line"></div>
+            <div class="section-divider-text">⛏️ Enchantements d'Outils</div>
+            <div class="section-divider-line"></div>
+          </div>
+          <h2 id="section-tool-ench">Enchantements d'Outils</h2>
+          <p>Ces enchantements se posent sur les <strong>pioches, haches, pelles et faux</strong>. Disponibles à partir du niveau 35 minimum.</p>
+
+          <div class="ench-grid">
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Excavation</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">⛏️</span>
+              </div>
+              <div class="ench-effect">
+                Mine une <strong>zone plus grande</strong> autour du bloc ciblé d'un seul coup. Creuse beaucoup plus vite en surface ou en tunnel — une révolution pour les mineurs !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Auto-Fusion</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max I</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔥</span>
+              </div>
+              <div class="ench-effect">
+                Les minerais que tu mines <strong>tombent directement fondus</strong> (lingots, verre de sable…). Plus besoin de four — tu gagnes du temps et de l'espace !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Magnétisme</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🧲</span>
+              </div>
+              <div class="ench-effect">
+                Les objets au sol dans un rayon de plusieurs blocs sont <strong>attirés automatiquement</strong> vers toi. Plus besoin de courir ramasser — tout vient à toi !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Prospection</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">💰</span>
+              </div>
+              <div class="ench-effect">
+                Les minerais donnent des <strong>drops bonus</strong> en plus des drops normaux de Fortune. Combine les deux pour maximiser tes récoltes de minerais rares !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Vitesse Minière</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 35+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🚀</span>
+              </div>
+              <div class="ench-effect">
+                Augmente la <strong>vitesse de minage</strong> de <strong>+10/20/30%</strong>. En plus de l'Efficacité vanilla, tu creuses à une vitesse folle !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Durabilité Cristalline</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max III</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 50+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🛡️</span>
+              </div>
+              <div class="ench-effect">
+                <strong>15/25/35% de chance</strong> de ne pas consommer de durabilité sur un coup. Ton outil dure bien plus longtemps — idéal pour les outils d'Erinium coûteux.
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Récolte en Masse</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-valterite">Niv 40+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🌾</span>
+              </div>
+              <div class="ench-effect">
+                Récolte d'un coup toutes les cultures <strong>connectées et matures</strong> autour de la première que tu coupes. Un seul clic pour vider tout un champ !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Bûcheron</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-aetherite">Niv 45+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🪓</span>
+              </div>
+              <div class="ench-effect">
+                Coupe tout l'<strong>arbre entier</strong> d'un seul coup de hache. Plus besoin de grimper bloc par bloc — l'arbre s'effondre en une seule frappe !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Pelle Infinie</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max II</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 55+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🪣</span>
+              </div>
+              <div class="ench-effect">
+                Ta pelle creuse une zone de <strong>3×3 / 5×5</strong> blocs autour du bloc ciblé. Creuse des plateformes et tunnels larges en un instant !
+              </div>
+            </div>
+
+            <div class="ench-card ench-tool">
+              <div class="ench-card-header">
+                <div>
+                  <div class="ench-name">Détecteur</div>
+                  <div class="ench-badges">
+                    <span class="ench-badge badge-maxlvl">Max I</span>
+                    <span class="ench-badge badge-tier-erinium">Niv 70+</span>
+                  </div>
+                </div>
+                <span style="font-size:1.5rem;">🔍</span>
+              </div>
+              <div class="ench-effect">
+                Les <strong>minerais proches brillent</strong> à travers les blocs (effet Glowing). Tu vois l'or, le diamant et les minerais d'Erinium sans même les toucher — le rêve du mineur !
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             L'ENCLUME
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-anvil">
+          <h2 id="section-anvil">L'Enclume — Combiner des enchantements</h2>
+          <p>L'enclume te permet de combiner des livres d'enchantement ou des objets enchantés pour aller encore plus loin !</p>
+
+          <div class="anvil-tip">
+            <span class="anvil-tip-icon">⚒️</span>
+            <div class="anvil-tip-body">
+              <strong>Dépasser les limites Vanilla :</strong> Pour atteindre les niveaux boostés (ex : Tranchant VII), tu dois combiner des livres à l'enclume.<br>
+              Exemple : <strong>Tranchant V + Tranchant V</strong> → <strong>Tranchant VI</strong>, puis <strong>Tranchant VI + Tranchant VI</strong> → <strong>Tranchant VII</strong>.<br><br>
+              <strong>Compatibilité :</strong> Les enchantements custom fonctionnent exactement comme les enchantements Vanilla à l'enclume — tu peux les combiner librement avec les enchantements normaux tant qu'ils ne sont pas en conflit.
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin-bottom:40px;">
+            <p style="margin:0;font-size:0.88rem;">
+              💡 <strong>Conseil de pro :</strong> Pour un Siphon III sur ton épée, il faut obtenir des livres Siphon I et les combiner jusqu'au niveau III. Les livres custom s'obtiennent dans les coffres de donjons, via le commerce, ou directement à la table d'enchantement avec les bonnes bibliothèques Erinium !
+            </p>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+             LE LIVRE PARFAIT
+        ══════════════════════════════════════════════════════ -->
+        <section aria-labelledby="section-livre-parfait">
+          <div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-text">Objectif ultime</div><div class="section-divider-line"></div></div>
+          <h2 id="section-livre-parfait">Le Livre Parfait</h2>
+          <p>Avec des bibliothèques Erinium (niveau max 90), tu peux atteindre la combinaison ultime : <strong>10 enchantements sur un seul objet</strong>. Voici les combinaisons idéales pour avoir un équipement de guerrier au sommet.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin:20px 0 16px;">
+
+            <!-- Carte Epée -->
+            <div style="background:var(--glass-bg);border:1px solid rgba(255,215,0,0.45);border-top:3px solid #FFD700;border-radius:var(--radius-xl);padding:24px 22px;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(255,215,0,0.07) 0%,var(--glass-bg) 55%);">
+              <div style="position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.35),transparent);"></div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+                <span style="font-size:1.8rem;">⚔️</span>
+                <div>
+                  <div style="font-size:0.72rem;font-weight:800;color:#FFD700;text-transform:uppercase;letter-spacing:0.10em;">Tier Erinium — Niv. 90</div>
+                  <div style="font-size:1.05rem;font-weight:900;color:var(--text);">Livre Parfait — Epée</div>
+                </div>
+              </div>
+
+              <div style="font-size:0.72rem;font-weight:800;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.10em;margin-bottom:8px;">Enchantements vanilla boostés</div>
+              <ul style="list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:5px;">
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Tranchant (Sharpness) VII</span><span style="font-size:0.72rem;color:var(--text-faint);">Dégâts augmentés</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Solidité (Unbreaking) V</span><span style="font-size:0.72rem;color:var(--text-faint);">Durabilité x6</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Aspect igné (Fire Aspect) IV</span><span style="font-size:0.72rem;color:var(--text-faint);">8s en feu</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Recul (Knockback) IV</span><span style="font-size:0.72rem;color:var(--text-faint);">Recul augmenté</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Butin (Looting) V</span><span style="font-size:0.72rem;color:var(--text-faint);">Plus de drops</span></li>
+              </ul>
+
+              <div style="font-size:0.72rem;font-weight:800;color:#FFD700;text-transform:uppercase;letter-spacing:0.10em;margin-bottom:8px;">Enchantements custom</div>
+              <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:5px;">
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Siphon III</span><span style="font-size:0.72rem;color:var(--text-faint);">12% de vol de vie par coup</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Faille III</span><span style="font-size:0.72rem;color:var(--text-faint);">Ignore 35% d'armure max</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Volatilite III</span><span style="font-size:0.72rem;color:var(--text-faint);">Chaque 4e coup : +50% dégâts</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Hémorragie III</span><span style="font-size:0.72rem;color:var(--text-faint);">DoT 1 coeur/2s pendant 6s</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Voracité II</span><span style="font-size:0.72rem;color:var(--text-faint);">+4 barres faim + 1 saturation/kill</span></li>
+              </ul>
+
+              <div style="border-top:1px solid rgba(255,215,0,0.25);padding-top:12px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.80rem;color:var(--text-muted);">Total</span>
+                <span style="font-size:0.88rem;font-weight:900;color:#FFD700;">10 enchantements</span>
+              </div>
+              <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">Possible au slot 2 avec bibliothèques Erinium — min garanti 9, chance de +1 bonus.</div>
+            </div>
+
+            <!-- Carte Armure -->
+            <div style="background:var(--glass-bg);border:1px solid rgba(255,215,0,0.45);border-top:3px solid #FFD700;border-radius:var(--radius-xl);padding:24px 22px;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(255,215,0,0.07) 0%,var(--glass-bg) 55%);">
+              <div style="position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.35),transparent);"></div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+                <span style="font-size:1.8rem;">🛡️</span>
+                <div>
+                  <div style="font-size:0.72rem;font-weight:800;color:#FFD700;text-transform:uppercase;letter-spacing:0.10em;">Tier Erinium — Niv. 90</div>
+                  <div style="font-size:1.05rem;font-weight:900;color:var(--text);">Livre Parfait — Armure (pièce)</div>
+                </div>
+              </div>
+
+              <div style="font-size:0.72rem;font-weight:800;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.10em;margin-bottom:8px;">Enchantements vanilla boostés</div>
+              <ul style="list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:5px;">
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Protection VI</span><span style="font-size:0.72rem;color:var(--text-faint);">Réduction de dégâts globale</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Solidité (Unbreaking) V</span><span style="font-size:0.72rem;color:var(--text-faint);">Durabilité x6</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Épines (Thorns) V</span><span style="font-size:0.72rem;color:var(--text-faint);">Dégâts réfléchis aux attaquants</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#E0E0E0;"><span>Chute amortie (Feather Falling) VI</span><span style="font-size:0.72rem;color:var(--text-faint);">Bottes uniquement</span></li>
+              </ul>
+
+              <div style="font-size:0.72rem;font-weight:800;color:#FFD700;text-transform:uppercase;letter-spacing:0.10em;margin-bottom:8px;">Enchantements custom</div>
+              <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:5px;">
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Fortification III</span><span style="font-size:0.72rem;color:var(--text-faint);">-22% dégâts quand immobile</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Vitalité III</span><span style="font-size:0.72rem;color:var(--text-faint);">+6 HP max</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Résilience II</span><span style="font-size:0.72rem;color:var(--text-faint);">Réduction d'urgence à 25% HP</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Carapace III</span><span style="font-size:0.72rem;color:var(--text-faint);">-35% dégâts d'explosion</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Régén. Cristalline III</span><span style="font-size:0.72rem;color:var(--text-faint);">Régénération en territoire faction</span></li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:0.84rem;color:#FFD700;"><span>Représailles II</span><span style="font-size:0.72rem;color:var(--text-faint);">Réfléchit 18% des dégâts reçus</span></li>
+              </ul>
+
+              <div style="border-top:1px solid rgba(255,215,0,0.25);padding-top:12px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.80rem;color:var(--text-muted);">Total</span>
+                <span style="font-size:0.88rem;font-weight:900;color:#FFD700;">10 enchantements</span>
+              </div>
+              <div style="font-size:0.72rem;color:var(--text-faint);margin-top:6px;">Possible sur une pièce — min garanti 9 + chance bonus.</div>
+            </div>
+
+          </div><!-- /livre parfait cards -->
+
+          <div class="glass-card glass-card-accent accent-gold" style="margin-bottom:8px;">
+            <p style="margin:0;font-size:0.88rem;">
+              💡 <strong>Attention :</strong> Ces combinaisons ne sont pas garanties en un seul enchantement. Il faudra probablement combiner plusieurs livres à l'enclume — de préférence une <strong>Enclume d'Erinium</strong> pour -50% de coût XP.
+            </p>
+          </div>
+        </section>
+
+      </div><!-- /content-body -->
+    </div><!-- /content -->
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup</span>
+    </footer>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>

@@ -535,14 +535,12 @@ body {
 .content {
   flex: 1;
   padding: 40px 60px 60px;
-  max-width: calc(var(--content-max) + 120px);
   width: 100%;
   animation: fade-in-up 0.5s ease both;
 }
 
 /* When TOC is present, make room */
 .content.has-toc {
-  max-width: calc(var(--content-max) + 340px);
   display: grid;
   grid-template-columns: 1fr 240px;
   grid-template-rows: auto 1fr;
@@ -1447,11 +1445,10 @@ body {
 
 /* ─── Table of Contents ─────────────────────────────────────── */
 .toc {
-  grid-column: 2;
-  grid-row: 1 / -1;
-  position: sticky;
-  top: calc(var(--header-height) + 30px);
-  align-self: start;
+  position: fixed;
+  right: 20px;
+  top: calc(var(--header-height) + 20px);
+  width: 220px;
   background: var(--glass-bg);
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
@@ -1459,8 +1456,15 @@ body {
   border-radius: var(--radius-md);
   padding: 18px;
   font-size: 0.8rem;
-  max-height: calc(100vh - var(--header-height) - 60px);
+  max-height: calc(100vh - var(--header-height) - 40px);
   overflow-y: auto;
+  z-index: 50;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+@media (max-width: 1400px) {
+  .toc { display: none; }
 }
 
 .toc-title {
@@ -1499,14 +1503,17 @@ body {
   border: none;
 }
 
-.toc-list a.active {
+.toc-list a.active,
+.toc-list a.is-active {
   color: var(--accent-secondary);
   background: rgba(var(--accent-secondary-rgb), 0.10);
   font-weight: 600;
 }
 
-.toc-list .toc-h3 { padding-left: 20px; font-size: 0.75rem; }
-.toc-list .toc-h4 { padding-left: 36px; font-size: 0.72rem; }
+.toc-list .toc-h3,
+.toc-list .toc-item--h3 a { padding-left: 20px; font-size: 0.75rem; }
+.toc-list .toc-h4,
+.toc-list .toc-item--h4 a { padding-left: 36px; font-size: 0.72rem; }
 
 /* ─── Tab Navigation ────────────────────────────────────────── */
 .tab-nav {

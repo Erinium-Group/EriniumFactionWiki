@@ -35,6 +35,7 @@ const pages = [
   { route: '/perks',          template: 'perks',          title: 'Perks — EriniumFaction Wiki' },
   { route: '/magic',          template: 'magic',          title: 'Magie — EriniumFaction Wiki' },
   { route: '/spells',         template: 'spells',         title: 'Sorts — EriniumFaction Wiki' },
+  { route: '/enchantments',   template: 'enchantments',   title: 'Enchantements — EriniumFaction Wiki' },
   { route: '/factions',       template: 'factions',       title: 'Factions — EriniumFaction Wiki' },
   { route: '/economy',        template: 'economy',        title: 'Économie — EriniumFaction Wiki' },
   { route: '/mining',         template: 'mining',         title: 'Minage — EriniumFaction Wiki' },

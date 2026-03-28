@@ -216,7 +216,8 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="content has-toc">
+      <div class="content-body">
       <div class="breadcrumb">
         <a href="/index">Accueil</a>
         <span class="breadcrumb-sep">›</span>
@@ -224,7 +225,7 @@
       </div>
 
       <!-- ══════════ VALTERITE ══════════ -->
-      <h2 style="margin-top:32px;">Armures par tier</h2>
+      <h2 id="armures-par-tier" style="margin-top:32px;">Armures par tier</h2>
       <p>Chaque tier d'armure se fabrique avec le matériau du même nom. Plus le tier est élevé, plus la protection est haute et plus tu as de sockets pour les gemmes.</p>
 
       <!-- HEADER VALTERITE -->
@@ -278,7 +279,7 @@
           <div class="set-bonus-icon">🟠</div>
           <div>
             <div class="set-bonus-title">Bonus de set complet (4/4)</div>
-            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+10% de PV maximum</strong>. Si tu as 20 PV de base, tu en auras 22 !</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble active la <strong>régénération passive hors-combat</strong> : tu récupères <strong>+0.5 cœur (1 PV) toutes les 5 secondes</strong> tant que tu n'as pas pris de dégâts depuis 5 secondes.</div>
           </div>
         </div>
       </div>
@@ -334,7 +335,7 @@
           <div class="set-bonus-icon">🔷</div>
           <div>
             <div class="set-bonus-title">Bonus de set complet (4/4)</div>
-            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+8% de dégâts infligés</strong>. Tous tes coups font 8% de plus !</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+10% de vitesse de déplacement</strong> en permanence. Tu te déplaces sensiblement plus vite qu'un joueur sans set complet.</div>
           </div>
         </div>
       </div>
@@ -394,13 +395,13 @@
           <div class="set-bonus-icon">💜</div>
           <div>
             <div class="set-bonus-title">Bonus de set complet (4/4)</div>
-            <div class="set-bonus-text">Porter les 4 pièces ensemble accorde <strong>+15% de gain d'XP</strong>. Parfait pour progresser en RPG plus vite !</div>
+            <div class="set-bonus-text">Porter les 4 pièces ensemble réduit <strong>tous les dégâts reçus de 15%</strong>. Chaque coup encaissé fait 15% de moins — une protection passive majeure en PvP.</div>
           </div>
         </div>
       </div>
 
       <!-- ══════════ TABLEAU RÉCAP ══════════ -->
-      <h2>Comparaison des armures</h2>
+      <h2 id="comparaison">Comparaison des armures</h2>
       <p>Protection totale en portant les 4 pièces du même set :</p>
 
       <table class="cmp-table">
@@ -419,21 +420,21 @@
             <td>20 ✦</td>
             <td>2.0 par pièce</td>
             <td>4 ◈</td>
-            <td>+10% PV max</td>
+            <td>Régén. hors-combat (+0.5 ❤/5s)</td>
           </tr>
           <tr>
             <td class="caeth">Aetherite (T2)</td>
             <td>24 ✦</td>
             <td>2.5 par pièce</td>
             <td>8 ◈◈</td>
-            <td>+8% dégâts infligés</td>
+            <td>+10% vitesse de déplacement</td>
           </tr>
           <tr>
             <td class="cerin">Erinium (T3)</td>
             <td>30 ✦</td>
             <td>3.0 par pièce</td>
             <td>12 ◈◈◈</td>
-            <td>+15% gain XP + effets potion</td>
+            <td>-15% dégâts reçus</td>
           </tr>
         </tbody>
       </table>
@@ -444,7 +445,13 @@
         </p>
       </div>
 
-    </div>
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+    </div><!-- /content -->
 
     <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>

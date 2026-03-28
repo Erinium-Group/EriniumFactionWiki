@@ -304,7 +304,8 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="content has-toc">
+      <div class="content-body">
       <div class="breadcrumb">
         <a href="/index">Accueil</a>
         <span class="breadcrumb-sep">›</span>
@@ -312,11 +313,11 @@
       </div>
 
       <!-- ══════════ C'EST QUOI ══════════ -->
-      <h2 style="margin-top:32px;">C'est quoi une gemme ?</h2>
+      <h2 id="cest-quoi" style="margin-top:32px;">C'est quoi une gemme ?</h2>
       <p>Une gemme est une pierre magique que tu glisses dans un <strong>socket</strong> (emplacement vide) sur une arme ou une armure. Chaque gemme donne un bonus permanent quand elle est sertie. Les armes et armures de tier supérieur ont plus de sockets, donc plus de gemmes possibles.</p>
 
       <!-- ══════════ COMMENT OBTENIR ══════════ -->
-      <h2>Comment obtenir des gemmes ?</h2>
+      <h2 id="obtenir">Comment obtenir des gemmes ?</h2>
       <p>Les gemmes tombent <strong>aleatoirement quand tu mines des minerais</strong>. Plus le minerai est rare, plus la chance est elevee :</p>
 
       <table style="width:100%; border-collapse:collapse; margin:16px 0 20px;">
@@ -378,7 +379,7 @@
       </div>
 
       <!-- ══════════ LES 6 TYPES ══════════ -->
-      <h2>Les 6 types de gemmes</h2>
+      <h2 id="types">Les 6 types de gemmes</h2>
       <p>Chaque type de gemme booste une stat RPG différente et a un effet spécial en combat :</p>
 
       <div class="gems-grid">
@@ -536,7 +537,7 @@
       </div><!-- /gems-grid -->
 
       <!-- ══════════ LES 3 QUALITÉS ══════════ -->
-      <h2>Les 3 qualités</h2>
+      <h2 id="qualites">Les 3 qualités</h2>
       <p>Chaque type de gemme existe en 3 qualités. La qualité détermine combien de stats et de puissance de combat elle donne :</p>
 
       <div class="quality-grid">
@@ -564,7 +565,7 @@
       </div>
 
       <!-- ══════════ COMMENT SERTIR ══════════ -->
-      <h2>Comment sertir une gemme ?</h2>
+      <h2 id="sertir">Comment sertir une gemme ?</h2>
       <p>Pour mettre une gemme dans ton arme ou ton armure, tu as besoin de l'<strong>Enclume de Diamant</strong>. Voici comment faire :</p>
 
       <div class="steps-list">
@@ -626,7 +627,7 @@ B B B</pre>
       </div>
 
       <!-- ══════════ L'EXTRACTEUR ══════════ -->
-      <h2>L'Extracteur d'Erinium</h2>
+      <h2 id="extracteur">L'Extracteur d'Erinium</h2>
       <p>Tu peux retirer une gemme de son socket sans la détruire grâce à l'<strong>Extracteur d'Erinium</strong>. C'est un outil rare mais précieux si tu veux réorganiser tes gemmes.</p>
 
       <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:32px;display:flex;align-items:flex-start;gap:16px;">
@@ -637,7 +638,7 @@ B B B</pre>
       </div>
 
       <!-- ══════════ BONUS DE COMBAT ══════════ -->
-      <h2>Bonus de combat — formules exactes</h2>
+      <h2 id="formules">Bonus de combat — formules exactes</h2>
       <p>Voici exactement comment les gemmes affectent le combat. Les valeurs sont basées sur une gemme <strong>Taillée</strong> (×1.0) :</p>
 
       <table class="formula-table">
@@ -702,7 +703,13 @@ B B B</pre>
         </p>
       </div>
 
-    </div>
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+    </div><!-- /content -->
 
     <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>

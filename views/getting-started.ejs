@@ -206,8 +206,10 @@
     .page-content {
       flex: 1;
       padding: 48px 60px 64px;
-      max-width: 1000px;
       animation: fade-in-up 0.5s ease both;
+    }
+    .page-content .content-body {
+      max-width: 1000px;
     }
 
     /* ── Page hero ─────────────────────────────────────────────── */
@@ -626,12 +628,13 @@
       </div>
     </section>
 
-    <div class="page-content">
+    <div class="page-content content has-toc">
+      <div class="content-body">
 
       <!-- ─── C'EST QUOI ? ───────────────────────────────────────── -->
       <section class="section">
         <p class="section-label">Bienvenue</p>
-        <h2 class="section-title">C'est quoi EriniumFaction ?</h2>
+        <h2 id="cest-quoi" class="section-title">C'est quoi EriniumFaction ?</h2>
 
         <div class="callout">
           <span class="callout-icon">💡</span>
@@ -689,7 +692,7 @@
       <!-- ─── ÉTAPES ─────────────────────────────────────────────── -->
       <section class="section">
         <p class="section-label">Par où commencer</p>
-        <h2 class="section-title">Tes 6 premières étapes</h2>
+        <h2 id="6-etapes" class="section-title">Tes 6 premières étapes</h2>
         <p class="section-desc">Suis ces étapes dans l'ordre pour prendre un bon départ !</p>
 
         <div class="steps-list">
@@ -803,7 +806,7 @@
       <!-- ─── MATÉRIAUX ──────────────────────────────────────────── -->
       <section class="section">
         <p class="section-label">Ressources du serveur</p>
-        <h2 class="section-title">Les 3 matériaux du serveur</h2>
+        <h2 id="materiaux" class="section-title">Les 3 matériaux du serveur</h2>
         <p class="section-desc">
           Il n'y a pas de diamant ni de netherite ici. À la place, 3 matériaux exclusifs
           te permettent de progresser du débutant à l'expert.
@@ -886,7 +889,7 @@
       <!-- ─── COMMANDES UTILES ───────────────────────────────────── -->
       <section class="section" style="margin-bottom:0;">
         <p class="section-label">Aide rapide</p>
-        <h2 class="section-title">Commandes essentielles</h2>
+        <h2 id="commandes" class="section-title">Commandes essentielles</h2>
         <p class="section-desc">Les 6 commandes les plus utiles pour bien démarrer.</p>
 
         <div class="cmd-list">
@@ -921,7 +924,13 @@
         </div>
       </section>
 
-    </div>
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+    </div><!-- /page-content -->
 
     <!-- ─── FOOTER ──────────────────────────────────────────────── -->
     <footer class="site-footer">

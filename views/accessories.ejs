@@ -282,7 +282,8 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="content has-toc">
+      <div class="content-body">
       <div class="breadcrumb">
         <a href="/index">Accueil</a>
         <span class="breadcrumb-sep">›</span>
@@ -290,7 +291,7 @@
       </div>
 
       <!-- ══════════ COMMENT ÉQUIPER ══════════ -->
-      <h2 style="margin-top:32px;">Comment équiper un accessoire ?</h2>
+      <h2 id="equiper" style="margin-top:32px;">Comment équiper un accessoire ?</h2>
       <p>Les accessoires ne vont pas dans ton inventaire normal. Ils ont des emplacements dédiés dans l'interface <strong>Baubles</strong> :</p>
 
       <div class="equip-steps">
@@ -479,7 +480,7 @@
       </div>
 
       <!-- ══════════ BONUS DE SET ══════════ -->
-      <h2>Bonus de Set — Bague + Amulette</h2>
+      <h2 id="bonus-set">Bonus de Set — Bague + Amulette</h2>
       <p>Si tu portes la <strong>bague et l'amulette du même tier en même temps</strong>, tu débloques un bonus de set puissant en plus des effets individuels !</p>
 
       <div class="set-bonus-grid">
@@ -512,7 +513,7 @@
       </div>
 
       <!-- ══════════ TABLEAU RÉCAP ══════════ -->
-      <h2>Récapitulatif</h2>
+      <h2 id="recapitulatif">Récapitulatif</h2>
       <table class="cmp-table">
         <thead>
           <tr>
@@ -568,11 +569,17 @@
 
       <div class="glass-card glass-card-accent accent-gold" style="margin-bottom:40px;">
         <p style="margin:0;font-size:0.9rem;">
-          <strong>Build optimal :</strong> Porte la bague et l'amulette du même tier que ton armure pour maximiser les synergies. Le set Aetherite (bague + amulette + armure complète) donne <strong>+8% dégâts du set bague/amulette</strong> et <strong>+8% dégâts supplémentaires du set armure</strong>, soit +16% total ! Et n'oublie pas les gemmes dans les sockets.
+          <strong>Build optimal :</strong> Porte la bague et l'amulette du même tier que ton armure pour maximiser les synergies. Le set Aetherite (bague + amulette + armure complète) donne <strong>+8% dégâts du set bague/amulette</strong> et <strong>+10% vitesse de déplacement du set armure</strong>. La combinaison idéale pour un guerrier offensif et mobile ! Et n'oublie pas les gemmes dans les sockets.
         </p>
       </div>
 
-    </div>
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+    </div><!-- /content -->
 
     <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>

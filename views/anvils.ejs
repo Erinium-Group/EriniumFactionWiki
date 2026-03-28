@@ -316,7 +316,8 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="content">
+    <div class="content has-toc">
+      <div class="content-body">
       <div class="breadcrumb">
         <a href="/index">Accueil</a>
         <span class="breadcrumb-sep">›</span>
@@ -326,7 +327,7 @@
       <!-- ══════════════════════════════════════════════════════
            INTRODUCTION
            ══════════════════════════════════════════════════════ -->
-      <h2 style="margin-top:32px;">Comment ca marche ?</h2>
+      <h2 id="comment-ca-marche" style="margin-top:32px;">Comment ca marche ?</h2>
       <p>Tu connais l'enclume classique de Minecraft ? Celle qui permet de reparer tes outils, renommer tes items et fusionner des enchantements ? Nos enclumes moddees font exactement la meme chose, mais en mieux :</p>
 
       <ul class="feature-list">
@@ -340,7 +341,7 @@
       <!-- ══════════════════════════════════════════════════════
            TIER 1 — VALTERITE
            ══════════════════════════════════════════════════════ -->
-      <h2>Les 3 Enclumes</h2>
+      <h2 id="les-3-enclumes">Les 3 Enclumes</h2>
       <p>Chaque enclume correspond a un materiau du jeu. Plus le materiau est rare, plus la reduction est forte !</p>
 
       <!-- VALTERITE ANVIL -->
@@ -472,7 +473,7 @@
       </div>
 
       <!-- ══════ COMPARISON TABLE ══════ -->
-      <h2>Comparaison des couts en XP</h2>
+      <h2 id="comparaison">Comparaison des couts en XP</h2>
       <p>Voici des exemples concrets pour voir combien tu economises avec chaque enclume. Le cout affiche est en niveaux d'experience.</p>
 
       <table class="cmp-table">
@@ -509,6 +510,12 @@
         </p>
       </div>
 
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
     </div><!-- /content -->
 
     <!-- FOOTER -->

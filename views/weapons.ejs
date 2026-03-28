@@ -30,6 +30,13 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text);
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: currentColor;
+      background-clip: unset;
     }
     .weapon-type-desc {
       font-size: 0.82rem;
@@ -213,7 +220,8 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="content has-toc">
+      <div class="content-body">
       <div class="breadcrumb">
         <a href="/index">Accueil</a>
         <span class="breadcrumb-sep">›</span>
@@ -229,7 +237,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">⚔️</div>
         <div>
-          <div class="weapon-type-name">Épées</div>
+          <h2 id="epees" class="weapon-type-name">Épées</h2>
           <div class="weapon-type-desc">L'arme principale de tout combattant. Bon équilibre entre dégâts et durabilité.</div>
         </div>
       </div>
@@ -313,7 +321,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">🗡️</div>
         <div>
-          <div class="weapon-type-name">Dagues</div>
+          <h2 id="dagues" class="weapon-type-name">Dagues</h2>
           <div class="weapon-type-desc">Arme rapide et furtive. Moins de dégâts bruts, mais un bonus de backstab si tu attaques par derrière.</div>
         </div>
       </div>
@@ -393,7 +401,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">🔨</div>
         <div>
-          <div class="weapon-type-name">Marteaux de Guerre</div>
+          <h2 id="marteaux" class="weapon-type-name">Marteaux de Guerre</h2>
           <div class="weapon-type-desc">Arme lourde à zone d'effet (AoE). Inflige des dégâts à tous les ennemis proches, mais avec un temps de recharge.</div>
         </div>
       </div>
@@ -494,7 +502,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">🏹</div>
         <div>
-          <div class="weapon-type-name">Arcs</div>
+          <h2 id="arcs" class="weapon-type-name">Arcs</h2>
           <div class="weapon-type-desc">Combat à distance. Chaque tier améliore les dégâts, la vitesse des flèches et la vitesse de chargement.</div>
         </div>
       </div>
@@ -590,7 +598,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">🏹</div>
         <div>
-          <div class="weapon-type-name">Fleches Speciales</div>
+          <h2 id="fleches" class="weapon-type-name">Fleches Speciales</h2>
           <div class="weapon-type-desc">Munitions ameliorees pour les arcs. Chaque type de fleche a un effet unique a l'impact. Stack max : 16 (8 pour explosives).</div>
         </div>
       </div>
@@ -690,7 +698,7 @@
       <div class="weapon-type-header">
         <div class="weapon-type-icon">🪓</div>
         <div>
-          <div class="weapon-type-name">Haches</div>
+          <h2 id="haches" class="weapon-type-name">Haches</h2>
           <div class="weapon-type-desc">Outil polyvalent — peut couper le bois ET combattre. En PvP 1.8, les haches sont moins efficaces que les épées en dégâts bruts.</div>
         </div>
       </div>
@@ -776,7 +784,7 @@
       </div>
 
       <!-- ══════════════ TABLEAU RÉCAP ══════════════ -->
-      <h2 style="margin-top:48px;">Comparaison toutes armes</h2>
+      <h2 id="comparaison" style="margin-top:48px;">Comparaison toutes armes</h2>
       <p>Quel type d'arme choisir selon ton style de jeu ?</p>
 
       <table class="cmp-table">
@@ -834,6 +842,12 @@
         </p>
       </div>
 
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
     </div><!-- /content -->
 
     <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">

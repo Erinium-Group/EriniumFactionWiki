@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les Machines — EriniumFaction Wiki</title>
+  <meta name="description" content="Les machines de faction d'EriniumFaction : tourelles automatiques, detecteurs de mouvement et brouilleur. Stats, recettes et utilisation." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-rgb:    74, 224, 224;
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-rgb:    155, 89, 182;
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-rgb:      255, 215, 0;
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    .item-img { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+    /* ── Machine type section header ── */
+    .machine-type-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 40px 0 20px;
+    }
+    .machine-type-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .machine-type-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .machine-type-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Machine tier card ── */
+    .machine-card {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .machine-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .machine-card:hover { transform: translateY(-2px); }
+    .machine-card.t1:hover { border-color: var(--valterite-border); box-shadow: 0 4px 20px rgba(74,224,224,0.15); }
+    .machine-card.t2:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 20px rgba(155,89,182,0.12); }
+    .machine-card.t3:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 20px rgba(255,215,0,0.18); }
+    .machine-card.t1 { border-left: 3px solid var(--valterite); }
+    .machine-card.t2 { border-left: 3px solid var(--aetherite); }
+    .machine-card.t3 { border-left: 3px solid var(--erinium); }
+    .machine-card.unique { border-left: 3px solid var(--accent-primary); }
+    .machine-card.unique:hover { border-color: rgba(var(--accent-primary-rgb), 0.35); box-shadow: 0 4px 20px rgba(var(--accent-primary-rgb), 0.15); }
+
+    .machine-card-img {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    }
+    .t1 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(74,224,224,0.5)); }
+    .t2 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(155,89,182,0.5)); }
+    .t3 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(255,215,0,0.7)); }
+    .unique .machine-card-img { filter: drop-shadow(0 2px 8px rgba(var(--accent-primary-rgb),0.6)); }
+
+    .machine-card-body { flex: 1; }
+    .machine-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+    .t1 .tier-pill { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .t2 .tier-pill { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .t3 .tier-pill { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+    .unique .tier-pill { background: rgba(var(--accent-primary-rgb),0.14); border: 1px solid rgba(var(--accent-primary-rgb),0.35); color: var(--accent-primary); }
+
+    .machine-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .machine-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 80px;
+    }
+    .machine-stat-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+    }
+    .machine-stat-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .machine-stat-value.red   { color: #FF6B6B; }
+    .machine-stat-value.cyan  { color: var(--accent-secondary); }
+    .machine-stat-value.gold  { color: var(--accent-gold); }
+    .machine-stat-value.green { color: var(--success); }
+    .machine-stat-value.purple { color: var(--aetherite); }
+
+    /* ── Info callout ── */
+    .info-callout {
+      display: flex;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      margin-bottom: 28px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .info-callout.info {
+      background: rgba(52,152,219,0.08);
+      border: 1px solid rgba(52,152,219,0.28);
+    }
+    .info-callout.warn {
+      background: rgba(243,156,18,0.08);
+      border: 1px solid rgba(243,156,18,0.28);
+    }
+    .info-callout.tip {
+      background: rgba(46,204,113,0.08);
+      border: 1px solid rgba(46,204,113,0.28);
+    }
+    .info-callout-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 40px;
+      font-size: 0.83rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .cval  { color: var(--valterite)  !important; }
+    .caeth { color: var(--aetherite) !important; }
+    .cerin { color: var(--erinium)   !important; }
+
+    /* ── Steps list ── */
+    .steps-list {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 28px;
+    }
+    .steps-list li {
+      counter-increment: step;
+      position: relative;
+      padding: 12px 16px 12px 52px;
+      margin-bottom: 8px;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .steps-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(var(--accent-primary-rgb), 0.15);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.30);
+      color: var(--accent-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 26px;
+      text-align: center;
+    }
+    .steps-list li strong { color: var(--text); }
+
+    /* ── Craft grid ── */
+    .craft-section {
+      margin-bottom: 36px;
+    }
+    .craft-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .craft-grid-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+    }
+    .craft-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 4px;
+    }
+    .craft-slot {
+      width: 52px;
+      height: 52px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .craft-slot img {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+    }
+    .craft-slot .slot-label {
+      font-size: 0.52rem;
+      color: var(--text-faint);
+      text-align: center;
+      line-height: 1.15;
+      padding: 2px;
+    }
+    .craft-arrow {
+      font-size: 1.6rem;
+      color: var(--text-faint);
+    }
+    .craft-result {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .craft-result img {
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 2px 8px rgba(255,215,0,0.4));
+    }
+    .craft-result-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-particles">
+    <div class="star" style="top:8%;left:20%;animation-delay:0s"></div>
+    <div class="star" style="top:35%;left:75%;animation-delay:1.2s"></div>
+    <div class="star" style="top:70%;left:45%;animation-delay:0.6s"></div>
+    <div class="star" style="top:85%;left:10%;animation-delay:2s"></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar wiki-sidebar" id="wiki-sidebar"></nav>
+  <header class="site-header" id="wiki-header"></header>
+
+  <div class="main">
+    <section class="hero" style="background:linear-gradient(135deg,rgba(52,152,219,0.13) 0%,rgba(46,204,113,0.07) 50%,transparent 100%);">
+      <div class="hero-badge">Machines de Faction</div>
+      <h1>Les Machines</h1>
+      <p>Protege ta base avec des tourelles automatiques, surveille tes frontieres avec des detecteurs de mouvement, et neutralise les defenses ennemies avec le brouilleur !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item"><strong>3 types de tourelles</strong></span>
+        <span class="hero-meta-item"><strong>3 types de detecteurs</strong></span>
+        <span class="hero-meta-item"><strong>1 brouilleur</strong></span>
+      </div>
+    </section>
+
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">&rsaquo;</span>
+          <span class="breadcrumb-current">Machines</span>
+        </nav>
+
+        <!-- ══════════════ TOURELLES ══════════════ -->
+        <section id="tourelles">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F52B;</div>
+            <div>
+              <div class="machine-type-name">Tourelles</div>
+              <div class="machine-type-desc">Des sentinelles automatiques qui defendent ta base jour et nuit.</div>
+            </div>
+          </div>
+
+          <p>Les tourelles sont des sentinelles automatiques qui tirent des fleches sur les joueurs ennemis qui s'approchent de ta base. Place-les, charge-les en energie RF et en fleches, et elles font le reste !</p>
+
+          <div class="info-callout info" style="margin-top:16px;">
+            <div class="info-callout-icon">&#x1F6E1;&#xFE0F;</div>
+            <div>Les tourelles ne tirent <strong>PAS</strong> sur les membres de ta faction ni sur tes allies. Seuls les ennemis et les joueurs sans faction sont vises.</div>
+          </div>
+
+          <!-- Tourelle Valterite -->
+          <div class="machine-card t1">
+            <img src="img/items/turret_placer_valterite.png" alt="Tourelle de Valterite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Tourelle de Valterite <span class="tier-pill">Tier 1</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Points de vie</span>
+                  <span class="machine-stat-value red">100 HP</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Portee</span>
+                  <span class="machine-stat-value cyan">15 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Degats / fleche</span>
+                  <span class="machine-stat-value red">4.0 (2&#x2764;)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Cadence de tir</span>
+                  <span class="machine-stat-value">40 ticks (2s)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tir</span>
+                  <span class="machine-stat-value gold">50 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">50 000 RF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tourelle Aetherite -->
+          <div class="machine-card t2">
+            <img src="img/items/turret_placer_aetherite.png" alt="Tourelle d'Aetherite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Tourelle d'Aetherite <span class="tier-pill">Tier 2</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Points de vie</span>
+                  <span class="machine-stat-value red">200 HP</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Portee</span>
+                  <span class="machine-stat-value cyan">30 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Degats / fleche</span>
+                  <span class="machine-stat-value red">6.0 (3&#x2764;)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Cadence de tir</span>
+                  <span class="machine-stat-value">25 ticks (1.25s)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tir</span>
+                  <span class="machine-stat-value gold">100 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">100 000 RF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tourelle Erinium -->
+          <div class="machine-card t3">
+            <img src="img/items/turret_placer_erinium.png" alt="Tourelle d'Erinium" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Tourelle d'Erinium <span class="tier-pill">Tier 3</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Points de vie</span>
+                  <span class="machine-stat-value red">400 HP</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Portee</span>
+                  <span class="machine-stat-value cyan">50 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Degats / fleche</span>
+                  <span class="machine-stat-value red">8.0 (4&#x2764;)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Cadence de tir</span>
+                  <span class="machine-stat-value">15 ticks (0.75s)</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tir</span>
+                  <span class="machine-stat-value gold">200 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">200 000 RF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tableau comparatif tourelles -->
+          <h3 id="tourelles-comparaison">Comparaison des tourelles</h3>
+          <table class="cmp-table">
+            <thead>
+              <tr>
+                <th>Stat</th>
+                <th>Valterite</th>
+                <th>Aetherite</th>
+                <th>Erinium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Points de vie</td>
+                <td><span class="cval">100 HP</span></td>
+                <td><span class="caeth">200 HP</span></td>
+                <td><span class="cerin">400 HP</span></td>
+              </tr>
+              <tr>
+                <td>Portee</td>
+                <td><span class="cval">15 blocs</span></td>
+                <td><span class="caeth">30 blocs</span></td>
+                <td><span class="cerin">50 blocs</span></td>
+              </tr>
+              <tr>
+                <td>Degats / fleche</td>
+                <td><span class="cval">4.0 (2&#x2764;)</span></td>
+                <td><span class="caeth">6.0 (3&#x2764;)</span></td>
+                <td><span class="cerin">8.0 (4&#x2764;)</span></td>
+              </tr>
+              <tr>
+                <td>Cadence de tir</td>
+                <td><span class="cval">2s</span></td>
+                <td><span class="caeth">1.25s</span></td>
+                <td><span class="cerin">0.75s</span></td>
+              </tr>
+              <tr>
+                <td>RF / tir</td>
+                <td><span class="cval">50</span></td>
+                <td><span class="caeth">100</span></td>
+                <td><span class="cerin">200</span></td>
+              </tr>
+              <tr>
+                <td>Stockage RF</td>
+                <td><span class="cval">50 000</span></td>
+                <td><span class="caeth">100 000</span></td>
+                <td><span class="cerin">200 000</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Comment utiliser -->
+          <h3 id="tourelles-utilisation">Comment utiliser une tourelle</h3>
+          <p>C'est tres simple, voici les etapes :</p>
+          <ol class="steps-list">
+            <li><strong>Craft</strong> ta tourelle avec la recette (voir plus bas dans la section Recettes).</li>
+            <li><strong>Place-la</strong> avec un clic droit sur le sol. Tu dois etre dans une faction pour pouvoir la poser.</li>
+            <li><strong>Alimente-la</strong> en energie RF. Place un bloc d'energie a cote (une cell, un generateur, un panneau solaire...).</li>
+            <li>Ouvre son <strong>inventaire</strong> avec un clic droit et mets des <strong>fleches</strong> dedans.</li>
+            <li>C'est pret ! La tourelle commence a <strong>tirer automatiquement</strong> sur les ennemis qui s'approchent.</li>
+          </ol>
+
+          <!-- Recuperer / Detruire -->
+          <h3 id="tourelles-recuperer">Recuperer ou detruire une tourelle</h3>
+          <div class="info-callout tip" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x2705;</div>
+            <div>
+              <strong>Recuperer :</strong> Fais <strong>Shift + clic droit</strong> sur ta tourelle pour la recuperer. Seuls les membres de ta faction avec la permission <strong>BUILD</strong> peuvent le faire.
+            </div>
+          </div>
+          <div class="info-callout warn">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>
+              <strong>Destruction par l'ennemi :</strong> Les joueurs ennemis peuvent detruire ta tourelle en la frappant. Quand elle est detruite, elle drop du <strong>scrap</strong> (pepites de fer) et les <strong>fleches restantes</strong>. Les membres de ta faction et tes allies ne peuvent <strong>PAS</strong> l'endommager.
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════════ DETECTEURS ══════════════ -->
+        <section id="detecteurs">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F4E1;</div>
+            <div>
+              <div class="machine-type-name">Detecteurs de Mouvement</div>
+              <div class="machine-type-desc">Surveille les alentours et alerte ta faction quand un ennemi approche.</div>
+            </div>
+          </div>
+
+          <p>Les detecteurs surveillent la zone autour d'eux et t'alertent quand un joueur ennemi s'approche. Ils envoient un message dans le chat de ta faction et peuvent meme envoyer une alerte sur Discord !</p>
+
+          <!-- Detecteur Valterite -->
+          <div class="machine-card t1">
+            <img src="img/blocks/motion_detector.png" alt="Detecteur de Valterite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Detecteur de Valterite <span class="tier-pill">Tier 1</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de detection</span>
+                  <span class="machine-stat-value cyan">10 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Frequence de scan</span>
+                  <span class="machine-stat-value">30s</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tick</span>
+                  <span class="machine-stat-value gold">5 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">50 000 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Mode Furtif</span>
+                  <span class="machine-stat-value red">Non</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detecteur Aetherite -->
+          <div class="machine-card t2">
+            <img src="img/blocks/motion_detector.png" alt="Detecteur d'Aetherite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Detecteur d'Aetherite <span class="tier-pill">Tier 2</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de detection</span>
+                  <span class="machine-stat-value cyan">20 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Frequence de scan</span>
+                  <span class="machine-stat-value">15s</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tick</span>
+                  <span class="machine-stat-value gold">10 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">100 000 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Mode Furtif</span>
+                  <span class="machine-stat-value green">Oui</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detecteur Erinium -->
+          <div class="machine-card t3">
+            <img src="img/blocks/motion_detector.png" alt="Detecteur d'Erinium" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Detecteur d'Erinium <span class="tier-pill">Tier 3</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de detection</span>
+                  <span class="machine-stat-value cyan">30 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Frequence de scan</span>
+                  <span class="machine-stat-value">5s</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">RF / tick</span>
+                  <span class="machine-stat-value gold">20 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Stockage max</span>
+                  <span class="machine-stat-value gold">200 000 RF</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Mode Furtif</span>
+                  <span class="machine-stat-value green">Oui</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-callout tip" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x1F440;</div>
+            <div><strong>Mode Furtif</strong> (Aetherite et Erinium) : le detecteur devient invisible aux ennemis. Pas de particules, pas d'indication visuelle. Ils ne sauront pas qu'ils sont surveilles !</div>
+          </div>
+
+          <!-- Tableau comparatif detecteurs -->
+          <h3 id="detecteurs-comparaison">Comparaison des detecteurs</h3>
+          <table class="cmp-table">
+            <thead>
+              <tr>
+                <th>Stat</th>
+                <th>Valterite</th>
+                <th>Aetherite</th>
+                <th>Erinium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Rayon</td>
+                <td><span class="cval">10 blocs</span></td>
+                <td><span class="caeth">20 blocs</span></td>
+                <td><span class="cerin">30 blocs</span></td>
+              </tr>
+              <tr>
+                <td>Frequence de scan</td>
+                <td><span class="cval">30s</span></td>
+                <td><span class="caeth">15s</span></td>
+                <td><span class="cerin">5s</span></td>
+              </tr>
+              <tr>
+                <td>RF / tick</td>
+                <td><span class="cval">5</span></td>
+                <td><span class="caeth">10</span></td>
+                <td><span class="cerin">20</span></td>
+              </tr>
+              <tr>
+                <td>Stockage RF</td>
+                <td><span class="cval">50 000</span></td>
+                <td><span class="caeth">100 000</span></td>
+                <td><span class="cerin">200 000</span></td>
+              </tr>
+              <tr>
+                <td>Mode Furtif</td>
+                <td><span style="color:#FF6B6B;">Non</span></td>
+                <td><span class="caeth">Oui</span></td>
+                <td><span class="cerin">Oui</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Webhook Discord -->
+          <h3 id="detecteurs-discord">Alertes Discord</h3>
+          <p>Tu peux recevoir les alertes directement sur ton serveur Discord ! Voici comment :</p>
+          <ol class="steps-list">
+            <li>Cree un <strong>webhook</strong> sur ton serveur Discord (dans les parametres d'un salon texte).</li>
+            <li>Copie l'<strong>URL du webhook</strong>.</li>
+            <li>Ouvre le GUI du detecteur avec un <strong>clic droit</strong>.</li>
+            <li>Colle l'URL dans le champ <strong>Webhook Discord</strong> et clique <strong>Sauvegarder</strong>.</li>
+            <li>C'est fait ! Chaque fois qu'un ennemi est detecte, tu recevras un message sur Discord.</li>
+          </ol>
+        </section>
+
+        <!-- ══════════════ BROUILLEUR ══════════════ -->
+        <section id="brouilleur">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F4DF;</div>
+            <div>
+              <div class="machine-type-name">Brouilleur de Tourelle</div>
+              <div class="machine-type-desc">Un outil offensif qui desactive temporairement les tourelles ennemies.</div>
+            </div>
+          </div>
+
+          <p>Le brouilleur est un outil offensif. Il desactive une tourelle ennemie pendant 30 secondes, te laissant le temps de passer ou de la detruire !</p>
+
+          <div class="machine-card unique">
+            <img src="img/items/turret_jammer.png" alt="Brouilleur de Tourelle" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Brouilleur de Tourelle <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree de brouillage</span>
+                  <span class="machine-stat-value cyan">30 secondes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Cooldown</span>
+                  <span class="machine-stat-value">2 minutes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Portee</span>
+                  <span class="machine-stat-value cyan">5 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Utilisations</span>
+                  <span class="machine-stat-value red">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-callout warn" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>Le brouilleur ne fonctionne que sur les tourelles <strong>ennemies</strong>. Tu ne peux pas brouiller les tourelles de ta propre faction ou de tes allies.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ RECETTES ══════════════ -->
+        <section id="recettes">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F9EA;</div>
+            <div>
+              <div class="machine-type-name">Recettes de craft</div>
+              <div class="machine-type-desc">Toutes les recettes pour fabriquer les machines de faction.</div>
+            </div>
+          </div>
+
+          <!-- Tourelles -->
+          <h3 id="recettes-tourelles">Tourelles</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/items/turret_placer_valterite.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Tourelle de Valterite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Fleche</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc de Fer</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/items/turret_placer_valterite.png" alt="Tourelle de Valterite" />
+                <span class="craft-result-name">Tourelle Valterite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/items/turret_placer_aetherite.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Tourelle d'Aetherite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Fleche</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Baton Blaze</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc de Fer</span></div>
+                <div class="craft-slot"><span class="slot-label">Baton Blaze</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/items/turret_placer_aetherite.png" alt="Tourelle d'Aetherite" />
+                <span class="craft-result-name">Tourelle Aetherite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/items/turret_placer_erinium.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Tourelle d'Erinium
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Fleche</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc de Fer</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/items/turret_placer_erinium.png" alt="Tourelle d'Erinium" />
+                <span class="craft-result-name">Tourelle Erinium</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detecteurs -->
+          <h3 id="recettes-detecteurs">Detecteurs</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/motion_detector.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Detecteur de Valterite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Observer</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/motion_detector.png" alt="Detecteur de Valterite" />
+                <span class="craft-result-name">Detecteur Valterite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/motion_detector.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Detecteur d'Aetherite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Observer</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/motion_detector.png" alt="Detecteur d'Aetherite" />
+                <span class="craft-result-name">Detecteur Aetherite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/motion_detector.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Detecteur d'Erinium
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Observer</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/motion_detector.png" alt="Detecteur d'Erinium" />
+                <span class="craft-result-name">Detecteur Erinium</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brouilleur -->
+          <h3 id="recettes-brouilleur">Brouilleur</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/items/turret_jammer.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Brouilleur de Tourelle
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Bloc Redstone</span></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/items/turret_jammer.png" alt="Brouilleur de Tourelle" />
+                <span class="craft-result-name">Brouilleur</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc">
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#tourelles" class="toc-link">Tourelles</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#tourelles-comparaison" class="toc-link">Comparaison</a></li>
+              <li class="toc-item"><a href="#tourelles-utilisation" class="toc-link">Comment utiliser</a></li>
+              <li class="toc-item"><a href="#tourelles-recuperer" class="toc-link">Recuperer / Detruire</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#detecteurs" class="toc-link">Detecteurs de Mouvement</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#detecteurs-comparaison" class="toc-link">Comparaison</a></li>
+              <li class="toc-item"><a href="#detecteurs-discord" class="toc-link">Alertes Discord</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#brouilleur" class="toc-link">Brouilleur de Tourelle</a></li>
+          <li class="toc-item"><a href="#recettes" class="toc-link">Recettes de craft</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#recettes-tourelles" class="toc-link">Tourelles</a></li>
+              <li class="toc-item"><a href="#recettes-detecteurs" class="toc-link">Detecteurs</a></li>
+              <li class="toc-item"><a href="#recettes-brouilleur" class="toc-link">Brouilleur</a></li>
+            </ul>
+          </li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">&copy; 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+  <script src="js/includes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -35,6 +35,7 @@
     '<div class="sidebar-section">' +
       '<div class="sidebar-section-label">Monde</div>' +
       '<a href="factions.html" class="nav-link"><span class="nav-icon">\ud83c\udff0</span><span class="nav-label">Factions</span></a>' +
+      '<a href="machines.html" class="nav-link"><span class="nav-icon">\ud83d\udd27</span><span class="nav-label">Machines</span></a>' +
       '<a href="economy.html" class="nav-link"><span class="nav-icon">\ud83d\udcb0</span><span class="nav-label">\u00c9conomie</span></a>' +
       '<a href="mining.html" class="nav-link"><span class="nav-icon">\u26cf\ufe0f</span><span class="nav-label">Minage</span></a>' +
       '<a href="biomes.html" class="nav-link"><span class="nav-icon">\ud83c\udf3f</span><span class="nav-label">Biomes</span></a>' +

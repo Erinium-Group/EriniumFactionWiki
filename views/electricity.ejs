@@ -1,0 +1,1065 @@
+<%- include('partials/head', { pageTitle: 'Electricite RF — EriniumFaction Wiki' }) %>
+<style>
+    :root {
+      --coal:             #8B8B8B;
+      --coal-rgb:         139, 139, 139;
+      --coal-dark:        rgba(139, 139, 139, 0.12);
+      --coal-border:      rgba(139, 139, 139, 0.35);
+      --valterite:        #4AE0E0;
+      --valterite-rgb:    74, 224, 224;
+      --valterite-dark:   rgba(74, 224, 224, 0.12);
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-rgb:    155, 89, 182;
+      --aetherite-dark:   rgba(155, 89, 182, 0.10);
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-rgb:      255, 215, 0;
+      --erinium-dark:     rgba(255, 215, 0, 0.12);
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+      --solar:            #3A6ACA;
+      --solar-rgb:        58, 106, 202;
+      --solar-dark:       rgba(58, 106, 202, 0.12);
+      --solar-border:     rgba(58, 106, 202, 0.35);
+    }
+
+    .item-img {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* ── Generator / Battery hero cards ── */
+    .energy-card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 32px 36px 28px;
+      margin-bottom: 32px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+    .energy-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    }
+    .energy-card.tc {
+      background: linear-gradient(135deg, rgba(139,139,139,0.13) 0%, var(--glass-bg) 60%);
+      border-color: var(--coal-border);
+    }
+    .energy-card.tv {
+      background: linear-gradient(135deg, rgba(74,224,224,0.13) 0%, var(--glass-bg) 60%);
+      border-color: var(--valterite-border);
+    }
+    .energy-card.ta {
+      background: linear-gradient(135deg, rgba(155,89,182,0.10) 0%, var(--glass-bg) 60%);
+      border-color: var(--aetherite-border);
+    }
+    .energy-card.te {
+      background: linear-gradient(135deg, rgba(255,215,0,0.12) 0%, var(--glass-bg) 60%);
+      border-color: var(--erinium-border);
+    }
+    .energy-card.ts {
+      background: linear-gradient(135deg, rgba(58,106,202,0.12) 0%, var(--glass-bg) 60%);
+      border-color: var(--solar-border);
+    }
+
+    .energy-card-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .energy-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      font-size: 2.4rem;
+      flex-shrink: 0;
+    }
+    .tc .energy-icon { background: var(--coal-dark); border: 1px solid var(--coal-border); }
+    .tv .energy-icon { background: var(--valterite-dark); border: 1px solid var(--valterite-border); }
+    .ta .energy-icon { background: var(--aetherite-dark); border: 1px solid var(--aetherite-border); }
+    .te .energy-icon { background: var(--erinium-dark); border: 1px solid var(--erinium-border); }
+    .ts .energy-icon { background: var(--solar-dark); border: 1px solid var(--solar-border); }
+
+    .energy-card-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .tc .energy-card-title { color: var(--coal); }
+    .tv .energy-card-title { color: var(--valterite); }
+    .ta .energy-card-title { color: var(--aetherite); }
+    .te .energy-card-title {
+      background: linear-gradient(135deg, #D4A017, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .ts .energy-card-title { color: var(--solar); }
+
+    .energy-card-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+    .tc .tier-badge { background: rgba(139,139,139,0.14); border: 1px solid rgba(139,139,139,0.35); color: var(--coal); }
+    .tv .tier-badge { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .ta .tier-badge { background: rgba(155,89,182,0.12); border: 1px solid rgba(155,89,182,0.32); color: var(--aetherite); }
+    .te .tier-badge { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+    .ts .tier-badge { background: rgba(58,106,202,0.14); border: 1px solid rgba(58,106,202,0.35); color: var(--solar); }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .stat-pill strong { color: var(--text); }
+    .stat-icon { font-size: 1rem; }
+
+    /* ── Info blocks ── */
+    .energy-info-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+    }
+    .energy-info-content { flex: 1; }
+    .energy-info-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+    .energy-info-value {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .energy-info-value strong { color: var(--text); }
+
+    /* ── Feature list ── */
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Crafting recipe ── */
+    .recipe-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .recipe-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      margin-bottom: 12px;
+    }
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 52px);
+      gap: 4px;
+      justify-content: center;
+    }
+    .recipe-slot {
+      width: 52px;
+      height: 52px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .recipe-slot img {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+    }
+    .recipe-slot.empty {
+      background: rgba(0,0,0,0.15);
+    }
+    .recipe-slot-label {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.55rem;
+      color: var(--text-faint);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .recipe-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: var(--text-faint);
+      margin: 12px 0;
+    }
+    .recipe-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .recipe-result-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .recipe-text-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      justify-content: center;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .recipe-text-slot {
+      padding: 8px 4px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .recipe-text-slot.empty {
+      background: rgba(0,0,0,0.15);
+      color: var(--text-faint);
+    }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0 40px;
+      font-size: 0.85rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .cmp-coal { color: var(--coal) !important; }
+    .cmp-val { color: var(--valterite) !important; }
+    .cmp-aeth { color: var(--aetherite) !important; }
+    .cmp-erin { color: var(--erinium) !important; }
+    .cmp-solar { color: var(--solar) !important; }
+
+    /* ── Section tag ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(var(--accent-primary-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.25);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--accent-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* ── Face mode diagram ── */
+    .face-modes {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .face-mode-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+    }
+    .face-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .face-dot.input { background: #4AE0E0; }
+    .face-dot.output { background: #E06050; }
+    .face-dot.off { background: #555; }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 28px 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      margin: 20px 0 32px;
+    }
+    .flow-box {
+      padding: 16px 24px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.88rem;
+      min-width: 140px;
+    }
+    .flow-box.gen {
+      background: rgba(74,224,224,0.12);
+      border: 1px solid rgba(74,224,224,0.35);
+      color: var(--valterite);
+    }
+    .flow-box.store {
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.35);
+      color: var(--erinium);
+    }
+    .flow-box.use {
+      background: rgba(155,89,182,0.12);
+      border: 1px solid rgba(155,89,182,0.35);
+      color: var(--aetherite);
+    }
+    .flow-arrow {
+      font-size: 1.6rem;
+      color: var(--text-faint);
+    }
+
+    /* ── Tips grid ── */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 20px 0 40px;
+    }
+    .tip-card {
+      padding: 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+    }
+    .tip-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tip-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .stats-row { flex-direction: column; }
+      .flow-diagram { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+
+  <div class="floating-particles">
+    <div class="star" style="top:10%;left:15%;animation-delay:0s"></div>
+    <div class="star" style="top:30%;left:70%;animation-delay:1s"></div>
+    <div class="star" style="top:65%;left:40%;animation-delay:2s"></div>
+    <div class="star" style="top:80%;left:85%;animation-delay:0.5s"></div>
+    <div class="star" style="top:50%;left:5%;animation-delay:1.5s"></div>
+  </div>
+  <!-- ═══════════════════════ MAIN ═══════════════════════ -->
+  <div class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">⚡ Energie</div>
+      <h1>Electricite RF</h1>
+      <p>Produis de l'energie, stocke-la dans des batteries et alimente tes machines ! Le systeme RF (Redstone Flux) te permet de fabriquer des generateurs et des cellules d'energie pour faire fonctionner tout ton equipement technique.</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">⚡ <strong>5 generateurs</strong></span>
+        <span class="hero-meta-item">🔋 <strong>4 batteries</strong></span>
+        <span class="hero-meta-item">🔌 <strong>Compatible RF</strong></span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content has-toc">
+      <div class="content-body">
+      <div class="breadcrumb">
+        <a href="/index">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Electricite RF</span>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════
+           C'EST QUOI LE RF ?
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="what-is-rf" style="margin-top:32px;">C'est quoi le RF ?</h2>
+      <p>Le <strong>RF</strong> (Redstone Flux) est une unite d'energie utilisee par beaucoup de mods Minecraft. C'est comme de l'electricite : tu la produis avec des <strong>generateurs</strong>, tu la stockes dans des <strong>batteries</strong>, et tes machines la consomment pour fonctionner.</p>
+
+      <ul class="feature-list">
+        <li><span class="feature-icon">⚡</span> <strong>RF/t</strong> veut dire "RF par tick". Il y a 20 ticks par seconde, donc <strong>40 RF/t = 800 RF par seconde</strong>.</li>
+        <li><span class="feature-icon">🔋</span> <strong>Stockage max</strong> = la quantite maximale de RF que le bloc peut contenir a la fois.</li>
+        <li><span class="feature-icon">🔌</span> <strong>Compatible</strong> avec tous les mods qui utilisent le systeme RF (Thermal Expansion, EnderIO, etc.).</li>
+        <li><span class="feature-icon">📦</span> <strong>Automatique</strong> — les generateurs envoient l'energie vers les blocs adjacents tout seuls, pas besoin de cables.</li>
+      </ul>
+
+      <!-- ══════════════════════════════════════════════════════
+           COMMENT L'ENERGIE CIRCULE
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="energy-flow">Comment l'energie circule</h2>
+      <p>Voici le chemin que suit l'energie, du generateur jusqu'a tes machines :</p>
+
+      <div class="flow-diagram">
+        <div class="flow-box gen">⚡ Generateur<br><small style="font-weight:400;opacity:0.8;">Produit du RF</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box store">🔋 Batterie<br><small style="font-weight:400;opacity:0.8;">Stocke le RF</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box use">⚙️ Machine<br><small style="font-weight:400;opacity:0.8;">Consomme du RF</small></div>
+      </div>
+
+      <p>Les generateurs <strong>poussent</strong> automatiquement l'energie vers tous les blocs adjacents (les 6 faces : haut, bas, nord, sud, est, ouest). Pas besoin de cables ! Place simplement un generateur a cote d'une batterie ou d'une machine.</p>
+
+
+      <!-- ══════════════════════════════════════════════════════
+           GENERATEURS
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="generators">Les Generateurs</h2>
+      <p>Les generateurs produisent de l'energie RF a partir de combustibles. Plus le tier est eleve, plus ils sont puissants.</p>
+
+      <!-- COAL GENERATOR -->
+      <div class="energy-card tc">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔥</div>
+          <div>
+            <div class="energy-card-title">Generateur a Charbon <span class="tier-badge">Tier 1</span></div>
+            <div class="energy-card-subtitle">Le generateur de base. Simple, accessible, ideal pour debuter.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">⚡</span> Production : <strong>40 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Stockage : <strong>50 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">⏱️</span> = <strong>800 RF/sec</strong></span>
+        </div>
+
+        <div class="energy-info-row">
+          <div class="energy-info-content">
+            <div class="energy-info-label">Combustible</div>
+            <div class="energy-info-value">Accepte <strong>tous les combustibles du four vanilla</strong> : charbon, planches de bois, seaux de lave, blocs de charbon, etc. La duree depend du combustible (un charbon brule plus longtemps qu'une planche).</div>
+          </div>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Four</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--coal);">Generateur a Charbon</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VALTERITE DYNAMO -->
+      <div class="energy-card tv">
+        <div class="energy-card-header">
+          <div class="energy-icon">🌀</div>
+          <div>
+            <div class="energy-card-title">Dynamo Valterite <span class="tier-badge">Tier 2</span></div>
+            <div class="energy-card-subtitle">Un generateur ameliore a la Valterite. Trois fois plus puissant que le charbon.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">⚡</span> Production : <strong>120 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Stockage : <strong>200 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">⏱️</span> = <strong>2 400 RF/sec</strong></span>
+        </div>
+
+        <div class="energy-info-row">
+          <div class="energy-info-content">
+            <div class="energy-info-label">Combustible</div>
+            <div class="energy-info-value">Accepte <strong>tous les combustibles du four vanilla</strong> + le <strong>Valterite Brut</strong> (valterite_raw). Un morceau de Valterite Brut brule pendant <strong>3 200 ticks</strong> (2 minutes 40 secondes), ce qui produit <strong>384 000 RF</strong> au total !</div>
+          </div>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Four</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Valterite</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--valterite);">Dynamo Valterite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AETHERITE REACTOR -->
+      <div class="energy-card ta">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔮</div>
+          <div>
+            <div class="energy-card-title">Reacteur Aetherite <span class="tier-badge">Tier 3</span></div>
+            <div class="energy-card-subtitle">Un reacteur puissant alimente par des cristaux d'Aetherite. Pour le mid-game.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">⚡</span> Production : <strong>400 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Stockage : <strong>1 000 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">⏱️</span> = <strong>8 000 RF/sec</strong></span>
+        </div>
+
+        <div class="energy-info-row">
+          <div class="energy-info-content">
+            <div class="energy-info-label">Combustible</div>
+            <div class="energy-info-value">Accepte <strong>uniquement les Cristaux d'Aetherite</strong>. Un cristal brule pendant <strong>6 400 ticks</strong> (5 minutes 20 secondes), ce qui produit <strong>2 560 000 RF</strong> au total.</div>
+          </div>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Diamant</div>
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Diamant</div>
+            <div class="recipe-text-slot">Nether Star</div>
+            <div class="recipe-text-slot">Diamant</div>
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Diamant</div>
+            <div class="recipe-text-slot">Aetherite</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--aetherite);">Reacteur Aetherite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERINIUM CORE -->
+      <div class="energy-card te">
+        <div class="energy-card-header">
+          <div class="energy-icon">💛</div>
+          <div>
+            <div class="energy-card-title">Noyau d'Erinium <span class="tier-badge">Tier 4</span></div>
+            <div class="energy-card-subtitle">Le generateur ultime. Une puissance inegalee pour les bases les plus avancees.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">⚡</span> Production : <strong>1 200 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Stockage : <strong>5 000 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">⏱️</span> = <strong>24 000 RF/sec</strong></span>
+        </div>
+
+        <div class="energy-info-row">
+          <div class="energy-info-content">
+            <div class="energy-info-label">Combustible</div>
+            <div class="energy-info-value">Accepte <strong>uniquement les Fragments d'Erinium</strong>. Un fragment brule pendant <strong>12 800 ticks</strong> (10 minutes 40 secondes), ce qui produit <strong>15 360 000 RF</strong> au total. C'est enorme !</div>
+          </div>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Diamant</div>
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Diamant</div>
+            <div class="recipe-text-slot">Nether Star</div>
+            <div class="recipe-text-slot">Bloc Diamant</div>
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Diamant</div>
+            <div class="recipe-text-slot">Erinium</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--erinium);">Noyau d'Erinium</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════════════════════
+           PANNEAU SOLAIRE
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="solar-panel">Panneau Solaire</h2>
+      <p>Le panneau solaire est un generateur special : il n'a pas besoin de combustible ! Il utilise la lumiere du soleil.</p>
+
+      <div class="energy-card ts">
+        <div class="energy-card-header">
+          <div class="energy-icon">☀️</div>
+          <div>
+            <div class="energy-card-title">Panneau Solaire <span class="tier-badge">Passif</span></div>
+            <div class="energy-card-subtitle">Pas de combustible necessaire. Gratuit, ecologique, mais dependant de la meteo.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">☀️</span> Beau temps : <strong>20 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🌧️</span> Pluie : <strong>5 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🌙</span> Nuit : <strong>0 RF/t</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Stockage : <strong>10 000 RF</strong></span>
+        </div>
+
+        <div class="energy-info-row">
+          <div class="energy-info-content">
+            <div class="energy-info-label">Conditions</div>
+            <div class="energy-info-value">Le panneau doit voir le ciel (pas de bloc au-dessus). Il produit <strong>20 RF/t par beau temps de jour</strong>, tombe a <strong>5 RF/t sous la pluie</strong>, et <strong>0 la nuit</strong>. Ideal en complement d'un autre generateur.</div>
+          </div>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Verre</div>
+            <div class="recipe-text-slot">Verre</div>
+            <div class="recipe-text-slot">Verre</div>
+            <div class="recipe-text-slot">Detecteur solaire</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Detecteur solaire</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Fer</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--solar);">Panneau Solaire</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════════════════════
+           BATTERIES
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="batteries">Les Batteries (Cellules d'Energie)</h2>
+      <p>Les batteries stockent l'energie produite par tes generateurs. Elles sont essentielles pour garder une reserve de RF et alimenter tes machines en continu, meme quand le generateur n'a plus de combustible.</p>
+
+      <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:24px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Configuration des faces :</strong> Chaque batterie a 6 faces (haut, bas, nord, sud, est, ouest). Tu peux configurer chaque face dans 3 modes en cliquant dessus :
+        </p>
+        <div class="face-modes" style="margin-top:12px;">
+          <div class="face-mode-item"><div class="face-dot input"></div> <strong>ENTREE</strong> — la batterie recoit de l'energie par cette face</div>
+          <div class="face-mode-item"><div class="face-dot output"></div> <strong>SORTIE</strong> — la batterie envoie de l'energie par cette face</div>
+          <div class="face-mode-item"><div class="face-dot off"></div> <strong>OFF</strong> — cette face est desactivee, rien ne passe</div>
+        </div>
+        <p style="margin:12px 0 0;font-size:0.82rem;color:var(--text-muted);">Par defaut, toutes les faces sont en mode ENTREE. Pense a passer au moins une face en SORTIE pour que la batterie puisse alimenter tes machines !</p>
+      </div>
+
+      <!-- IRON CELL -->
+      <div class="energy-card tc">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔋</div>
+          <div>
+            <div class="energy-card-title">Cellule de Fer <span class="tier-badge">Tier 1</span></div>
+            <div class="energy-card-subtitle">La batterie de base. Petite capacite, mais facile a fabriquer.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Capacite : <strong>100 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔄</span> Transfert max : <strong>80 RF/t</strong></span>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Verre</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Fer</div>
+            <div class="recipe-text-slot">Redstone</div>
+            <div class="recipe-text-slot">Fer</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--coal);">Cellule de Fer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VALTERITE CELL -->
+      <div class="energy-card tv">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔋</div>
+          <div>
+            <div class="energy-card-title">Cellule de Valterite <span class="tier-badge">Tier 2</span></div>
+            <div class="energy-card-subtitle">Plus de capacite et un transfert bien plus rapide.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Capacite : <strong>500 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔄</span> Transfert max : <strong>200 RF/t</strong></span>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Verre</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Valterite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Valterite</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--valterite);">Cellule de Valterite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AETHERITE CELL -->
+      <div class="energy-card ta">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔋</div>
+          <div>
+            <div class="energy-card-title">Cellule d'Aetherite <span class="tier-badge">Tier 3</span></div>
+            <div class="energy-card-subtitle">Une batterie haute capacite pour les bases gourmandes en energie.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Capacite : <strong>2 000 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔄</span> Transfert max : <strong>500 RF/t</strong></span>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Diamant</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Aetherite</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Aetherite</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--aetherite);">Cellule d'Aetherite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERINIUM CELL -->
+      <div class="energy-card te">
+        <div class="energy-card-header">
+          <div class="energy-icon">🔋</div>
+          <div>
+            <div class="energy-card-title">Cellule d'Erinium <span class="tier-badge">Tier 4</span></div>
+            <div class="energy-card-subtitle">La batterie ultime. Capacite colossale de 10 millions de RF.</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <span class="stat-pill"><span class="stat-icon">🔋</span> Capacite : <strong>10 000 000 RF</strong></span>
+          <span class="stat-pill"><span class="stat-icon">🔄</span> Transfert max : <strong>1 200 RF/t</strong></span>
+        </div>
+
+        <div class="recipe-box">
+          <div class="recipe-title">Recette de craft</div>
+          <div class="recipe-text-grid">
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Nether Star</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Erinium</div>
+            <div class="recipe-text-slot">Bloc Redstone</div>
+            <div class="recipe-text-slot">Erinium</div>
+          </div>
+          <div class="recipe-arrow">⬇</div>
+          <div class="recipe-result">
+            <span class="recipe-result-name" style="color:var(--erinium);">Cellule d'Erinium</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════════════════════
+           TABLEAUX COMPARATIFS
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="comparison">Tableaux comparatifs</h2>
+
+      <h3>Generateurs</h3>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Generateur</th>
+            <th>Tier</th>
+            <th>RF/t</th>
+            <th>RF/sec</th>
+            <th>Stockage</th>
+            <th>Combustible</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cmp-coal">Generateur a Charbon</td>
+            <td>1</td>
+            <td>40</td>
+            <td>800</td>
+            <td>50 000</td>
+            <td>Combustibles four</td>
+          </tr>
+          <tr>
+            <td class="cmp-solar">Panneau Solaire</td>
+            <td>-</td>
+            <td>20 / 5 / 0</td>
+            <td>400 / 100 / 0</td>
+            <td>10 000</td>
+            <td>Soleil (gratuit)</td>
+          </tr>
+          <tr>
+            <td class="cmp-val">Dynamo Valterite</td>
+            <td>2</td>
+            <td>120</td>
+            <td>2 400</td>
+            <td>200 000</td>
+            <td>Four + Valterite Brut</td>
+          </tr>
+          <tr>
+            <td class="cmp-aeth">Reacteur Aetherite</td>
+            <td>3</td>
+            <td>400</td>
+            <td>8 000</td>
+            <td>1 000 000</td>
+            <td>Cristal d'Aetherite</td>
+          </tr>
+          <tr>
+            <td class="cmp-erin">Noyau d'Erinium</td>
+            <td>4</td>
+            <td>1 200</td>
+            <td>24 000</td>
+            <td>5 000 000</td>
+            <td>Fragment d'Erinium</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Batteries</h3>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Batterie</th>
+            <th>Tier</th>
+            <th>Capacite</th>
+            <th>Transfert max (RF/t)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cmp-coal">Cellule de Fer</td>
+            <td>1</td>
+            <td>100 000 RF</td>
+            <td>80</td>
+          </tr>
+          <tr>
+            <td class="cmp-val">Cellule de Valterite</td>
+            <td>2</td>
+            <td>500 000 RF</td>
+            <td>200</td>
+          </tr>
+          <tr>
+            <td class="cmp-aeth">Cellule d'Aetherite</td>
+            <td>3</td>
+            <td>2 000 000 RF</td>
+            <td>500</td>
+          </tr>
+          <tr>
+            <td class="cmp-erin">Cellule d'Erinium</td>
+            <td>4</td>
+            <td>10 000 000 RF</td>
+            <td>1 200</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <!-- ══════════════════════════════════════════════════════
+           CONSEILS
+           ══════════════════════════════════════════════════════ -->
+      <h2 id="tips">Conseils pour bien demarrer</h2>
+
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-card-title">🏁 Debut de partie</div>
+          <p>Commence par un <strong>Generateur a Charbon</strong> et une <strong>Cellule de Fer</strong>. Ca ne coute que du fer, de la redstone, du verre et un four. Place le generateur a cote de la cellule et mets du charbon dedans.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-card-title">☀️ Energie gratuite</div>
+          <p>Ajoute des <strong>Panneaux Solaires</strong> sur le toit de ta base ! Ils ne produisent pas beaucoup, mais c'est gratuit. Combine-les avec une batterie pour stocker l'energie de la journee.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-card-title">🔄 Configuration des faces</div>
+          <p>N'oublie pas de configurer les faces de tes batteries ! Par defaut tout est en ENTREE. Mets au moins une face en SORTIE pour que l'energie puisse sortir vers tes machines.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-card-title">📈 Progression</div>
+          <p>Monte les tiers progressivement : <strong>Fer → Valterite → Aetherite → Erinium</strong>. Chaque tier est beaucoup plus puissant que le precedent. Un Noyau d'Erinium produit 30 fois plus qu'un Generateur a Charbon !</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-card-title">🔌 Pas de cables</div>
+          <p>Les generateurs et batteries envoient l'energie automatiquement vers les blocs adjacents. Place-les simplement les uns a cote des autres, pas besoin de cables ou de tuyaux !</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-card-title">⚡ Valterite Brut = super fuel</div>
+          <p>Dans la Dynamo Valterite, un seul morceau de <strong>Valterite Brut</strong> produit <strong>384 000 RF</strong>. C'est bien plus efficace que le charbon. Garde ta Valterite Brute pour les dynamos !</p>
+        </div>
+      </div>
+
+      <div class="glass-card glass-card-accent accent-violet" style="margin-bottom:40px;">
+        <p style="margin:0;font-size:0.9rem;">
+          <strong>Rappel :</strong> Le systeme RF est compatible avec les autres mods qui utilisent le Redstone Flux. Si tu as d'autres mods d'energie installes, leurs machines peuvent se connecter a tes generateurs et batteries EriniumFaction !
+        </p>
+      </div>
+
+      </div><!-- /content-body -->
+
+      <aside class="toc" aria-label="Table des matières">
+        <div class="toc-title">Sur cette page</div>
+        <div data-toc></div>
+      </aside>
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <footer class="footer" style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">© 2026 EriniumGroup — Minecraft 1.12.2</span>
+      <div style="display:flex;gap:16px;">
+        <a href="/index" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Accueil</a>
+        <a href="/materials" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Materiaux</a>
+        <a href="/enchantments" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Enchantements</a>
+        <a href="/weapons" style="font-size:0.78rem;color:var(--text-faint);text-decoration:none;">Armes</a>
+      </div>
+    </footer>
+  </div><!-- /main -->
+
+<%- include('partials/footer') %>

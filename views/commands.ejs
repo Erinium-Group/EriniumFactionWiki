@@ -291,6 +291,7 @@
           <a href="#rpg" class="jump-link">⚔️ RPG</a>
           <a href="#magie" class="jump-link">✨ Magie</a>
           <a href="#economie" class="jump-link">💰 Économie</a>
+          <a href="#mail" class="jump-link">📬 Mail</a>
           <a href="#chat" class="jump-link">💬 Chat</a>
           <a href="#minage" class="jump-link">⛏️ Minage</a>
           <a href="#teleportation" class="jump-link">🌀 Téléportation</a>
@@ -752,6 +753,79 @@
               </tbody>
             </table>
             <div class="cmd-no-results" id="no-results-economie">Aucune commande ne correspond à votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
+             MAIL
+             ══════════════════════════════════════════════════ -->
+        <section id="mail" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">📬</span>
+            <h2>Mail <code style="font-size:0.7em;background:rgba(var(--accent-primary-rgb),0.12);color:#B06EDE;border-radius:6px;padding:2px 10px;vertical-align:middle;">/mail /mailadmin</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">📨</span>
+            <div class="section-intro-text">
+              Systeme de messagerie asynchrone du serveur. Recevez des items, de l'argent et des messages meme hors ligne.
+              Utilisez la touche <strong>N</strong> ou <code>/mail</code> pour ouvrir votre boite mail.
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table" id="table-mail">
+              <thead>
+                <tr>
+                  <th style="width:40%">Commande</th>
+                  <th style="width:25%">Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/mail</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Ouvrir la boite mail</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin send &lt;joueur&gt; &lt;message&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.send</span></td>
+                  <td>Envoyer un mail admin avec l'item tenu en main (ou message seul si main vide)</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin senditem &lt;joueur&gt; &lt;item&gt; &lt;quantite&gt; [message]</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.send</span></td>
+                  <td>Envoyer un item specifique par nom de registre</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin sendmoney &lt;joueur&gt; &lt;dollars&gt; &lt;eris&gt; [message]</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.send</span></td>
+                  <td>Envoyer de l'argent (dollars + Eris) via mail</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin list &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.list</span></td>
+                  <td>Lister tous les mails d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin delete &lt;joueur&gt; &lt;mailId&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.delete</span></td>
+                  <td>Supprimer un mail specifique</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin clear &lt;joueur&gt;</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.clear</span></td>
+                  <td>Supprimer tous les mails d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>/mailadmin cleanup</code></td>
+                  <td><span class="badge badge-orange">eriniumfaction.mail.admin.cleanup</span></td>
+                  <td>Forcer le nettoyage des mails expires maintenant</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-mail">Aucune commande ne correspond a votre recherche.</div>
           </div>
         </section>
 
@@ -1355,6 +1429,26 @@
                 <tr>
                   <td><code>minage.admin</code></td>
                   <td>Administration du monde de minage — forcer les resets, éditer le spawn</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.mail.admin.send</code></td>
+                  <td>Envoyer des mails admin (items, argent, messages) aux joueurs</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.mail.admin.list</code></td>
+                  <td>Consulter les mails d'un joueur via commande admin</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.mail.admin.delete</code></td>
+                  <td>Supprimer un mail specifique d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.mail.admin.clear</code></td>
+                  <td>Supprimer tous les mails d'un joueur</td>
+                </tr>
+                <tr>
+                  <td><code>eriniumfaction.mail.admin.cleanup</code></td>
+                  <td>Forcer le nettoyage des mails expires</td>
                 </tr>
               </tbody>
             </table>

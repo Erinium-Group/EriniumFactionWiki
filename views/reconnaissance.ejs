@@ -1,0 +1,1060 @@
+<%- include('partials/head', { pageTitle: 'Reconnaissance — EriniumFaction Wiki' }) %>
+<style>
+    :root {
+      --valterite:        #4AE0E0;
+      --valterite-rgb:    74, 224, 224;
+      --valterite-border: rgba(74, 224, 224, 0.35);
+      --aetherite:        #9B59B6;
+      --aetherite-rgb:    155, 89, 182;
+      --aetherite-border: rgba(155, 89, 182, 0.32);
+      --erinium:          #FFD700;
+      --erinium-rgb:      255, 215, 0;
+      --erinium-border:   rgba(255, 215, 0, 0.35);
+    }
+
+    .item-img { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+    /* ── Machine type section header ── */
+    .machine-type-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 40px 0 20px;
+    }
+    .machine-type-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .machine-type-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .machine-type-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Machine tier card ── */
+    .machine-card {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .machine-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    }
+    .machine-card:hover { transform: translateY(-2px); }
+    .machine-card.t1:hover { border-color: var(--valterite-border); box-shadow: 0 4px 20px rgba(74,224,224,0.15); }
+    .machine-card.t2:hover { border-color: var(--aetherite-border); box-shadow: 0 4px 20px rgba(155,89,182,0.12); }
+    .machine-card.t3:hover { border-color: var(--erinium-border);   box-shadow: 0 4px 20px rgba(255,215,0,0.18); }
+    .machine-card.t1 { border-left: 3px solid var(--valterite); }
+    .machine-card.t2 { border-left: 3px solid var(--aetherite); }
+    .machine-card.t3 { border-left: 3px solid var(--erinium); }
+    .machine-card.unique { border-left: 3px solid var(--accent-primary); }
+    .machine-card.unique:hover { border-color: rgba(var(--accent-primary-rgb), 0.35); box-shadow: 0 4px 20px rgba(var(--accent-primary-rgb), 0.15); }
+
+    .machine-card-img {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    }
+    .t1 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(74,224,224,0.5)); }
+    .t2 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(155,89,182,0.5)); }
+    .t3 .machine-card-img { filter: drop-shadow(0 2px 8px rgba(255,215,0,0.7)); }
+    .unique .machine-card-img { filter: drop-shadow(0 2px 8px rgba(var(--accent-primary-rgb),0.6)); }
+
+    .machine-card-body { flex: 1; }
+    .machine-card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+    .t1 .tier-pill { background: rgba(74,224,224,0.14); border: 1px solid rgba(74,224,224,0.35); color: var(--valterite); }
+    .t2 .tier-pill { background: rgba(155,89,182,0.12);  border: 1px solid rgba(155,89,182,0.32);  color: var(--aetherite); }
+    .t3 .tier-pill { background: rgba(255,215,0,0.14); border: 1px solid rgba(255,215,0,0.35); color: var(--erinium); }
+    .unique .tier-pill { background: rgba(var(--accent-primary-rgb),0.14); border: 1px solid rgba(var(--accent-primary-rgb),0.35); color: var(--accent-primary); }
+
+    .machine-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .machine-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 80px;
+    }
+    .machine-stat-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+    }
+    .machine-stat-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .machine-stat-value.red   { color: #FF6B6B; }
+    .machine-stat-value.cyan  { color: var(--accent-secondary); }
+    .machine-stat-value.gold  { color: var(--accent-gold); }
+    .machine-stat-value.green { color: var(--success); }
+    .machine-stat-value.purple { color: var(--aetherite); }
+
+    /* ── Info callout ── */
+    .info-callout {
+      display: flex;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      margin-bottom: 28px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .info-callout.info {
+      background: rgba(52,152,219,0.08);
+      border: 1px solid rgba(52,152,219,0.28);
+    }
+    .info-callout.warn {
+      background: rgba(243,156,18,0.08);
+      border: 1px solid rgba(243,156,18,0.28);
+    }
+    .info-callout.tip {
+      background: rgba(46,204,113,0.08);
+      border: 1px solid rgba(46,204,113,0.28);
+    }
+    .info-callout-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    /* ── Comparison table ── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 40px;
+      font-size: 0.83rem;
+    }
+    .cmp-table th, .cmp-table td {
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cmp-table th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      background: var(--glass-bg);
+    }
+    .cmp-table td { color: var(--text-muted); }
+    .cmp-table td:first-child { font-weight: 600; color: var(--text); }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .cval  { color: var(--valterite)  !important; }
+    .caeth { color: var(--aetherite) !important; }
+    .cerin { color: var(--erinium)   !important; }
+
+    /* ── Steps list ── */
+    .steps-list {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 28px;
+    }
+    .steps-list li {
+      counter-increment: step;
+      position: relative;
+      padding: 12px 16px 12px 52px;
+      margin-bottom: 8px;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .steps-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(var(--accent-primary-rgb), 0.15);
+      border: 1px solid rgba(var(--accent-primary-rgb), 0.30);
+      color: var(--accent-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 26px;
+      text-align: center;
+    }
+    .steps-list li strong { color: var(--text); }
+
+    /* ── Craft grid ── */
+    .craft-section {
+      margin-bottom: 36px;
+    }
+    .craft-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .craft-grid-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+    }
+    .craft-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 4px;
+    }
+    .craft-slot {
+      width: 52px;
+      height: 52px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .craft-slot img {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+    }
+    .craft-slot .slot-label {
+      font-size: 0.52rem;
+      color: var(--text-faint);
+      text-align: center;
+      line-height: 1.15;
+      padding: 2px;
+    }
+    .craft-arrow {
+      font-size: 1.6rem;
+      color: var(--text-faint);
+    }
+    .craft-result {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .craft-result img {
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 2px 8px rgba(255,215,0,0.4));
+    }
+    .craft-result-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ── Density badges ── */
+    .density-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 10px;
+      border-radius: 100px;
+    }
+    .density-badge.low {
+      background: rgba(46,204,113,0.14);
+      border: 1px solid rgba(46,204,113,0.35);
+      color: var(--success);
+    }
+    .density-badge.medium {
+      background: rgba(243,156,18,0.14);
+      border: 1px solid rgba(243,156,18,0.35);
+      color: #F39C12;
+    }
+    .density-badge.high {
+      background: rgba(231,76,60,0.14);
+      border: 1px solid rgba(231,76,60,0.35);
+      color: #E74C3C;
+    }
+
+    /* ── Density cards row ── */
+    .density-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 16px 0 28px;
+    }
+    .density-card {
+      flex: 1;
+      min-width: 160px;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      text-align: center;
+    }
+    .density-card-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      margin-bottom: 6px;
+    }
+    .density-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .density-card-range {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="floating-particles" aria-hidden="true"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<%- include('partials/sidebar', { currentPage: currentPage }) %>
+<%- include('partials/header') %>
+
+<div class="main">
+    <section class="hero" style="background:linear-gradient(135deg,rgba(231,76,60,0.13) 0%,rgba(155,89,182,0.07) 50%,transparent 100%);">
+      <div class="hero-badge">Espionnage de Faction</div>
+      <h1>Reconnaissance de Base</h1>
+      <p>Localise les bases ennemies cachees grace a des stations de scan, trompe les scanners adverses avec des leurres, et explore le terrain avec des outils portatifs !</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item"><strong>3 tiers de Finder Station</strong></span>
+        <span class="hero-meta-item"><strong>1 Cave Block</strong></span>
+        <span class="hero-meta-item"><strong>1 Decoy Station</strong></span>
+        <span class="hero-meta-item"><strong>2 outils portatifs</strong></span>
+      </div>
+    </section>
+
+    <div class="content has-toc">
+      <div class="content-body">
+
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+          <a href="index.html">Accueil</a>
+          <span class="breadcrumb-sep">&rsaquo;</span>
+          <span class="breadcrumb-current">Reconnaissance</span>
+        </nav>
+
+        <!-- ══════════════ FINDER STATION ══════════════ -->
+        <section id="finder-station">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F4E1;</div>
+            <div>
+              <div class="machine-type-name">Finder Station</div>
+              <div class="machine-type-desc">Scanne les alentours pour detecter les bases ennemies cachees.</div>
+            </div>
+          </div>
+
+          <p>La Finder Station est une machine qui scanne une large zone autour d'elle pour trouver des bases ennemies. Elle detecte les <strong>TileEntities</strong> (coffres, fours, enchanteurs, etc.) qui ne sont pas dans un territoire claim. Si plusieurs TileEntities sont proches les unes des autres, elle les regroupe en un <strong>cluster</strong> : c'est probablement une base !</p>
+
+          <div class="info-callout info" style="margin-top:16px;">
+            <div class="info-callout-icon">&#x1F6E1;&#xFE0F;</div>
+            <div>La Finder Station <strong>ignore</strong> les chunks qui sont claim par une faction. Elle ne detecte que les bases qui ne sont pas encore protegees. Si un ennemi a claim son territoire, tu ne le trouveras pas avec cette machine.</div>
+          </div>
+
+          <div class="info-callout warn">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>Lancer un scan n'est <strong>pas discret</strong> ! Tous les joueurs en ligne de la faction ciblee recoivent une <strong>alerte</strong> les prevenant qu'un scan est en cours dans leur zone. Avec une station Erinium (Tier 3), l'alerte <strong>revele meme ta position</strong> au lieu de simplement signaler le scan.</div>
+          </div>
+
+          <!-- Finder Station Valterite -->
+          <div class="machine-card t1">
+            <img src="img/blocks/finder_station_front_valterite.png" alt="Finder Station de Valterite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Finder Station de Valterite <span class="tier-pill">Tier 1</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durabilite</span>
+                  <span class="machine-stat-value red">25 utilisations</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de scan</span>
+                  <span class="machine-stat-value cyan">800 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree du scan</span>
+                  <span class="machine-stat-value">30 secondes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Precision</span>
+                  <span class="machine-stat-value red">&plusmn;500 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Faux clusters</span>
+                  <span class="machine-stat-value red">3</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Detection leurres</span>
+                  <span class="machine-stat-value red">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finder Station Aetherite -->
+          <div class="machine-card t2">
+            <img src="img/blocks/finder_station_front_aetherite.png" alt="Finder Station d'Aetherite" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Finder Station d'Aetherite <span class="tier-pill">Tier 2</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durabilite</span>
+                  <span class="machine-stat-value red">10 utilisations</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de scan</span>
+                  <span class="machine-stat-value cyan">500 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree du scan</span>
+                  <span class="machine-stat-value">90 secondes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Precision</span>
+                  <span class="machine-stat-value purple">&plusmn;200 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Faux clusters</span>
+                  <span class="machine-stat-value purple">2</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Detection leurres</span>
+                  <span class="machine-stat-value purple">30%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finder Station Erinium -->
+          <div class="machine-card t3">
+            <img src="img/blocks/finder_station_front_erinium.png" alt="Finder Station d'Erinium" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Finder Station d'Erinium <span class="tier-pill">Tier 3</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durabilite</span>
+                  <span class="machine-stat-value red">5 utilisations</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de scan</span>
+                  <span class="machine-stat-value cyan">300 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree du scan</span>
+                  <span class="machine-stat-value">5 minutes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Precision</span>
+                  <span class="machine-stat-value gold">&plusmn;50 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Faux clusters</span>
+                  <span class="machine-stat-value green">0</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Detection leurres</span>
+                  <span class="machine-stat-value gold">60%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tableau comparatif Finder Station -->
+          <h3 id="finder-comparaison">Comparaison des Finder Stations</h3>
+          <table class="cmp-table">
+            <thead>
+              <tr>
+                <th>Stat</th>
+                <th>Valterite</th>
+                <th>Aetherite</th>
+                <th>Erinium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Durabilite</td>
+                <td><span class="cval">25 utilisations</span></td>
+                <td><span class="caeth">10 utilisations</span></td>
+                <td><span class="cerin">5 utilisations</span></td>
+              </tr>
+              <tr>
+                <td>Rayon de scan</td>
+                <td><span class="cval">800 blocs</span></td>
+                <td><span class="caeth">500 blocs</span></td>
+                <td><span class="cerin">300 blocs</span></td>
+              </tr>
+              <tr>
+                <td>Duree du scan</td>
+                <td><span class="cval">30s</span></td>
+                <td><span class="caeth">90s</span></td>
+                <td><span class="cerin">5 min</span></td>
+              </tr>
+              <tr>
+                <td>Precision</td>
+                <td><span class="cval">&plusmn;500 blocs</span></td>
+                <td><span class="caeth">&plusmn;200 blocs</span></td>
+                <td><span class="cerin">&plusmn;50 blocs</span></td>
+              </tr>
+              <tr>
+                <td>Faux clusters</td>
+                <td><span class="cval">3</span></td>
+                <td><span class="caeth">2</span></td>
+                <td><span class="cerin">0</span></td>
+              </tr>
+              <tr>
+                <td>Detection leurres</td>
+                <td><span style="color:#FF6B6B;">0%</span></td>
+                <td><span class="caeth">30%</span></td>
+                <td><span class="cerin">60%</span></td>
+              </tr>
+              <tr>
+                <td>Alerte envoyee</td>
+                <td><span class="cval">Standard</span></td>
+                <td><span class="caeth">Standard</span></td>
+                <td><span style="color:#FF6B6B;">Revele ta position</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="info-callout tip" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x2705;</div>
+            <div>
+              <strong>Quel tier choisir ?</strong> La Valterite scanne large et vite, mais la precision est faible et il y a beaucoup de faux resultats. L'Erinium est tres precis et sans faux clusters, mais le scan est lent, la portee reduite, et les ennemis verront ta position. L'Aetherite est un bon compromis entre les deux.
+            </div>
+          </div>
+
+          <!-- Comment utiliser -->
+          <h3 id="finder-utilisation">Comment utiliser la Finder Station</h3>
+          <p>Voici comment lancer un scan de reconnaissance :</p>
+          <ol class="steps-list">
+            <li><strong>Craft</strong> ta Finder Station avec la recette correspondante (voir la section Recettes plus bas).</li>
+            <li><strong>Place-la</strong> dans le monde avec un clic droit. Elle doit etre placee dans un territoire <strong>non-claim</strong>.</li>
+            <li><strong>Clic droit</strong> sur la station pour ouvrir son interface et lancer le scan.</li>
+            <li>Attends que le scan se termine. Une <strong>barre de progression</strong> s'affiche pendant le scan.</li>
+            <li>Une fois le scan termine, tu recois un <strong>Report de Scan</strong> dans ton inventaire. La station perd 1 point de durabilite.</li>
+            <li>Fais un <strong>clic droit</strong> avec le Report en main pour l'ouvrir et voir les resultats.</li>
+          </ol>
+
+          <!-- Systeme d'alerte -->
+          <h3 id="finder-alertes">Systeme d'alerte</h3>
+          <p>Quand un scan est lance, les joueurs en ligne de toutes les factions dans la zone scannee recoivent une alerte. Le type d'alerte depend du tier :</p>
+          <ul class="steps-list" style="counter-reset:none;">
+            <li style="padding-left:18px;"><strong>Tier 1 et 2 (Standard) :</strong> Les joueurs recoivent un message leur disant qu'un scan est en cours pres de leur zone, sans plus de details.</li>
+            <li style="padding-left:18px;"><strong>Tier 3 (Revele ta position) :</strong> L'alerte indique aussi les <strong>coordonnees exactes</strong> de ta Finder Station aux ennemis. Fais attention a ne pas te faire reperer !</li>
+          </ul>
+
+          <div class="info-callout warn">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>Il ne peut y avoir que <strong>3 scans en cours en meme temps</strong> sur tout le serveur. Si le serveur est deja sature, tu devras attendre qu'un scan se termine avant de pouvoir en lancer un nouveau.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ CAVE BLOCK ══════════════ -->
+        <section id="cave-block">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F50D;</div>
+            <div>
+              <div class="machine-type-name">Cave Block</div>
+              <div class="machine-type-desc">Un bloc special qui revele les cavites souterraines sous tes pieds.</div>
+            </div>
+          </div>
+
+          <p>Le Cave Block est un bloc transparent qui te permet de voir a travers le sol ! Quand tu le places, il scanne le terrain en dessous de lui et affiche les poches d'air (grottes, tunnels, salles cachees) sous forme de <strong>boites cyan brillantes</strong> visibles a travers le terrain. C'est ideal pour trouver des bases souterraines ou des grottes sans avoir a creuser au hasard.</p>
+
+          <div class="machine-card unique">
+            <img src="img/blocks/cave_block.png" alt="Cave Block" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Cave Block <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Profondeur de scan</span>
+                  <span class="machine-stat-value cyan">32 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Intervalle de scan</span>
+                  <span class="machine-stat-value">5 secondes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Materiau</span>
+                  <span class="machine-stat-value">Verre</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Blocs detectes</span>
+                  <span class="machine-stat-value cyan">Air, Plantes, Lianes, Tapis, Feu</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-callout tip" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x2705;</div>
+            <div>Le Cave Block scanne automatiquement toutes les <strong>5 secondes</strong>. Tu n'as rien a faire : place-le et observe ! Les boites cyan apparaissent la ou il y a des espaces vides sous terre.</div>
+          </div>
+
+          <div class="info-callout info">
+            <div class="info-callout-icon">&#x1F4A1;</div>
+            <div><strong>Astuce :</strong> Le Cave Block detecte aussi les <strong>plantes</strong>, les <strong>lianes</strong>, les <strong>tapis</strong> et le <strong>feu</strong>, pas seulement l'air. Si un joueur a cache sa base avec des tapis ou des lianes pour masquer l'entree, le Cave Block la trouvera quand meme !</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ DECOY STATION ══════════════ -->
+        <section id="decoy-station">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F3AD;</div>
+            <div>
+              <div class="machine-type-name">Decoy Station</div>
+              <div class="machine-type-desc">Un leurre qui trompe les scanners ennemis avec de fausses bases.</div>
+            </div>
+          </div>
+
+          <p>La Decoy Station est un outil de contre-espionnage. Quand tu la places, elle genere de <strong>faux TileEntities</strong> (coffres, fours, etc. qui n'existent pas vraiment) dans un rayon autour d'elle. Quand un ennemi lance un scan avec sa Finder Station, ces faux TileEntities apparaissent comme des clusters reels dans son report. Il pensera qu'il a trouve une base, mais en realite c'est un piege !</p>
+
+          <div class="machine-card unique">
+            <img src="img/blocks/decoy_station_front.png" alt="Decoy Station" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Decoy Station <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Faux TileEntities</span>
+                  <span class="machine-stat-value cyan">8 &ndash; 15</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de dispersion</span>
+                  <span class="machine-stat-value cyan">250 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree</span>
+                  <span class="machine-stat-value gold">24 heures</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Chance de dysfonction</span>
+                  <span class="machine-stat-value red">15%</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Max par faction</span>
+                  <span class="machine-stat-value">1</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durete</span>
+                  <span class="machine-stat-value">3.0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="decoy-regles">Regles de placement</h3>
+          <p>La Decoy Station a des regles strictes pour eviter les abus :</p>
+          <ul class="steps-list" style="counter-reset:none;">
+            <li style="padding-left:18px;"><strong>Territoire non-claim uniquement :</strong> Tu ne peux pas placer une Decoy Station sur un territoire deja claim par une faction.</li>
+            <li style="padding-left:18px;"><strong>Distance minimum :</strong> La Decoy Station doit etre placee a au moins <strong>200 blocs</strong> de tes propres claims. Tu ne peux pas la poser juste a cote de ta base.</li>
+            <li style="padding-left:18px;"><strong>Une seule par faction :</strong> Ta faction ne peut avoir qu'<strong>une seule</strong> Decoy Station active a la fois.</li>
+            <li style="padding-left:18px;"><strong>Usage unique :</strong> La Decoy Station est <strong>detruite</strong> quand tu la places. Elle disparait apres 24 heures.</li>
+          </ul>
+
+          <div class="info-callout warn" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>La Decoy Station a <strong>15% de chance de mal fonctionner</strong> ! Dans ce cas, les faux TileEntities qu'elle genere seront marques comme <strong>"instables"</strong> dans le report de scan ennemi, ce qui pourrait reveler que c'est un leurre. Les scanners de tier superieur (Aetherite : 30%, Erinium : 60%) ont encore plus de chances de detecter le piege.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ REPORT DE SCAN ══════════════ -->
+        <section id="report">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F4CB;</div>
+            <div>
+              <div class="machine-type-name">Report de Scan</div>
+              <div class="machine-type-desc">Le resultat d'un scan : coordonnees, densite et alertes.</div>
+            </div>
+          </div>
+
+          <p>Quand un scan de la Finder Station se termine, tu recois un <strong>Report de Scan</strong> dans ton inventaire. C'est un item special qui contient toutes les informations sur les clusters detectes. Fais un <strong>clic droit</strong> pour ouvrir l'interface du report.</p>
+
+          <div class="machine-card unique">
+            <img src="img/items/unclaim_report.png" alt="Report de Scan" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Report de Scan <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Type</span>
+                  <span class="machine-stat-value">Item genere</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Contenu</span>
+                  <span class="machine-stat-value cyan">Clusters, Densite, Distance</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Alertes</span>
+                  <span class="machine-stat-value red">Clusters instables</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 id="report-contenu">Ce que contient le report</h3>
+          <p>Pour chaque cluster detecte, le report affiche :</p>
+          <ul class="steps-list" style="counter-reset:none;">
+            <li style="padding-left:18px;"><strong>Position approximative :</strong> Les coordonnees du cluster, avec un decalage aleatoire qui depend de la precision du tier utilise (par exemple &plusmn;500 blocs pour le Tier 1).</li>
+            <li style="padding-left:18px;"><strong>Densite :</strong> Le nombre de TileEntities dans le cluster, classe en 3 niveaux (voir ci-dessous).</li>
+            <li style="padding-left:18px;"><strong>Distance :</strong> A quelle distance le cluster se trouve de ta Finder Station.</li>
+            <li style="padding-left:18px;"><strong>Etat "instable" :</strong> Si un cluster est detecte comme potentiellement faux (leurre), il sera marque en rouge avec un avertissement.</li>
+          </ul>
+
+          <h3 id="report-densite">Niveaux de densite</h3>
+          <p>Les clusters sont classes en 3 niveaux selon le nombre de TileEntities qu'ils contiennent :</p>
+
+          <div class="density-row">
+            <div class="density-card">
+              <div class="density-card-label">Faible</div>
+              <div class="density-card-value" style="color:var(--success);">Low</div>
+              <div class="density-card-range">3 &ndash; 8 TileEntities</div>
+            </div>
+            <div class="density-card">
+              <div class="density-card-label">Moyen</div>
+              <div class="density-card-value" style="color:#F39C12;">Medium</div>
+              <div class="density-card-range">9 &ndash; 20 TileEntities</div>
+            </div>
+            <div class="density-card">
+              <div class="density-card-label">Eleve</div>
+              <div class="density-card-value" style="color:#E74C3C;">High</div>
+              <div class="density-card-range">21+ TileEntities</div>
+            </div>
+          </div>
+
+          <div class="info-callout tip">
+            <div class="info-callout-icon">&#x2705;</div>
+            <div>Un cluster <strong>High</strong> (21+ TileEntities) est tres probablement une vraie base avec beaucoup de coffres, fours et machines. Un cluster <strong>Low</strong> pourrait etre juste quelques coffres abandonnes ou un petit abri temporaire.</div>
+          </div>
+
+          <div class="info-callout info">
+            <div class="info-callout-icon">&#x1F4A1;</div>
+            <div><strong>Faux clusters :</strong> Selon le tier de ta Finder Station, le report peut contenir des <strong>faux clusters</strong> (3 pour le Tier 1, 2 pour le Tier 2, 0 pour le Tier 3). Ces faux clusters ressemblent a de vrais resultats mais ne correspondent a aucune base reelle. A toi de determiner lesquels sont vrais !</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ OUTILS PORTATIFS ══════════════ -->
+        <section id="outils">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F9ED;</div>
+            <div>
+              <div class="machine-type-name">Outils Portatifs</div>
+              <div class="machine-type-desc">Des outils a tenir en main pour naviguer vers les bases et detecter les mines.</div>
+            </div>
+          </div>
+
+          <p>Ces outils sont des items que tu gardes dans ta main. Ils t'aident a explorer le terrain et a te diriger vers les cibles trouvees par la Finder Station.</p>
+
+          <!-- Handheld Scanner -->
+          <div class="machine-card unique">
+            <img src="img/items/handheld_scanner.png" alt="Handheld Scanner" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Handheld Scanner <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durabilite max</span>
+                  <span class="machine-stat-value red">10 800 points</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree de vie</span>
+                  <span class="machine-stat-value">3 heures</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Consommation</span>
+                  <span class="machine-stat-value gold">1 point / minute</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Reparable</span>
+                  <span class="machine-stat-value red">Non</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Enchantable</span>
+                  <span class="machine-stat-value red">Non</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>Le Handheld Scanner affiche un <strong>overlay de boussole</strong> sur ton ecran qui pointe vers les coordonnees d'un cluster de ton Report de Scan. Tiens-le en main et suis la direction indiquee pour trouver la base ennemie. Il consomme 1 point de durabilite par minute et ne peut pas etre repare ni enchante : c'est un outil jetable.</p>
+
+          <div class="info-callout tip" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x2705;</div>
+            <div>Avec <strong>10 800 points</strong> et une consommation de 1 point par minute, le Handheld Scanner dure <strong>3 heures en continu</strong>. C'est largement suffisant pour trouver une base, meme loin de chez toi.</div>
+          </div>
+
+          <!-- Mine Proximity Detector -->
+          <div class="machine-card unique" style="margin-top:20px;">
+            <img src="img/items/mine_proximity_detector.png" alt="Mine Proximity Detector" class="machine-card-img" />
+            <div class="machine-card-body">
+              <div class="machine-card-name">Mine Proximity Detector <span class="tier-pill">Unique</span></div>
+              <div class="machine-stats">
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Durabilite max</span>
+                  <span class="machine-stat-value red">3 600 points</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Duree de vie</span>
+                  <span class="machine-stat-value">60 minutes</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Rayon de detection</span>
+                  <span class="machine-stat-value cyan">50 blocs</span>
+                </div>
+                <div class="machine-stat">
+                  <span class="machine-stat-label">Coordonnees</span>
+                  <span class="machine-stat-value red">Non affichees</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>Le Mine Proximity Detector emet un <strong>son</strong> dont la hauteur (le pitch) augmente quand tu te rapproches d'une mine ennemie. Plus le son est aigu, plus tu es proche. Il ne montre <strong>aucune coordonnee</strong> : tu dois te fier uniquement au son pour localiser les mines. C'est un outil de survie, pas de navigation precise.</p>
+
+          <div class="info-callout warn" style="margin-top:8px;">
+            <div class="info-callout-icon">&#x26A0;&#xFE0F;</div>
+            <div>Le Mine Proximity Detector ne dure que <strong>60 minutes</strong>. Utilise-le quand tu approches d'une zone suspecte, pas pendant tout le trajet. Garde-le pour quand tu en as vraiment besoin !</div>
+          </div>
+        </section>
+
+        <!-- ══════════════ RECETTES ══════════════ -->
+        <section id="recettes">
+          <div class="machine-type-header">
+            <div class="machine-type-icon">&#x1F9EA;</div>
+            <div>
+              <div class="machine-type-name">Recettes de craft</div>
+              <div class="machine-type-desc">Toutes les recettes pour fabriquer les outils de reconnaissance.</div>
+            </div>
+          </div>
+
+          <!-- Finder Stations -->
+          <h3 id="recettes-finder">Finder Stations</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/finder_station_front_valterite.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Finder Station de Valterite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Boussole</span></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+                <div class="craft-slot"><span class="slot-label">Perle Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Lingot Valterite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/finder_station_front_valterite.png" alt="Finder Station de Valterite" />
+                <span class="craft-result-name">Finder Station Valterite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/finder_station_front_aetherite.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Finder Station d'Aetherite
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Boussole</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/finder_station_front_aetherite.png" alt="Finder Station d'Aetherite" />
+                <span class="craft-result-name">Finder Station Aetherite</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/finder_station_front_erinium.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Finder Station d'Erinium
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/finder_station_front_erinium.png" alt="Finder Station d'Erinium" />
+                <span class="craft-result-name">Finder Station Erinium</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cave Block -->
+          <h3 id="recettes-cave">Cave Block</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/cave_block.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Cave Block (x4)
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Cristal Aetherite</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+                <div class="craft-slot"><span class="slot-label">Verre</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/cave_block.png" alt="Cave Block" />
+                <span class="craft-result-name">Cave Block x4</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decoy Station -->
+          <h3 id="recettes-decoy">Decoy Station</h3>
+
+          <div class="craft-section">
+            <div class="craft-title">
+              <img src="img/blocks/decoy_station_front.png" alt="" style="width:24px;height:24px;image-rendering:pixelated;" />
+              Decoy Station
+            </div>
+            <div class="craft-grid-wrapper">
+              <div class="craft-grid">
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Oeil Ender</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+                <div class="craft-slot"><span class="slot-label">Nether Star</span></div>
+                <div class="craft-slot"><span class="slot-label">Fragment Erinium</span></div>
+              </div>
+              <div class="craft-arrow">&#x27A1;</div>
+              <div class="craft-result">
+                <img src="img/blocks/decoy_station_front.png" alt="Decoy Station" />
+                <span class="craft-result-name">Decoy Station</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- TOC -->
+      <aside class="toc" data-toc>
+        <div class="toc-title">Sur cette page</div>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#finder-station" class="toc-link">Finder Station</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#finder-comparaison" class="toc-link">Comparaison</a></li>
+              <li class="toc-item"><a href="#finder-utilisation" class="toc-link">Comment utiliser</a></li>
+              <li class="toc-item"><a href="#finder-alertes" class="toc-link">Systeme d'alerte</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#cave-block" class="toc-link">Cave Block</a></li>
+          <li class="toc-item"><a href="#decoy-station" class="toc-link">Decoy Station</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#decoy-regles" class="toc-link">Regles de placement</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#report" class="toc-link">Report de Scan</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#report-contenu" class="toc-link">Contenu du report</a></li>
+              <li class="toc-item"><a href="#report-densite" class="toc-link">Niveaux de densite</a></li>
+            </ul>
+          </li>
+          <li class="toc-item"><a href="#outils" class="toc-link">Outils Portatifs</a></li>
+          <li class="toc-item"><a href="#recettes" class="toc-link">Recettes de craft</a>
+            <ul class="toc-list" style="padding-left:12px;margin-top:4px;">
+              <li class="toc-item"><a href="#recettes-finder" class="toc-link">Finder Stations</a></li>
+              <li class="toc-item"><a href="#recettes-cave" class="toc-link">Cave Block</a></li>
+              <li class="toc-item"><a href="#recettes-decoy" class="toc-link">Decoy Station</a></li>
+            </ul>
+          </li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer style="background:var(--glass-bg);border-top:1px solid var(--glass-border);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:700;font-size:0.88rem;background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EriniumFaction Wiki</span>
+      <span style="font-size:0.78rem;color:var(--text-faint);">&copy; 2026 EriniumGroup</span>
+    </footer>
+  </div>
+
+<%- include('partials/footer') %>

@@ -48,6 +48,7 @@ const pages = [
   { route: '/anvils',         template: 'anvils',         title: 'Enclumes Moddees — EriniumFaction Wiki' },
   { route: '/electricity',    template: 'electricity',    title: 'Electricite RF — EriniumFaction Wiki' },
   { route: '/machines',        template: 'machines',        title: 'Machines — EriniumFaction Wiki' },
+  { route: '/reconnaissance', template: 'reconnaissance', title: 'Reconnaissance — EriniumFaction Wiki' },
 ];
 
 pages.forEach(function(p) {

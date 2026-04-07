@@ -1377,6 +1377,79 @@
         </section>
 
         <!-- ══════════════════════════════════════════════════
+             ERIS (MONNAIE PREMIUM)
+             ══════════════════════════════════════════════════ -->
+        <section id="eris" class="table-section">
+          <div class="cmd-section-heading">
+            <span class="cmd-section-heading-icon">✦</span>
+            <h2>Eris <code style="font-size:0.7em;background:rgba(255,215,0,0.15);color:#FFD700;border-radius:6px;padding:2px 10px;vertical-align:middle;">/eris</code></h2>
+          </div>
+
+          <div class="section-intro">
+            <span class="section-intro-icon">💰</span>
+            <div class="section-intro-text">
+              L'Eris est la monnaie premium permanente. Elle survit aux resets de map et aux saisons.
+              Obtenable uniquement via le site officiel ou par transfert entre joueurs.
+            </div>
+          </div>
+
+          <div class="table-container" id="table-eris">
+            <table>
+              <thead>
+                <tr>
+                  <th>Commande</th>
+                  <th>Permission</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>/eris</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Afficher votre solde Eris</td>
+                </tr>
+                <tr>
+                  <td><code>/eris balance [joueur|UUID]</code></td>
+                  <td><span class="badge badge-yellow">eriniumfaction.eris.balance.other</span></td>
+                  <td>Voir le solde d'un autre joueur. Sans argument : votre solde</td>
+                </tr>
+                <tr>
+                  <td><code>/eris pay &lt;joueur&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Envoyer des Eris a un joueur en ligne. Confirmation cliquable. Rate limit : 10/h. Minimum : 1</td>
+                </tr>
+                <tr>
+                  <td><code>/eris top</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Classement des 20 joueurs les plus riches en Eris</td>
+                </tr>
+                <tr>
+                  <td><code>/eris history [page]</code></td>
+                  <td><span class="badge badge-green">Aucune</span></td>
+                  <td>Historique de vos transactions (max 200, 10 par page)</td>
+                </tr>
+                <tr>
+                  <td><code>/eris give &lt;joueur|UUID&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-red">eriniumfaction.admin.eris</span></td>
+                  <td>Ajouter des Eris (fonctionne hors ligne via UUID)</td>
+                </tr>
+                <tr>
+                  <td><code>/eris take &lt;joueur|UUID&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-red">eriniumfaction.admin.eris</span></td>
+                  <td>Retirer des Eris (le solde ne descend jamais sous 0)</td>
+                </tr>
+                <tr>
+                  <td><code>/eris set &lt;joueur|UUID&gt; &lt;montant&gt;</code></td>
+                  <td><span class="badge badge-red">eriniumfaction.admin.eris</span></td>
+                  <td>Definir le solde exact. Confirmation si > 10 000</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="cmd-no-results" id="no-results-eris">Aucune commande ne correspond a votre recherche.</div>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════
              8. PERMISSIONS
              ══════════════════════════════════════════════════ -->
         <section id="permissions" class="table-section">

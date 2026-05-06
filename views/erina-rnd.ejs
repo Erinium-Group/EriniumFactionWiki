@@ -115,6 +115,34 @@
       box-shadow: 0 6px 20px rgba(0,229,255,0.20);
     }
     .component-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .component-png {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 8px rgba(0,229,255,0.45));
+    }
+    .rnd-item-png {
+      width: 28px;
+      height: 28px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      vertical-align: middle;
+      margin-right: 6px;
+      filter: drop-shadow(0 0 4px rgba(0,229,255,0.35));
+    }
+    .wiki-inline-icon {
+      width: 18px;
+      height: 18px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 4px rgba(0,229,255,0.35));
+    }
     .component-name {
       font-size: 0.92rem;
       font-weight: 700;
@@ -398,35 +426,35 @@
           <div class="components-grid">
 
             <div class="component-card">
-              <div class="component-icon">🛡️</div>
+              <img src="/wiki/img/items/rocket_hull.png" class="component-png" alt="Coque" title="Coque">
               <div class="component-name">Coque</div>
               <span class="component-qty">× 4 requises</span>
               <div class="component-craft">Plaques de métal qui forment la structure extérieure de la fusée.</div>
             </div>
 
             <div class="component-card">
-              <div class="component-icon">🔥</div>
+              <img src="/wiki/img/items/rocket_engine.png" class="component-png" alt="Réacteur" title="Réacteur">
               <div class="component-name">Réacteur</div>
               <span class="component-qty">× 1 requis</span>
               <div class="component-craft">Le cœur propulsif. Brûle le carburant pour décoller.</div>
             </div>
 
             <div class="component-card">
-              <div class="component-icon">⛽</div>
+              <img src="/wiki/img/items/rocket_tank.png" class="component-png" alt="Réservoir" title="Réservoir">
               <div class="component-name">Réservoir</div>
               <span class="component-qty">× 1 requis</span>
               <div class="component-craft">Stocke les Blaze Rods qui servent de carburant.</div>
             </div>
 
             <div class="component-card">
-              <div class="component-icon">🧭</div>
+              <img src="/wiki/img/items/rocket_nav.png" class="component-png" alt="Module Navigation" title="Module Navigation">
               <div class="component-name">Module Navigation</div>
               <span class="component-qty">× 1 requis</span>
               <div class="component-craft">Calcule la trajectoire et oriente la fusée vers Érina.</div>
             </div>
 
             <div class="component-card">
-              <div class="component-icon">💺</div>
+              <img src="/wiki/img/items/rocket_seat.png" class="component-png" alt="Sièges" title="Sièges">
               <div class="component-name">Sièges</div>
               <span class="component-qty">× 2 requis</span>
               <div class="component-craft">Permettent à 2 joueurs maximum de prendre place dans la fusée.</div>
@@ -525,7 +553,7 @@
             <div class="rnd-grid">
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">⚓ Ancre de Résurrection</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/resurrection_anchor.png" class="rnd-item-png" alt="Ancre de Résurrection">Ancre de Résurrection</div>
                 <div class="rnd-item-desc">Pose une ancre. Si tu meurs dans les 30 minutes, tu respawn directement à l'ancre.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">500 PR</span>
@@ -534,7 +562,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">🔆 Flare d'Erinium</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/erinium_flare.png" class="rnd-item-png" alt="Flare d'Erinium">Flare d'Erinium</div>
                 <div class="rnd-item-desc">Projectile qui applique <strong>Glowing</strong> sur 50 blocs pendant 8s. Révèle les ennemis invisibles.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">200 PR</span>
@@ -543,7 +571,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">🛡️ Bouclier d'Erinium</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/force_shield.png" class="rnd-item-png" alt="Bouclier d'Erinium">Bouclier d'Erinium</div>
                 <div class="rnd-item-desc">Déploie un mur protecteur 2×3 blocs pendant 3s. 30 utilisations avant de se casser.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">600 PR</span>
@@ -552,7 +580,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">⚡ Orbe de Speed</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_speed.png" class="rnd-item-png" alt="Orbe de Speed">Orbe de Speed</div>
                 <div class="rnd-item-desc">Active <strong>Speed III</strong> pendant quelques secondes. Idéal pour les courses-poursuites.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">200 PR</span>
@@ -561,7 +589,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">🦘 Orbe de Saut</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_jump.png" class="rnd-item-png" alt="Orbe de Saut">Orbe de Saut</div>
                 <div class="rnd-item-desc">Te propulse de <strong>15 blocs</strong> en l'air. Pratique pour franchir des obstacles ou esquiver.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">250 PR</span>
@@ -570,7 +598,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">❤️ Orbe de Soin</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_heal.png" class="rnd-item-png" alt="Orbe de Soin">Orbe de Soin</div>
                 <div class="rnd-item-desc">Restaure <strong>8 HP</strong> instantanément. Indispensable pour les combats prolongés.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">300 PR</span>
@@ -579,7 +607,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">💪 Orbe de Force</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_strength.png" class="rnd-item-png" alt="Orbe de Force">Orbe de Force</div>
                 <div class="rnd-item-desc">Active <strong>Strength II</strong> pendant quelques secondes. Frappe plus fort.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">350 PR</span>
@@ -588,7 +616,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">💥 Orbe Répulsif</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_repulsive.png" class="rnd-item-png" alt="Orbe Répulsif">Orbe Répulsif</div>
                 <div class="rnd-item-desc">Inflige un <strong>knockback de 5 blocs</strong> à tous les ennemis autour de toi.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">400 PR</span>
@@ -597,7 +625,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">🎲 Orbe de Désordre</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_disorder.png" class="rnd-item-png" alt="Orbe de Désordre">Orbe de Désordre</div>
                 <div class="rnd-item-desc">Mélange aléatoirement la <strong>hotbar</strong> de l'ennemi. Sème la panique en duel !</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">300 PR</span>
@@ -606,7 +634,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">👻 Orbe d'Invisibilité</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_invisibility.png" class="rnd-item-png" alt="Orbe d'Invisibilité">Orbe d'Invisibilité</div>
                 <div class="rnd-item-desc">Te rend <strong>invisible 10s</strong>. Parfait pour disparaître ou prendre l'initiative.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">450 PR</span>
@@ -615,7 +643,7 @@
               </div>
 
               <div class="rnd-item rnd-item--combat">
-                <div class="rnd-item-name">💨 Orbe de Dash</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/orb_dash.png" class="rnd-item-png" alt="Orbe de Dash">Orbe de Dash</div>
                 <div class="rnd-item-desc">Te propulse de <strong>8 blocs</strong> droit devant toi. Esquive ou rattrape un ennemi en fuite.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">500 PR</span>
@@ -636,7 +664,7 @@
             <div class="rnd-grid">
 
               <div class="rnd-item rnd-item--defense">
-                <div class="rnd-item-name">💎 Totem Valterite <span class="tier-indicator tier-t1">T1</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/valterite_totem.png" class="rnd-item-png" alt="Totem Valterite">Totem Valterite <span class="tier-indicator tier-t1">T1</span></div>
                 <div class="rnd-item-desc">À ta mort, te restaure <strong>3 cœurs</strong> + Speed II 5s. Te sauve la vie.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">400 PR</span>
@@ -645,7 +673,7 @@
               </div>
 
               <div class="rnd-item rnd-item--defense">
-                <div class="rnd-item-name">💎 Totem Aetherite <span class="tier-indicator tier-t2">T2</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/aetherite_totem.png" class="rnd-item-png" alt="Totem Aetherite">Totem Aetherite <span class="tier-indicator tier-t2">T2</span></div>
                 <div class="rnd-item-desc">À ta mort, restaure <strong>5 cœurs</strong> + déclenche une explosion AoE autour de toi.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">700 PR</span>
@@ -654,7 +682,7 @@
               </div>
 
               <div class="rnd-item rnd-item--defense">
-                <div class="rnd-item-name">💎 Totem Erinium <span class="tier-indicator tier-t3">T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/erinium_totem.png" class="rnd-item-png" alt="Totem Erinium">Totem Erinium <span class="tier-indicator tier-t3">T3</span></div>
                 <div class="rnd-item-desc">À ta mort, restaure <strong>7 cœurs</strong> + invincibilité 3s. La meilleure protection du jeu.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">1 200 PR</span>
@@ -663,7 +691,7 @@
               </div>
 
               <div class="rnd-item rnd-item--defense">
-                <div class="rnd-item-name">🪂 Piège à Gravité</div>
+                <div class="rnd-item-name"><img src="/wiki/img/blocks/gravity_trap.png" class="rnd-item-png" alt="Piège à Gravité">Piège à Gravité</div>
                 <div class="rnd-item-desc">Quand un ennemi marche dessus, il est <strong>propulsé 15 blocs en l'air</strong>. Chute potentiellement fatale.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">250 PR</span>
@@ -672,7 +700,7 @@
               </div>
 
               <div class="rnd-item rnd-item--defense">
-                <div class="rnd-item-name">💣 Mine Terrestre</div>
+                <div class="rnd-item-name"><img src="/wiki/img/blocks/land_mine.png" class="rnd-item-png" alt="Mine Terrestre">Mine Terrestre</div>
                 <div class="rnd-item-desc">Explose au contact pour <strong>4 cœurs</strong> de dégâts. Limite : <strong>5 mines</strong> posées en même temps.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">300 PR</span>
@@ -693,7 +721,7 @@
             <div class="rnd-grid">
 
               <div class="rnd-item rnd-item--explosif">
-                <div class="rnd-item-name">🧨 TNT Valterite <span class="tier-indicator tier-t1">T1</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/tnt_valterite.png" class="rnd-item-png" alt="TNT Valterite">TNT Valterite <span class="tier-indicator tier-t1">T1</span></div>
                 <div class="rnd-item-desc">Explosion de <strong>puissance 6</strong>. Plus fort que la TNT classique.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">300 PR</span>
@@ -702,7 +730,7 @@
               </div>
 
               <div class="rnd-item rnd-item--explosif">
-                <div class="rnd-item-name">🧨 TNT Aetherite <span class="tier-indicator tier-t2">T2</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/tnt_aetherite.png" class="rnd-item-png" alt="TNT Aetherite">TNT Aetherite <span class="tier-indicator tier-t2">T2</span></div>
                 <div class="rnd-item-desc">Explosion de <strong>puissance 8</strong>. Détruit la plupart des défenses.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">600 PR</span>
@@ -711,7 +739,7 @@
               </div>
 
               <div class="rnd-item rnd-item--explosif">
-                <div class="rnd-item-name">🧨 TNT Erinium <span class="tier-indicator tier-t3">T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/tnt_erinium.png" class="rnd-item-png" alt="TNT Erinium">TNT Erinium <span class="tier-indicator tier-t3">T3</span></div>
                 <div class="rnd-item-desc">Explosion de <strong>puissance 12</strong>. Le plus puissant explosif du serveur.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">1 000 PR</span>
@@ -720,7 +748,7 @@
               </div>
 
               <div class="rnd-item rnd-item--explosif">
-                <div class="rnd-item-name">🧨 Dynamite</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/dynamite.png" class="rnd-item-png" alt="Dynamite">Dynamite</div>
                 <div class="rnd-item-desc"><strong>Pas de R&amp;D requis !</strong> Craft normal disponible directement. Explosion contrôlée.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">— Gratuit —</span>
@@ -740,7 +768,7 @@
             <div class="rnd-grid">
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">🪤 Razor Wire <span class="tier-indicator tier-t1">T1-T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/blocks/razor_wire_erinium.png" class="rnd-item-png" alt="Razor Wire">Razor Wire <span class="tier-indicator tier-t1">T1-T3</span></div>
                 <div class="rnd-item-desc">Fil barbelé qui entoure ta base. <strong>Ralentit + blesse</strong> les intrus. 3 tiers de puissance.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">150–500 PR</span>
@@ -749,7 +777,7 @@
               </div>
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">🧱 Briques Protectives <span class="tier-indicator tier-t1">T1-T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/blocks/protective_brick_erinium.png" class="rnd-item-png" alt="Briques Protectives">Briques Protectives <span class="tier-indicator tier-t1">T1-T3</span></div>
                 <div class="rnd-item-desc">Blocs de défense ultra-résistants : <strong>450 / 700 / 900 HP</strong> selon le tier.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">200–700 PR</span>
@@ -758,7 +786,7 @@
               </div>
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">💨 Fumigènes <span class="tier-indicator tier-t1">T1-T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/erinium_smoke_bomb.png" class="rnd-item-png" alt="Fumigènes">Fumigènes <span class="tier-indicator tier-t1">T1-T3</span></div>
                 <div class="rnd-item-desc">Crée un nuage de fumée. Rayon <strong>3/5/5 blocs</strong>, durée <strong>4/6/8s</strong>. Couverture parfaite pour fuir.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">200–600 PR</span>
@@ -767,7 +795,7 @@
               </div>
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">🪝 Grappin <span class="tier-indicator tier-t1">T1-T3</span></div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/erinium_grappling_hook.png" class="rnd-item-png" alt="Grappin">Grappin <span class="tier-indicator tier-t1">T1-T3</span></div>
                 <div class="rnd-item-desc">Te tire vers une cible. Portée <strong>10 / 15 / 20 blocs</strong> selon le tier.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">250–800 PR</span>
@@ -776,7 +804,7 @@
               </div>
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">🟢 Slime Pad</div>
+                <div class="rnd-item-name"><img src="/wiki/img/blocks/slime_pad.png" class="rnd-item-png" alt="Slime Pad">Slime Pad</div>
                 <div class="rnd-item-desc">Pad qui te propulse comme un trampoline. Pas de dégâts de chute.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">200 PR</span>
@@ -785,7 +813,7 @@
               </div>
 
               <div class="rnd-item rnd-item--infra">
-                <div class="rnd-item-name">🥖 Brick Stick</div>
+                <div class="rnd-item-name"><img src="/wiki/img/items/brick_stick.png" class="rnd-item-png" alt="Brick Stick">Brick Stick</div>
                 <div class="rnd-item-desc">Bâton qui pose une rangée de briques en marchant. Construction express.</div>
                 <div class="rnd-item-cost">
                   <span class="cost-pill cost-pill--pr">300 PR</span>

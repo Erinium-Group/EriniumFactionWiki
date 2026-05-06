@@ -202,6 +202,33 @@
     .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
     .tip-text { font-size: 0.86rem; color: var(--text); line-height: 1.55; }
     .tip-text strong { color: var(--erina-cyan); }
+
+    /* ── PNG icons (replace emojis) ── */
+    .suit-png {
+      width: 96px;
+      height: 96px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 0 14px rgba(0,229,255,0.55));
+      margin: 0 auto 6px;
+      display: block;
+    }
+    .item-card-png {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 0 8px rgba(255,215,0,0.45));
+      flex-shrink: 0;
+    }
+    .wiki-inline-icon {
+      width: 18px;
+      height: 18px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      vertical-align: middle;
+      margin: 0 2px;
+    }
   </style>
 </head>
 <body>
@@ -265,42 +292,42 @@
           <div class="suit-grid">
 
             <div class="suit-piece">
-              <div class="suit-icon">🪖</div>
+              <img src="/wiki/img/items/space_helmet.png" class="suit-png" alt="Casque Spatial">
               <div class="suit-name">Casque Spatial</div>
               <div class="suit-effect">Protège du Wither I quand tu montes au-dessus de Y=140</div>
               <div class="suit-craft">
                 <strong>Craft</strong>
-                4 Aerium + 1 Cryo-Cristal
+                4 <img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt=""> Aerium + 1 <img src="/wiki/img/items/cryo_crystal.png" class="wiki-inline-icon" alt=""> Cryo-Cristal
               </div>
             </div>
 
             <div class="suit-piece">
-              <div class="suit-icon">🦺</div>
+              <img src="/wiki/img/items/space_chestplate.png" class="suit-png" alt="Plastron Spatial">
               <div class="suit-name">Plastron Spatial</div>
               <div class="suit-effect">Bloque le Poison de la Toxic Jungle</div>
               <div class="suit-craft">
                 <strong>Craft</strong>
-                4 Aerium + 2 Plasma Solidifié + 1 Cristal
+                4 <img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt=""> Aerium + 2 <img src="/wiki/img/items/solid_plasma.png" class="wiki-inline-icon" alt=""> Plasma Solidifié + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="suit-piece">
-              <div class="suit-icon">👖</div>
+              <img src="/wiki/img/items/space_leggings.png" class="suit-png" alt="Jambières Spatiales">
               <div class="suit-name">Jambières Spatiales</div>
               <div class="suit-effect">Protège du froid en Crystal Tundra</div>
               <div class="suit-craft">
                 <strong>Craft</strong>
-                5 Aerium + 2 Cristal
+                5 <img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt=""> Aerium + 2 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="suit-piece">
-              <div class="suit-icon">👢</div>
+              <img src="/wiki/img/items/space_boots.png" class="suit-png" alt="Bottes Spatiales">
               <div class="suit-name">Bottes Spatiales</div>
               <div class="suit-effect">-80% dégâts plasma + ErinaWalk (jamais de Slowness sur les blocs Erina)</div>
               <div class="suit-craft">
                 <strong>Craft</strong>
-                2 Aerium + 2 Plasma Solidifié
+                2 <img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt=""> Aerium + 2 <img src="/wiki/img/items/solid_plasma.png" class="wiki-inline-icon" alt=""> Plasma Solidifié
               </div>
             </div>
 
@@ -327,79 +354,79 @@
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">📈</span>
+                <img src="/wiki/img/items/loot_amplifier.png" class="item-card-png" alt="Amplificateur de Drop">
                 <div class="item-card-name">Amplificateur de Drop</div>
               </div>
               <div class="item-card-desc">Active un effet qui <strong>double les drops</strong> de tous les minerais d'Érina pendant 5 minutes. Indispensable pour les sessions de farming.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                2 Spore + 2 Perle Plasma + 1 Cristal
+                2 <img src="/wiki/img/items/luminous_spore.png" class="wiki-inline-icon" alt=""> Spore + 2 <img src="/wiki/img/items/plasma_pearl.png" class="wiki-inline-icon" alt=""> Perle Plasma + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🌀</span>
+                <img src="/wiki/img/items/return_portal.png" class="item-card-png" alt="Portail de Retour">
                 <div class="item-card-name">Portail de Retour</div>
               </div>
               <div class="item-card-desc">Place un portail violet pendant 30 secondes pour <strong>revenir en Overworld</strong> (ou aller sur Érina depuis l'Overworld). Solution d'urgence !</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                4 Echo Stone + 4 Ender Pearl + 1 Cristal
+                4 <img src="/wiki/img/items/echo_stone.png" class="wiki-inline-icon" alt=""> Echo Stone + 4 Ender Pearl + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🛸</span>
+                <img src="/wiki/img/items/drone.png" class="item-card-png" alt="Drone d'Exploration">
                 <div class="item-card-name">Drone d'Exploration</div>
               </div>
               <div class="item-card-desc">Lance un drone qui vole 200 blocs droit devant toi. Il applique <strong>Glowing</strong> sur tous les joueurs à moins de 2 blocs de sa trajectoire. Parfait pour repérer les ennemis.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                2 Aerium + 2 Echo Stone + 1 Cristal
+                2 <img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt=""> Aerium + 2 <img src="/wiki/img/items/echo_stone.png" class="wiki-inline-icon" alt=""> Echo Stone + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">📡</span>
+                <img src="/wiki/img/items/signal_scrambler.png" class="item-card-png" alt="Brouilleur de Signal">
                 <div class="item-card-name">Brouilleur de Signal</div>
               </div>
               <div class="item-card-desc">Bloque <strong>toutes les commandes de TP</strong> (/home, /tpa, /warp) dans un rayon de 30 blocs pendant 60 secondes. L'ennemi ne peut plus s'enfuir.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                2 Echo Stone + 2 Void Fragment + 1 Cristal
+                2 <img src="/wiki/img/items/echo_stone.png" class="wiki-inline-icon" alt=""> Echo Stone + 2 <img src="/wiki/img/items/void_fragment.png" class="wiki-inline-icon" alt=""> Void Fragment + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">📦</span>
+                <img src="/wiki/img/items/void_container.png" class="item-card-png" alt="Conteneur Dimensionnel">
                 <div class="item-card-name">Conteneur Dimensionnel</div>
               </div>
               <div class="item-card-desc">Coffre portable de <strong>27 slots</strong> intégré à l'item. Le contenu est <strong>sauvegardé même à la mort</strong>. Idéal pour transporter du loot précieux.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                4 Void Fragment + 4 Ender Pearl + 1 Cristal
+                4 <img src="/wiki/img/items/void_fragment.png" class="wiki-inline-icon" alt=""> Void Fragment + 4 Ender Pearl + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🕳️</span>
+                <img src="/wiki/img/items/mine_proximity_detector.png" class="item-card-png" alt="Piège à Ombre">
                 <div class="item-card-name">Piège à Ombre</div>
               </div>
               <div class="item-card-desc">Pose un piège <strong>invisible aux ennemis</strong>. Quand quelqu'un marche dessus : téléportation aléatoire dans 10 blocs + Blindness 2s. Chaos garanti !</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                2 Void Fragment + 2 Echo Stone + 1 Ender Pearl
+                2 <img src="/wiki/img/items/void_fragment.png" class="wiki-inline-icon" alt=""> Void Fragment + 2 <img src="/wiki/img/items/echo_stone.png" class="wiki-inline-icon" alt=""> Echo Stone + 1 Ender Pearl
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🔧</span>
+                <img src="/wiki/img/items/stability_fragment.png" class="item-card-png" alt="Fragment de Stabilité">
                 <div class="item-card-name">Fragment de Stabilité</div>
               </div>
               <div class="item-card-desc">Répare n'importe quel item à <strong>50% de durabilité max</strong>. Limite : 1 fois par item toutes les 24h réelles.</div>
@@ -411,7 +438,7 @@
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🍄</span>
+                <img src="/wiki/img/items/vision_mushroom.png" class="item-card-png" alt="Champignon de Vision">
                 <div class="item-card-name">Champignon de Vision</div>
               </div>
               <div class="item-card-desc">Consommable : Night Vision pendant 5 min, et <strong>révèle les joueurs invisibles</strong> dans 30 blocs pendant 10s. Une légère nausée à la fin.</div>
@@ -423,25 +450,25 @@
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">🔮</span>
+                <img src="/wiki/img/items/telepathy_crystal.png" class="item-card-png" alt="Cristal de Télépathie">
                 <div class="item-card-name">Cristal de Télépathie</div>
               </div>
               <div class="item-card-desc">Active un <strong>overlay</strong> qui affiche en permanence la position de tous les membres de ta faction présents sur Érina.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                2 Perle Plasma + 2 Erinite + 1 Cristal
+                2 <img src="/wiki/img/items/plasma_pearl.png" class="wiki-inline-icon" alt=""> Perle Plasma + 2 <img src="/wiki/img/items/erinite_gem.png" class="wiki-inline-icon" alt=""> Erinite + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal
               </div>
             </div>
 
             <div class="item-card">
               <div class="item-card-header">
-                <span class="item-card-icon">⛺</span>
+                <img src="/wiki/img/items/deployable_camp.png" class="item-card-png" alt="Camp Déployable">
                 <div class="item-card-name">Camp Déployable</div>
               </div>
               <div class="item-card-desc">Pose une structure <strong>tente temporaire</strong> avec un point de respawn pour ta faction. Pratique pour sécuriser une zone d'exploration.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                5 Cendre Compacte + 1 Cristal + 1 Noyau d'Impact
+                5 <img src="/wiki/img/items/compact_ash.png" class="wiki-inline-icon" alt=""> Cendre Compacte + 1 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt=""> Cristal + 1 <img src="/wiki/img/items/impact_core.png" class="wiki-inline-icon" alt=""> Noyau d'Impact
               </div>
             </div>
 
@@ -460,25 +487,25 @@
 
             <div class="item-card block">
               <div class="item-card-header">
-                <span class="item-card-icon">⚗️</span>
+                <img src="/wiki/img/blocks/plasma_extractor.png" class="item-card-png" alt="Extracteur de Plasma" title="Extracteur de Plasma">
                 <div class="item-card-name">Extracteur de Plasma</div>
               </div>
               <div class="item-card-desc">Pose-le à côté du <strong>plasma liquide</strong>. Il collecte automatiquement <strong>1 Plasma Solidifié toutes les 60s</strong> (max 16 stockés). Clic droit pour récupérer.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                4 Iron + 2 Glass + 2 Perle Plasma
+                4 Iron + 2 Glass + 2 <img src="/wiki/img/items/plasma_pearl.png" class="wiki-inline-icon" alt="Perle de Plasma" title="Perle de Plasma">
               </div>
             </div>
 
             <div class="item-card block">
               <div class="item-card-header">
-                <span class="item-card-icon">🗼</span>
+                <img src="/wiki/img/blocks/faction_beacon.png" class="item-card-png" alt="Beacon de Faction" title="Beacon de Faction">
                 <div class="item-card-name">Beacon de Faction</div>
               </div>
               <div class="item-card-desc">Donne aux <strong>membres de ta faction</strong> dans 30 blocs : <strong>Régénération I + Vitesse I + Résistance I</strong> toutes les 5 secondes. Le bouclier mobile de ta base.</div>
               <div class="item-card-craft">
                 <strong>Craft</strong>
-                4 Erinite + 4 Cristal + 1 Noyau d'Impact
+                4 <img src="/wiki/img/items/erinite_gem.png" class="wiki-inline-icon" alt="Erinite" title="Erinite"> + 4 <img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt="Cristal d'Erina" title="Cristal d'Erina"> + 1 <img src="/wiki/img/items/impact_core.png" class="wiki-inline-icon" alt="Noyau d'Impact" title="Noyau d'Impact">
               </div>
             </div>
 

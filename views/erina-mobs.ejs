@@ -227,6 +227,44 @@
     .intro-tip-icon { font-size: 1.5rem; flex-shrink: 0; }
     .intro-tip-text { font-size: 0.86rem; color: var(--text); line-height: 1.6; }
     .intro-tip-text strong { color: var(--erina-cyan); }
+
+    /* ── PNG item icons (drop list) ── */
+    .wiki-item-icon {
+      width: 22px;
+      height: 22px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      vertical-align: middle;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── 3D entity viewer placeholder ── */
+    .entity-viewer-placeholder {
+      width: 100%;
+      min-height: 220px;
+      margin: -8px -8px 12px -8px;
+      border-radius: var(--radius-md);
+      background:
+        radial-gradient(circle at 50% 40%, rgba(0,229,255,0.08), transparent 60%),
+        rgba(0,0,0,0.20);
+      border: 1px solid rgba(0,229,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .entity-viewer-placeholder::before {
+      content: "Chargement du modèle 3D…";
+      font-size: 0.7rem;
+      color: var(--text-faint);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .mob-card-viewer {
+      margin: -20px -20px 14px -20px;
+      border-bottom: 1px solid var(--glass-border);
+    }
   </style>
 </head>
 <body>
@@ -296,12 +334,15 @@
           <div class="mob-grid">
 
             <div class="mob-card mob-card--passive">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Crystallite.json"
+                   data-texture="/wiki/img/entities/Crystallite.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--passive">🌿 Passif</span>
                   <div class="mob-name">Crystallite</div>
                 </div>
-                <span class="mob-icon">💎</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -314,18 +355,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">💎 Cristal d'Erina × 0–2</span>
-                <span class="drop-item">🪶 Aerium × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_crystal.png" class="wiki-item-icon" alt="Cristal d'Erina"> Cristal d'Erina × 0–2</span>
+                <span class="drop-item"><img src="/wiki/img/items/aerium.png" class="wiki-item-icon" alt="Aerium"> Aerium × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--passive">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Shore_Crab.json"
+                   data-texture="/wiki/img/entities/Shore_Crab.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--passive">🌿 Passif</span>
                   <div class="mob-name">Shore Crab</div>
                 </div>
-                <span class="mob-icon">🦀</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -338,8 +382,8 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">🔮 Perle de Plasma (80%)</span>
-                <span class="drop-item">⚙️ Erinite (10%)</span>
+                <span class="drop-item"><img src="/wiki/img/items/plasma_pearl.png" class="wiki-item-icon" alt="Perle de Plasma"> Perle de Plasma (80%)</span>
+                <span class="drop-item"><img src="/wiki/img/items/erinite_gem.png" class="wiki-item-icon" alt="Erinite"> Erinite (10%)</span>
               </div>
             </div>
 
@@ -357,12 +401,15 @@
           <div class="mob-grid">
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Sporeling.json"
+                   data-texture="/wiki/img/entities/Sporeling.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Sporeling</div>
                 </div>
-                <span class="mob-icon">🍄</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -375,18 +422,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">✨ Spore Lumineuse × 1–2</span>
-                <span class="drop-item">☣️ Toxine × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/luminous_spore.png" class="wiki-item-icon" alt="Spore Lumineuse"> Spore Lumineuse × 1–2</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_toxin.png" class="wiki-item-icon" alt="Toxine"> Toxine × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Echolith.json"
+                   data-texture="/wiki/img/entities/Echolith.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Echolith</div>
                 </div>
-                <span class="mob-icon">🌀</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -399,18 +449,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">🌀 Echo Stone × 0–1</span>
-                <span class="drop-item">💎 Cristal × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/echo_stone.png" class="wiki-item-icon" alt="Echo Stone"> Echo Stone × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_crystal.png" class="wiki-item-icon" alt="Cristal"> Cristal × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Ash_Lurker.json"
+                   data-texture="/wiki/img/entities/Ash_Lurker.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Ash Lurker</div>
                 </div>
-                <span class="mob-icon">👤</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -423,18 +476,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">🌋 Cendre Compacte × 0–2</span>
-                <span class="drop-item">☣️ Toxine × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/compact_ash.png" class="wiki-item-icon" alt="Cendre Compacte"> Cendre Compacte × 0–2</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_toxin.png" class="wiki-item-icon" alt="Toxine"> Toxine × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Frost_Crawler.json"
+                   data-texture="/wiki/img/entities/Frost_Crawler.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Frost Crawler</div>
                 </div>
-                <span class="mob-icon">🕷️</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -447,18 +503,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">❄️ Cryo-Cristal × 0–1</span>
-                <span class="drop-item">💎 Cristal × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/cryo_crystal.png" class="wiki-item-icon" alt="Cryo-Cristal"> Cryo-Cristal × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_crystal.png" class="wiki-item-icon" alt="Cristal"> Cristal × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Toxic_Crawler.json"
+                   data-texture="/wiki/img/entities/Toxic_Crawler.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Toxic Crawler</div>
                 </div>
-                <span class="mob-icon">🦂</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -471,18 +530,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">☣️ Toxine × 0–1</span>
-                <span class="drop-item">✨ Spore × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_toxin.png" class="wiki-item-icon" alt="Toxine"> Toxine × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/luminous_spore.png" class="wiki-item-icon" alt="Spore"> Spore × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Venom_Spitter.json"
+                   data-texture="/wiki/img/entities/Venom_Spitter.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Venom Spitter</div>
                 </div>
-                <span class="mob-icon">🐍</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -495,8 +557,8 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">☣️ Toxine × 0–2</span>
-                <span class="drop-item">🔮 Perle Plasma × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_toxin.png" class="wiki-item-icon" alt="Toxine"> Toxine × 0–2</span>
+                <span class="drop-item"><img src="/wiki/img/items/plasma_pearl.png" class="wiki-item-icon" alt="Perle Plasma"> Perle Plasma × 0–1</span>
               </div>
             </div>
 
@@ -519,18 +581,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">💧 Plasma Solidifié × 0–1</span>
-                <span class="drop-item">🔮 Perle Plasma × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/solid_plasma.png" class="wiki-item-icon" alt="Plasma Solidifié"> Plasma Solidifié × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/plasma_pearl.png" class="wiki-item-icon" alt="Perle Plasma"> Perle Plasma × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Plateau_Drifter.json"
+                   data-texture="/wiki/img/entities/Plateau_Drifter.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Plateau Drifter</div>
                 </div>
-                <span class="mob-icon">🦇</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -543,18 +608,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">🪶 Aerium × 0–1</span>
-                <span class="drop-item">💎 Cristal × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/aerium.png" class="wiki-item-icon" alt="Aerium"> Aerium × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_crystal.png" class="wiki-item-icon" alt="Cristal"> Cristal × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--hostile">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Void_Shade.json"
+                   data-texture="/wiki/img/entities/Void_Shade.png"
+                   data-height="220"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--hostile">⚠️ Hostile</span>
                   <div class="mob-name">Void Shade</div>
                 </div>
-                <span class="mob-icon">👻</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -567,8 +635,8 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">🌑 Void Fragment × 0–1</span>
-                <span class="drop-item">⚙️ Erinite × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/void_fragment.png" class="wiki-item-icon" alt="Void Fragment"> Void Fragment × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erinite_gem.png" class="wiki-item-icon" alt="Erinite"> Erinite × 0–1</span>
               </div>
             </div>
 
@@ -586,12 +654,15 @@
           <div class="mob-grid">
 
             <div class="mob-card mob-card--elite">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Impact_Brute.json"
+                   data-texture="/wiki/img/entities/Impact_Brute.png"
+                   data-height="260"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--elite">💀 Élite</span>
                   <div class="mob-name">Impact Brute</div>
                 </div>
-                <span class="mob-icon">👹</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -605,18 +676,21 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">☄️ Noyau d'Impact × 1</span>
-                <span class="drop-item">⚙️ Erinite × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/impact_core.png" class="wiki-item-icon" alt="Noyau d'Impact"> Noyau d'Impact × 1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erinite_gem.png" class="wiki-item-icon" alt="Erinite"> Erinite × 0–1</span>
               </div>
             </div>
 
             <div class="mob-card mob-card--elite">
+              <div class="entity-viewer-placeholder mob-card-viewer"
+                   data-model="/wiki/models/entities/Crystal_Golem.json"
+                   data-texture="/wiki/img/entities/Crystal_Golem.png"
+                   data-height="260"></div>
               <div class="mob-card-header">
                 <div>
                   <span class="mob-badge mob-badge--elite">💀 Élite</span>
                   <div class="mob-name">Crystal Golem</div>
                 </div>
-                <span class="mob-icon">🗿</span>
               </div>
               <div class="hp-row">
                 <span class="hp-label">HP</span>
@@ -631,9 +705,9 @@
               </div>
               <div class="mob-stat-label" style="margin-top:8px;">Drops</div>
               <div class="drops-list">
-                <span class="drop-item">💎 Cristal d'Erina × 2–4</span>
-                <span class="drop-item">❄️ Cryo-Cristal × 0–1</span>
-                <span class="drop-item">🪶 Aerium × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/erina_crystal.png" class="wiki-item-icon" alt="Cristal d'Erina"> Cristal d'Erina × 2–4</span>
+                <span class="drop-item"><img src="/wiki/img/items/cryo_crystal.png" class="wiki-item-icon" alt="Cryo-Cristal"> Cryo-Cristal × 0–1</span>
+                <span class="drop-item"><img src="/wiki/img/items/aerium.png" class="wiki-item-icon" alt="Aerium"> Aerium × 0–1</span>
               </div>
             </div>
 

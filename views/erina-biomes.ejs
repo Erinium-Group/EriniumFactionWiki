@@ -94,6 +94,19 @@
     .biome-stat-val {
       color: var(--text);
       flex: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .wiki-inline-icon {
+      width: 18px;
+      height: 18px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 4px rgba(0,229,255,0.35));
     }
     .biome-tags {
       display: flex;
@@ -241,7 +254,7 @@
               <div class="biome-y">Niveau Y ~ 76</div>
               <div class="biome-desc">Plaines couvertes de cristaux qui scintillent au soleil. Le biome le plus paisible d'Érina, parfait pour faire ses premières récoltes.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Cristal d'Erina</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/erina_crystal.png" class="wiki-inline-icon" alt="Cristal d'Erina"> Cristal d'Erina</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Crystallite (passif)</span></div>
               </div>
               <div class="biome-tags">
@@ -256,7 +269,7 @@
               <div class="biome-y">Niveau Y ~ 65</div>
               <div class="biome-desc">Côtes lumineuses bordées de plasma. Le sable brille la nuit et reflète les couleurs du ciel violacé.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Perle de Plasma</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/plasma_pearl.png" class="wiki-inline-icon" alt="Perle de Plasma"> Perle de Plasma</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Shore Crab (neutre)</span></div>
               </div>
               <div class="biome-tags">
@@ -280,7 +293,7 @@
               <div class="biome-y">Niveau Y ~ 80</div>
               <div class="biome-desc">Forêt magique remplie de champignons lumineux. Les spores qui flottent dans l'air ralentissent les visiteurs imprudents.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Spore Lumineuse</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/luminous_spore.png" class="wiki-inline-icon" alt="Spore Lumineuse"> Spore Lumineuse</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Sporeling (hostile)</span></div>
               </div>
               <div class="biome-tags">
@@ -296,7 +309,7 @@
               <div class="biome-y">Niveau Y ~ 46</div>
               <div class="biome-desc">Canyons profonds aux échos étranges. Les parois sont à pic — chuter de 40 blocs ou plus est très dangereux.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Echo Stone</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/echo_stone.png" class="wiki-inline-icon" alt="Echo Stone"> Echo Stone</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Echolith</span></div>
               </div>
               <div class="biome-tags">
@@ -312,7 +325,7 @@
               <div class="biome-y">Niveau Y ~ 63</div>
               <div class="biome-desc">Marais inondés de plasma violet. Le liquide ralentit et brûle ceux qui marchent dedans.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Plasma Solidifié</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/solid_plasma.png" class="wiki-inline-icon" alt="Plasma Solidifié"> Plasma Solidifié</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Plasma Leech</span></div>
               </div>
               <div class="biome-tags">
@@ -328,7 +341,7 @@
               <div class="biome-y">Niveau Y ~ 100</div>
               <div class="biome-desc">Plateaux flottants suspendus dans le vide. Vue spectaculaire, mais une mauvaise glissade signifie une chute mortelle.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Aerium</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/aerium.png" class="wiki-inline-icon" alt="Aerium"> Aerium</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Plateau Drifter</span></div>
               </div>
               <div class="biome-tags">
@@ -344,7 +357,7 @@
               <div class="biome-y">Niveau Y ~ 72</div>
               <div class="biome-desc">Désert de cendres grises. Des geysers crachent du gaz toxique de manière imprévisible.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Cendre Compacte</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/compact_ash.png" class="wiki-inline-icon" alt="Cendre Compacte"> Cendre Compacte</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Ash Lurker</span></div>
               </div>
               <div class="biome-tags">
@@ -360,7 +373,7 @@
               <div class="biome-y">Niveau Y ~ 82</div>
               <div class="biome-desc">Toundra glaciale aux cristaux gelés. Le froid mord ceux qui n'ont pas leurs jambières spatiales.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Cryo-Cristal</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/cryo_crystal.png" class="wiki-inline-icon" alt="Cryo-Cristal"> Cryo-Cristal</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Frost Crawler</span></div>
               </div>
               <div class="biome-tags">
@@ -376,7 +389,7 @@
               <div class="biome-y">Niveau Y ~ 83</div>
               <div class="biome-desc">Jungle dense et empoisonnée. L'air est saturé de toxines, et les habitants n'ont rien d'amical.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Toxine d'Erina</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/erina_toxin.png" class="wiki-inline-icon" alt="Toxine d'Erina"> Toxine d'Erina</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Toxic Crawler, Venom Spitter</span></div>
               </div>
               <div class="biome-tags">
@@ -401,7 +414,7 @@
               <div class="biome-y">Niveau Y ~ 65</div>
               <div class="biome-desc">Cratère unique formé par un astéroïde géant. Lave alien et créatures élites gardent les ressources les plus rares.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Noyau d'Impact</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/impact_core.png" class="wiki-inline-icon" alt="Noyau d'Impact"> Noyau d'Impact</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Impact Brute, Magma Crawler</span></div>
               </div>
               <div class="biome-tags">
@@ -417,7 +430,7 @@
               <div class="biome-y">Niveau Y &lt; 40</div>
               <div class="biome-desc">Souterrain labyrinthique creusé sous Érina. Obscurité totale et minerais d'Erinite à profusion.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Minerai d'Erinite</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/erinite_gem.png" class="wiki-inline-icon" alt="Minerai d'Erinite"> Minerai d'Erinite</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Frost Crawler, Crystal Golem</span></div>
               </div>
               <div class="biome-tags">
@@ -433,7 +446,7 @@
               <div class="biome-y">Niveau Y ~ 130</div>
               <div class="biome-desc">Pics extrêmes qui frôlent le vide cosmique. Au-delà de Y=140, tu as besoin de ton casque sinon tu meurs.</div>
               <div class="biome-stats">
-                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val">Void Fragment</span></div>
+                <div class="biome-stat-row"><span class="biome-stat-label">Ressource</span><span class="biome-stat-val"><img src="/wiki/img/items/void_fragment.png" class="wiki-inline-icon" alt="Void Fragment"> Void Fragment</span></div>
                 <div class="biome-stat-row"><span class="biome-stat-label">Mobs</span><span class="biome-stat-val">Void Shade</span></div>
               </div>
               <div class="biome-tags">

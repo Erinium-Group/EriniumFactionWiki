@@ -49,6 +49,11 @@ const pages = [
   { route: '/electricity',    template: 'electricity',    title: 'Electricite RF — EriniumFaction Wiki' },
   { route: '/machines',        template: 'machines',        title: 'Machines — EriniumFaction Wiki' },
   { route: '/reconnaissance', template: 'reconnaissance', title: 'Reconnaissance — EriniumFaction Wiki' },
+  { route: '/erina',           template: 'erina',           title: 'Planète Érina — EriniumFaction Wiki' },
+  { route: '/erina-biomes',    template: 'erina-biomes',    title: 'Biomes d\'Érina — EriniumFaction Wiki' },
+  { route: '/erina-mobs',      template: 'erina-mobs',      title: 'Créatures d\'Érina — EriniumFaction Wiki' },
+  { route: '/erina-items',     template: 'erina-items',     title: 'Items d\'Érina — EriniumFaction Wiki' },
+  { route: '/erina-rnd',       template: 'erina-rnd',       title: 'Fusée & R&D — EriniumFaction Wiki' },
 ];
 
 pages.forEach(function(p) {
